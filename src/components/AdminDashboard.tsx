@@ -428,7 +428,7 @@ const AdminDashboard: React.FC = () => {
                         <Checkbox
                           checked={filterOptions.missingPassport}
                           onChange={(e) =>
-                            setAdminFilter({ missingPassport: e.target.checked })
+                            setAdminFilter('missingPassport', e.target.checked)
                           }
                         />
                       }
@@ -439,7 +439,7 @@ const AdminDashboard: React.FC = () => {
                         <Checkbox
                           checked={filterOptions.missingAddress}
                           onChange={(e) =>
-                            setAdminFilter({ missingAddress: e.target.checked })
+                            setAdminFilter('missingAddress', e.target.checked)
                           }
                         />
                       }
@@ -450,7 +450,7 @@ const AdminDashboard: React.FC = () => {
                         <Checkbox
                           checked={filterOptions.missingDOB}
                           onChange={(e) =>
-                            setAdminFilter({ missingDOB: e.target.checked })
+                            setAdminFilter('missingDOB', e.target.checked)
                           }
                         />
                       }
