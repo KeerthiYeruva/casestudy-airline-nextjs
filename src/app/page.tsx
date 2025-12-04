@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense } from "react";
 import useAuthStore from "@/stores/useAuthStore";
 import Auth from "@/components/Auth";
 import ErrorBoundary from "@/components/ErrorBoundary";

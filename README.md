@@ -23,7 +23,7 @@ This project has been migrated from Create React App to Next.js for improved per
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/casestudy-airline-nextjs.git
+git clone https://github.com/KeerthiYeruva/casestudy-airline-nextjs.git
 cd casestudy-airline-nextjs
 ```
 
