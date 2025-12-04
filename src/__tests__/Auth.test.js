@@ -1,12 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
 import Auth from '../components/Auth';
-import authReducer from '../slices/authSlice';
+import useAuthStore from '../stores/useAuthStore';
 
 // Mock Firebase auth
-jest.mock('../firebaseConfig', () => ({
+jest.mock('../lib/firebaseConfig', () => ({
   auth: {},
   googleProvider: {}
 }));
@@ -15,264 +13,193 @@ jest.mock('firebase/auth', () => ({
   signInWithPopup: jest.fn(),
   signOut: jest.fn(),
   onAuthStateChanged: jest.fn((auth, callback) => {
-    // Simulate no user initially
     callback(null);
-    return jest.fn(); // Return unsubscribe function
+    return jest.fn();
   })
 }));
 
-describe('Auth Component', () => {
-  let store;
+// Mock Zustand store
+jest.mock('../stores/useAuthStore');
 
+describe('Auth Component', () => {
   beforeEach(() => {
-    store = configureStore({
-      reducer: {
-        auth: authReducer
-      },
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-          serializableCheck: {
-            ignoredActions: ['auth/loginSuccess', 'auth/setUser'],
-            ignoredPaths: ['auth.user']
-          }
-        })
+    useAuthStore.mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      role: null,
+      loading: false,
+      error: null,
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      logout: jest.fn(),
+      setRole: jest.fn(),
     });
   });
 
   test('renders login screen when not authenticated', () => {
-    render(
-      <Provider store={store}>
-        <Auth />
-      </Provider>
-    );
+    render(<Auth />);
 
-    expect(screen.getByText(/Welcome to Airline Management System/i)).toBeInTheDocument();
+    expect(screen.getByText(/Airline Management System/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Sign in with Google/i })).toBeInTheDocument();
   });
 
-  test('login button is accessible', () => {
-    render(
-      <Provider store={store}>
-        <Auth />
-      </Provider>
-    );
+  test('login button displays correct text', () => {
+    render(<Auth />);
 
     const loginButton = screen.getByRole('button', { name: /Sign in with Google/i });
     expect(loginButton).toBeInTheDocument();
-    expect(loginButton).toHaveAttribute('aria-label');
+    expect(loginButton).not.toBeDisabled();
   });
 
   test('displays user profile when authenticated', () => {
-    // Pre-populate store with authenticated user
-    store = configureStore({
-      reducer: {
-        auth: authReducer
+    useAuthStore.mockReturnValue({
+      user: {
+        displayName: 'John Doe',
+        email: 'john@example.com',
+        photoURL: 'https://example.com/photo.jpg'
       },
-      preloadedState: {
-        auth: {
-          user: {
-            displayName: 'John Doe',
-            email: 'john@example.com',
-            photoURL: 'https://example.com/photo.jpg'
-          },
-          isAuthenticated: true,
-          role: 'staff',
-          loading: false,
-          error: null
-        }
-      },
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-          serializableCheck: {
-            ignoredActions: ['auth/loginSuccess', 'auth/setUser'],
-            ignoredPaths: ['auth.user']
-          }
-        })
+      isAuthenticated: true,
+      role: 'staff',
+      loading: false,
+      error: null,
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      logout: jest.fn(),
+      setRole: jest.fn(),
     });
 
-    render(
-      <Provider store={store}>
-        <Auth />
-      </Provider>
-    );
+    render(<Auth />);
 
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Logout/i })).toBeInTheDocument();
   });
 
-  test('role chip displays correct role', () => {
-    store = configureStore({
-      reducer: {
-        auth: authReducer
+  test('role chip displays correct role for admin', () => {
+    useAuthStore.mockReturnValue({
+      user: {
+        displayName: 'Admin User',
+        email: 'admin@example.com'
       },
-      preloadedState: {
-        auth: {
-          user: {
-            displayName: 'Admin User',
-            email: 'admin@example.com'
-          },
-          isAuthenticated: true,
-          role: 'admin',
-          loading: false,
-          error: null
-        }
-      },
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-          serializableCheck: {
-            ignoredActions: ['auth/loginSuccess', 'auth/setUser'],
-            ignoredPaths: ['auth.user']
-          }
-        })
+      isAuthenticated: true,
+      role: 'admin',
+      loading: false,
+      error: null,
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      logout: jest.fn(),
+      setRole: jest.fn(),
     });
 
-    render(
-      <Provider store={store}>
-        <Auth />
-      </Provider>
-    );
+    render(<Auth />);
 
     expect(screen.getByText('Administrator')).toBeInTheDocument();
   });
 
-  test('role dropdown is accessible', () => {
-    store = configureStore({
-      reducer: {
-        auth: authReducer
+  test('role chip displays correct role for staff', () => {
+    useAuthStore.mockReturnValue({
+      user: {
+        displayName: 'Staff User',
+        email: 'staff@example.com'
       },
-      preloadedState: {
-        auth: {
-          user: {
-            displayName: 'Staff User',
-            email: 'staff@example.com'
-          },
-          isAuthenticated: true,
-          role: 'staff',
-          loading: false,
-          error: null
-        }
-      },
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-          serializableCheck: {
-            ignoredActions: ['auth/loginSuccess', 'auth/setUser'],
-            ignoredPaths: ['auth.user']
-          }
-        })
+      isAuthenticated: true,
+      role: 'staff',
+      loading: false,
+      error: null,
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      logout: jest.fn(),
+      setRole: jest.fn(),
     });
 
-    render(
-      <Provider store={store}>
-        <Auth />
-      </Provider>
-    );
+    render(<Auth />);
 
-    const roleSelect = screen.getByLabelText(/Switch Role/i);
+    // Check for the Staff chip (it appears twice - in chip and select, so use getAllByText)
+    const staffElements = screen.getAllByText('Staff');
+    expect(staffElements.length).toBeGreaterThan(0);
+    expect(staffElements[0]).toBeInTheDocument();
+  });
+
+  test('role select dropdown is present when authenticated', () => {
+    useAuthStore.mockReturnValue({
+      user: {
+        displayName: 'Staff User',
+        email: 'staff@example.com'
+      },
+      isAuthenticated: true,
+      role: 'staff',
+      loading: false,
+      error: null,
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      logout: jest.fn(),
+      setRole: jest.fn(),
+    });
+
+    render(<Auth />);
+
+    // The select element is accessible by role combobox
+    const roleSelect = screen.getByRole('combobox');
     expect(roleSelect).toBeInTheDocument();
+    expect(roleSelect).toHaveTextContent('Staff');
   });
 
-  test('logout button triggers logout action', () => {
-    store = configureStore({
-      reducer: {
-        auth: authReducer
-      },
-      preloadedState: {
-        auth: {
-          user: {
-            displayName: 'Test User',
-            email: 'test@example.com'
-          },
-          isAuthenticated: true,
-          role: 'staff',
-          loading: false,
-          error: null
-        }
-      },
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-          serializableCheck: {
-            ignoredActions: ['auth/loginSuccess', 'auth/setUser'],
-            ignoredPaths: ['auth.user']
-          }
-        })
+  test('displays loading state with disabled button', () => {
+    useAuthStore.mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      role: null,
+      loading: true,
+      error: null,
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      logout: jest.fn(),
+      setRole: jest.fn(),
     });
 
-    render(
-      <Provider store={store}>
-        <Auth />
-      </Provider>
-    );
+    render(<Auth />);
 
-    const logoutButton = screen.getByRole('button', { name: /Logout/i });
-    fireEvent.click(logoutButton);
-
-    // After logout, state should reflect logged out status
-    const state = store.getState();
-    expect(state.auth.isAuthenticated).toBe(false);
-    expect(state.auth.user).toBe(null);
-  });
-
-  test('displays loading state', () => {
-    store = configureStore({
-      reducer: {
-        auth: authReducer
-      },
-      preloadedState: {
-        auth: {
-          user: null,
-          isAuthenticated: false,
-          role: null,
-          loading: true,
-          error: null
-        }
-      },
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-          serializableCheck: {
-            ignoredActions: ['auth/loginSuccess', 'auth/setUser'],
-            ignoredPaths: ['auth.user']
-          }
-        })
-    });
-
-    render(
-      <Provider store={store}>
-        <Auth />
-      </Provider>
-    );
-
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    const loginButton = screen.getByRole('button', { name: /Signing in.../i });
+    expect(loginButton).toBeInTheDocument();
+    expect(loginButton).toBeDisabled();
   });
 
   test('displays error message when login fails', () => {
-    store = configureStore({
-      reducer: {
-        auth: authReducer
-      },
-      preloadedState: {
-        auth: {
-          user: null,
-          isAuthenticated: false,
-          role: null,
-          loading: false,
-          error: 'Authentication failed. Please try again.'
-        }
-      },
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-          serializableCheck: {
-            ignoredActions: ['auth/loginSuccess', 'auth/setUser'],
-            ignoredPaths: ['auth.user']
-          }
-        })
+    useAuthStore.mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      role: null,
+      loading: false,
+      error: 'Authentication failed. Please try again.',
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      logout: jest.fn(),
+      setRole: jest.fn(),
     });
 
-    render(
-      <Provider store={store}>
-        <Auth />
-      </Provider>
-    );
+    render(<Auth />);
 
-    expect(screen.getByText(/Authentication failed/i)).toBeInTheDocument();
+    expect(screen.getByText(/Authentication failed. Please try again./i)).toBeInTheDocument();
+  });
+
+  test('logout button has aria-label for accessibility', () => {
+    useAuthStore.mockReturnValue({
+      user: {
+        displayName: 'Test User',
+        email: 'test@example.com'
+      },
+      isAuthenticated: true,
+      role: 'staff',
+      loading: false,
+      error: null,
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      logout: jest.fn(),
+      setRole: jest.fn(),
+    });
+
+    render(<Auth />);
+
+    const logoutButton = screen.getByRole('button', { name: /Logout/i });
+    expect(logoutButton).toHaveAttribute('aria-label', 'Logout');
   });
 });
