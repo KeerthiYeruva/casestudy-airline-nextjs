@@ -62,7 +62,7 @@ export const flights: Flight[] = [
 ];
 
 export const passengers: Passenger[] = [
-  // Flight FL001 passengers
+  // Flight FL001 passengers - Various missing information scenarios
   { 
     id: 'P001', 
     name: 'John Smith', 
@@ -90,7 +90,7 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Extra Baggage', 'Infant Care Kit'],
     specialMeal: 'Regular',
     bookingReference: 'ABC124',
-    passport: { number: '', expiryDate: '', country: '' },
+    passport: { number: '', expiryDate: '', country: '' }, // Missing passport only
     address: '456 Oak Ave, Los Angeles, CA 90001',
     dateOfBirth: '1990-07-14',
     shopRequests: [{ itemId: 'SHOP001', itemName: 'Perfume - Chanel No. 5', category: 'Perfumes & Cosmetics', quantity: 1, price: 89.99, currency: 'USD' }]
@@ -107,7 +107,7 @@ export const passengers: Passenger[] = [
     specialMeal: 'Gluten-Free',
     bookingReference: 'ABC125',
     passport: { number: 'CA987654321', expiryDate: '2027-11-30', country: 'Canada' },
-    address: '',
+    address: '', // Missing address only
     dateOfBirth: '1988-09-10',
     shopRequests: []
   },
@@ -124,7 +124,7 @@ export const passengers: Passenger[] = [
     bookingReference: 'ABC126',
     passport: { number: 'GB456789123', expiryDate: '2029-02-20', country: 'UK' },
     address: '789 Pine Rd, Miami, FL 33101',
-    dateOfBirth: '',
+    dateOfBirth: '', // Missing DOB only
     shopRequests: []
   },
   { 
@@ -138,9 +138,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Wheelchair Assistance'],
     specialMeal: 'Diabetic',
     bookingReference: 'ABC127',
-    passport: { number: '', expiryDate: '', country: '' },
+    passport: { number: '', expiryDate: '', country: '' }, // Missing passport & address
     address: '',
-    dateOfBirth: '',
+    dateOfBirth: '1975-11-22',
     shopRequests: []
   },
   { 
@@ -154,8 +154,8 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Infant Care Kit', 'Priority Boarding'],
     specialMeal: 'Regular',
     bookingReference: 'ABC128',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
+    passport: { number: '', expiryDate: '', country: '' }, // Missing passport & DOB
+    address: '222 Elm St, Boston, MA 02101',
     dateOfBirth: '',
     shopRequests: []
   },
@@ -170,8 +170,8 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Wi-Fi Access', 'Extra Baggage'],
     specialMeal: 'Kosher',
     bookingReference: 'ABC129',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
+    passport: { number: 'AU555666777', expiryDate: '2026-08-15', country: 'Australia' },
+    address: '', // Missing address & DOB
     dateOfBirth: '',
     shopRequests: []
   },
@@ -186,13 +186,13 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Priority Boarding'],
     specialMeal: 'Halal',
     bookingReference: 'ABC130',
-    passport: { number: '', expiryDate: '', country: '' },
+    passport: { number: '', expiryDate: '', country: '' }, // Missing all three
     address: '',
     dateOfBirth: '',
     shopRequests: []
   },
 
-  // Flight FL002 passengers
+  // Flight FL002 passengers - More diverse scenarios
   { 
     id: 'P009', 
     name: 'James Thomas', 
@@ -204,9 +204,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Infant Care Kit', 'Extra Baggage'],
     specialMeal: 'Regular',
     bookingReference: 'DEF201',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    passport: { number: 'FR888999000', expiryDate: '2029-03-10', country: 'France' },
+    address: '100 Seine St, Paris, France',
+    dateOfBirth: '1992-05-18',
     shopRequests: []
   },
   { 
@@ -220,9 +220,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Wheelchair Assistance', 'Priority Boarding'],
     specialMeal: 'Vegetarian',
     bookingReference: 'DEF202',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    passport: { number: 'ES111222333', expiryDate: '2027-06-25', country: 'Spain' },
+    address: '', // Missing address only
+    dateOfBirth: '1980-12-03',
     shopRequests: []
   },
   { 
@@ -236,9 +236,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Wi-Fi Access', 'Extra Legroom'],
     specialMeal: 'Regular',
     bookingReference: 'DEF203',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    passport: { number: '', expiryDate: '', country: '' }, // Missing passport only
+    address: '567 Market St, San Francisco, CA 94102',
+    dateOfBirth: '1987-09-14',
     shopRequests: []
   },
   { 
@@ -252,9 +252,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Extra Baggage'],
     specialMeal: 'Gluten-Free',
     bookingReference: 'DEF204',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    passport: { number: 'IT444555666', expiryDate: '2028-10-20', country: 'Italy' },
+    address: '789 Venice Blvd, Rome, Italy',
+    dateOfBirth: '', // Missing DOB only
     shopRequests: []
   },
   { 
@@ -268,9 +268,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Infant Care Kit', 'Priority Boarding'],
     specialMeal: 'Regular',
     bookingReference: 'DEF205',
-    passport: { number: '', expiryDate: '', country: '' },
+    passport: { number: '', expiryDate: '', country: '' }, // Missing passport & address
     address: '',
-    dateOfBirth: '',
+    dateOfBirth: '1995-02-28',
     shopRequests: []
   },
   { 
@@ -284,13 +284,13 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Wheelchair Assistance'],
     specialMeal: 'Vegan',
     bookingReference: 'DEF206',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    passport: { number: 'DE777888999', expiryDate: '2030-01-15', country: 'Germany' },
+    address: '321 Berlin St, Munich, Germany',
+    dateOfBirth: '1983-07-09',
     shopRequests: []
   },
 
-  // Flight FL003 passengers
+  // Flight FL003 passengers - Complete information mix
   { 
     id: 'P015', 
     name: 'Matthew Lewis', 
@@ -302,9 +302,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Priority Boarding', 'Wi-Fi Access'],
     specialMeal: 'Regular',
     bookingReference: 'GHI301',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    passport: { number: 'JP123789456', expiryDate: '2026-12-31', country: 'Japan' },
+    address: '456 Tokyo Ave, Shibuya, Japan',
+    dateOfBirth: '1991-04-15',
     shopRequests: []
   },
   { 
@@ -318,8 +318,8 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Infant Care Kit', 'Extra Baggage'],
     specialMeal: 'Regular',
     bookingReference: 'GHI302',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
+    passport: { number: '', expiryDate: '', country: '' }, // Missing passport & DOB
+    address: '890 Broadway, New York, NY 10003',
     dateOfBirth: '',
     shopRequests: []
   },
@@ -334,8 +334,8 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Wheelchair Assistance', 'Priority Boarding'],
     specialMeal: 'Diabetic',
     bookingReference: 'GHI303',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
+    passport: { number: 'NZ987654123', expiryDate: '2029-07-20', country: 'New Zealand' },
+    address: '', // Missing address & DOB
     dateOfBirth: '',
     shopRequests: []
   },
@@ -350,7 +350,7 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Extra Legroom'],
     specialMeal: 'Vegetarian',
     bookingReference: 'GHI304',
-    passport: { number: '', expiryDate: '', country: '' },
+    passport: { number: '', expiryDate: '', country: '' }, // Missing all three
     address: '',
     dateOfBirth: '',
     shopRequests: []
@@ -366,9 +366,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Wi-Fi Access', 'Extra Baggage'],
     specialMeal: 'Kosher',
     bookingReference: 'GHI305',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    passport: { number: 'SE456123789', expiryDate: '2027-09-10', country: 'Sweden' },
+    address: '234 Stockholm St, Sweden',
+    dateOfBirth: '', // Missing DOB only
     shopRequests: []
   },
   { 
@@ -382,9 +382,9 @@ export const passengers: Passenger[] = [
     ancillaryServices: ['Priority Boarding'],
     specialMeal: 'Halal',
     bookingReference: 'GHI306',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    passport: { number: 'BR789456123', expiryDate: '2028-11-05', country: 'Brazil' },
+    address: '567 Rio Blvd, Rio de Janeiro, Brazil',
+    dateOfBirth: '1989-08-22',
     shopRequests: []
   },
 ];

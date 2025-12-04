@@ -19,9 +19,9 @@ const useAdminStore = create<AdminStore>()(
       // Actions
       selectFlight: (flight: Flight | null) => set({ selectedFlight: flight }),
 
-      setAdminFilter: (filterKey: keyof FilterOptions, value: boolean) =>
+      setAdminFilter: (updates: Partial<FilterOptions>) =>
         set((state) => ({
-          filterOptions: { ...state.filterOptions, [filterKey]: value },
+          filterOptions: { ...state.filterOptions, ...updates },
         })),
 
       clearAdminFilters: () =>
