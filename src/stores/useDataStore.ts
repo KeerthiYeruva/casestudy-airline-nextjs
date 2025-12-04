@@ -13,6 +13,12 @@ import type {
   ShopCategory,
   APIResponse 
 } from '@/types';
+import { 
+  ancillaryServices as defaultAncillaryServices,
+  mealOptions as defaultMealOptions,
+  shopItems as defaultShopItems,
+  shopCategories as defaultShopCategories
+} from '@/data/flightData';
 
 const useDataStore = create<DataStore>()(
   devtools(
@@ -20,10 +26,10 @@ const useDataStore = create<DataStore>()(
       // State
       flights: [],
       passengers: [],
-      ancillaryServices: [],
-      mealOptions: [],
-      shopItems: [],
-      shopCategories: [],
+      ancillaryServices: defaultAncillaryServices,
+      mealOptions: defaultMealOptions,
+      shopItems: defaultShopItems,
+      shopCategories: defaultShopCategories,
       loading: false,
       error: null,
 

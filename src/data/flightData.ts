@@ -135,6 +135,25 @@ export const flights: Flight[] = [
     totalSeats: 150,
     availableSeats: 150
   },
+  { 
+    id: 'FL008',
+    name: 'Flight HH808',
+    flightNumber: 'HH808',
+    origin: 'Houston (IAH)',
+    destination: 'San Diego (SAN)',
+    from: 'Houston (IAH)',
+    to: 'San Diego (SAN)',
+    departureTime: '04:00 PM',
+    arrivalTime: '05:45 PM',
+    time: '04:00 PM',
+    date: '2025-12-05',
+    status: 'On Time',
+    aircraft: 'Boeing 777',
+    gate: 'H20',
+    terminal: '3',
+    totalSeats: 220,
+    availableSeats: 205
+  },
 ];
 
 export const passengers: Passenger[] = [
@@ -651,6 +670,273 @@ export const passengers: Passenger[] = [
     shopRequests: [
       { itemId: 'SHOP023', itemName: 'Playing Cards - Luxury', category: 'Toys & Gifts', quantity: 2, price: 15.99, currency: 'USD' }
     ]
+  },
+
+  // Flight FL008 - Edge Cases & Probabilities Testing
+  { 
+    id: 'P030', 
+    name: 'José María García-O\'Brien', // Special characters in name
+    seat: '1A', 
+    flightId: 'FL008',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: [],
+    specialMeal: 'Regular',
+    bookingReference: 'STU801',
+    passport: { number: 'ES999888777', expiryDate: '2030-12-31', country: 'Spain' },
+    address: '123 Cañón Street, São Paulo, Brazil',
+    dateOfBirth: '2005-01-01', // Very young passenger (20 years old)
+    shopRequests: []
+  },
+  { 
+    id: 'P031', 
+    name: 'Margaret Smith', 
+    seat: '1B', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: true,
+    infant: false,
+    ancillaryServices: ['Wheelchair Assistance', 'Priority Boarding', 'Extra Legroom'],
+    specialMeal: 'Low Sodium',
+    bookingReference: 'STU802',
+    passport: { number: 'US111222333', expiryDate: '2020-06-15', country: 'USA' }, // Expired passport
+    address: '456 Retirement Village, Phoenix, AZ 85001',
+    dateOfBirth: '1935-08-20', // Very old passenger (90 years old)
+    shopRequests: []
+  },
+  { 
+    id: 'P032', 
+    name: 'X', // Single character name
+    seat: '2A', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: [],
+    specialMeal: 'Regular',
+    bookingReference: 'STU803',
+    passport: { number: 'XX000000001', expiryDate: '2025-12-05', country: 'Unknown' }, // Passport expires today
+    address: '',
+    dateOfBirth: '2000-02-29', // Leap year birthday
+    shopRequests: []
+  },
+  { 
+    id: 'P033', 
+    name: 'Александр Иванович Петров', // Cyrillic characters
+    seat: '2B', 
+    flightId: 'FL008',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Wi-Fi Access'],
+    specialMeal: 'Regular',
+    bookingReference: 'STU804',
+    passport: { number: 'RU777888999', expiryDate: '2027-03-15', country: 'Russia' },
+    address: 'Улица Ленина 123, Москва, Russia',
+    dateOfBirth: '1995-12-31', // Year-end birthday
+    shopRequests: [
+      { itemId: 'SHOP019', itemName: 'Travel Size Toiletries', category: 'Travel Essentials', quantity: 10, price: 19.99, currency: 'USD' } // Large quantity
+    ]
+  },
+  { 
+    id: 'P034', 
+    name: '李明华', // Chinese characters
+    seat: '3A', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: false,
+    infant: true,
+    ancillaryServices: ['Infant Care Kit', 'Priority Boarding', 'Extra Baggage'],
+    specialMeal: 'Child Meal',
+    bookingReference: 'STU805',
+    passport: { number: 'CN123456789', expiryDate: '2028-06-30', country: 'China' },
+    address: '北京市朝阳区建国路88号, Beijing, China',
+    dateOfBirth: '2024-12-01', // Infant - 3 days old
+    shopRequests: []
+  },
+  { 
+    id: 'P035', 
+    name: 'Dr. William Alexander Montgomery-Smythe III Esq.', // Very long name with titles
+    seat: '3B', 
+    flightId: 'FL008',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Lounge Access', 'Priority Boarding', 'Fast Track Security', 'Wi-Fi Access'],
+    specialMeal: 'Kosher',
+    bookingReference: 'STU806',
+    passport: { number: 'GB987654321012', expiryDate: '2029-12-31', country: 'United Kingdom' }, // Very long passport number
+    address: '1234567890 Extraordinarily Long Street Name Avenue Boulevard Drive Court, Westminster, London, UK',
+    dateOfBirth: '1977-07-07',
+    shopRequests: [
+      { itemId: 'SHOP001', itemName: 'Perfume - Chanel No. 5', category: 'Perfumes & Cosmetics', quantity: 1, price: 89.99, currency: 'USD' },
+      { itemId: 'SHOP007', itemName: 'Smart Watch - Samsung', category: 'Electronics', quantity: 1, price: 299.99, currency: 'USD' },
+      { itemId: 'SHOP010', itemName: 'Silk Scarf - Hermès', category: 'Fashion & Accessories', quantity: 1, price: 395.00, currency: 'USD' },
+      { itemId: 'SHOP015', itemName: 'Wine - French Bordeaux', category: 'Food & Beverages', quantity: 1, price: 89.99, currency: 'USD' }
+    ]
+  },
+  { 
+    id: 'P036', 
+    name: 'Jane Doe', 
+    seat: '4A', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: [],
+    specialMeal: 'Regular',
+    bookingReference: 'STU807',
+    passport: { number: '   ', expiryDate: '', country: '   ' }, // Whitespace only
+    address: '   ',
+    dateOfBirth: '   ',
+    shopRequests: []
+  },
+  { 
+    id: 'P037', 
+    name: 'محمد بن عبدالله', // Arabic characters
+    seat: '4B', 
+    flightId: 'FL008',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Priority Boarding'],
+    specialMeal: 'Halal',
+    bookingReference: 'STU808',
+    passport: { number: 'SA456789012', expiryDate: '2026-01-01', country: 'Saudi Arabia' },
+    address: 'شارع الملك فهد، الرياض، المملكة العربية السعودية',
+    dateOfBirth: '1990-01-01',
+    shopRequests: []
+  },
+  { 
+    id: 'P038', 
+    name: 'Test User 123!@#$%', // Name with numbers and special characters
+    seat: '5A', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: true,
+    infant: true, // Both wheelchair AND infant (unusual combination)
+    ancillaryServices: ['Wheelchair Assistance', 'Infant Care Kit', 'Pet Care', 'Sports Equipment'],
+    specialMeal: 'Vegan',
+    bookingReference: 'STU809',
+    passport: { number: '!@#$%^&*()', expiryDate: '2025-12-04', country: 'Test' }, // Special characters in passport
+    address: '',
+    dateOfBirth: '1999-01-01',
+    shopRequests: []
+  },
+  { 
+    id: 'P039', 
+    name: 'Future Traveler', 
+    seat: '5B', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: [],
+    specialMeal: 'Regular',
+    bookingReference: 'STU810',
+    passport: { number: 'FT999999999', expiryDate: '2099-12-31', country: 'Future' },
+    address: '123 Tomorrow St, Future City, FC 99999',
+    dateOfBirth: '2026-01-01', // Future date of birth (not born yet)
+    shopRequests: []
+  },
+  { 
+    id: 'P040', 
+    name: 'नरेंद्र कुमार शर्मा', // Hindi/Devanagari characters
+    seat: '6A', 
+    flightId: 'FL008',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Extra Legroom', 'Wi-Fi Access'],
+    specialMeal: 'Vegetarian',
+    bookingReference: 'STU811',
+    passport: { number: 'IN123456789', expiryDate: '2027-08-15', country: 'India' },
+    address: 'मुंबई, महाराष्ट्र, भारत',
+    dateOfBirth: '1988-03-15',
+    shopRequests: []
+  },
+  { 
+    id: 'P041', 
+    name: 'Kim Min-Jung (김민정)', // Mixed scripts
+    seat: '6B', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: [],
+    specialMeal: 'Regular',
+    bookingReference: 'STU812',
+    passport: { number: '', expiryDate: '', country: '' }, // Completely empty passport
+    address: '서울특별시 강남구, Seoul, South Korea',
+    dateOfBirth: '1992-11-11',
+    shopRequests: []
+  },
+  { 
+    id: 'P042', 
+    name: 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z', // Alphabet name
+    seat: '7A', 
+    flightId: 'FL008',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Priority Boarding', 'Extra Baggage', 'Wi-Fi Access', 'Extra Legroom', 'Lounge Access', 'Fast Track Security', 'Pet Care', 'Sports Equipment'], // All services
+    specialMeal: 'Fruit Platter',
+    bookingReference: 'ABCD12345',
+    passport: { number: '0000000000', expiryDate: '2025-12-05', country: 'AAA' }, // All zeros passport
+    address: '0',
+    dateOfBirth: '1900-01-01', // Very old date (125 years old)
+    shopRequests: [
+      { itemId: 'SHOP024', itemName: 'Souvenir Keychain Set', category: 'Toys & Gifts', quantity: 100, price: 9.99, currency: 'USD' } // Extreme quantity
+    ]
+  },
+  { 
+    id: 'P043', 
+    name: 'João da Silva Pereira Júnior', // Portuguese with accents and junior
+    seat: '7B', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: true,
+    infant: false,
+    ancillaryServices: ['Wheelchair Assistance'],
+    specialMeal: 'Gluten-Free',
+    bookingReference: 'STU813',
+    passport: { number: 'PT111222333', expiryDate: '2026-06-15', country: 'Portugal' },
+    address: 'Rua das Flores, nº 123, 1º andar, Lisboa, Portugal',
+    dateOfBirth: '1950-12-25', // Christmas birthday, 75 years old
+    shopRequests: []
+  },
+  { 
+    id: 'P044', 
+    name: 'Σωκράτης Παπαδόπουλος', // Greek characters
+    seat: '8A', 
+    flightId: 'FL008',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: [],
+    specialMeal: 'Regular',
+    bookingReference: 'STU814',
+    passport: { number: 'GR555666777', expiryDate: '2028-09-30', country: 'Greece' },
+    address: 'Οδός Αθηνάς 45, Αθήνα, Ελλάδα',
+    dateOfBirth: '1985-06-30',
+    shopRequests: []
+  },
+  { 
+    id: 'P045', 
+    name: 'Empty Everything', 
+    seat: '8B', 
+    flightId: 'FL008',
+    checkedIn: false,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: [], // Empty array
+    specialMeal: 'Regular',
+    bookingReference: 'STU815',
+    passport: { number: '', expiryDate: '', country: '' }, // All empty
+    address: '', // Empty
+    dateOfBirth: '', // Empty
+    shopRequests: [] // Empty array
   },
 ];
 
