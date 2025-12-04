@@ -1,6 +1,6 @@
 ﻿# Airline Management System - Next.js
 
-Modern airline check-in and in-flight management system built with Next.js 15, React 19, Redux Toolkit, Firebase, and Material-UI.
+Modern airline check-in and in-flight management system built with **Next.js 16**, **React 19**, **TypeScript**, **Zustand**, **Firebase**, and **Material-UI**.
 
 ##  Migration from Create React App
 
@@ -118,16 +118,18 @@ The project uses Jest and React Testing Library:
 - [Authentication Guide](./AUTHENTICATION_GUIDE.md)
 - [Accessibility Features](./ACCESSIBILITY.md)
 - [Testing Notes](./TESTING_NOTES.md)
+- [TypeScript Migration](./TYPESCRIPT_MIGRATION.md) ⭐ **NEW**
 
 ##  Technologies
 
-- **Next.js 15**: React framework with App Router
-- **React 19**: UI library
-- **Redux Toolkit**: State management
-- **Firebase**: Authentication and backend
-- **Material-UI**: Component library
+- **Next.js 16**: React framework with App Router & Turbopack
+- **React 19**: UI library with latest features
+- **TypeScript 5**: Type-safe development ⭐ **NEW**
+- **Zustand 5**: Lightweight state management (replaced Redux)
+- **Firebase 12**: Authentication and backend
+- **Material-UI 7**: Modern component library
 - **Sass**: CSS preprocessor
-- **Jest**: Testing framework
+- **Jest 29**: Testing framework
 
 ##  License
 
