@@ -15,7 +15,7 @@ import type { Flight, Passenger } from '@/types';
 const isBrowser = typeof window !== 'undefined';
 
 // Helper functions for localStorage persistence
-const saveToStorage = (key: string, data: any) => {
+const saveToStorage = (key: string, data: unknown) => {
   if (isBrowser) {
     try {
       localStorage.setItem(key, JSON.stringify(data));
@@ -202,15 +202,15 @@ export const mealDB = {
 // Database operations for Shop Items
 export const shopDB = {
   getAll: () => [...shop],
-  getById: (id: string) => shop.find((item: any) => item.id === id),
-  getByCategory: (category: string) => shop.filter((item: any) => item.category === category),
-  add: (item: any) => {
+  getById: (id: string) => shop.find((item) => item.id === id),
+  getByCategory: (category: string) => shop.filter((item) => item.category === category),
+  add: (item: typeof shop[0]) => {
     shop.push(item);
     saveToStorage('shop', shop);
     return item;
   },
-  update: (id: string, updates: any) => {
-    const index = shop.findIndex((item: any) => item.id === id);
+  update: (id: string, updates: Partial<typeof shop[0]>) => {
+    const index = shop.findIndex((item) => item.id === id);
     if (index !== -1) {
       shop[index] = { ...shop[index], ...updates };
       saveToStorage('shop', shop);
@@ -219,7 +219,7 @@ export const shopDB = {
     return null;
   },
   delete: (id: string) => {
-    const index = shop.findIndex((item: any) => item.id === id);
+    const index = shop.findIndex((item) => item.id === id);
     if (index !== -1) {
       const deleted = shop[index];
       shop.splice(index, 1);

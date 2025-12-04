@@ -12,6 +12,7 @@ import {
   Typography,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   Button,
   Chip,
@@ -134,32 +135,31 @@ const StaffCheckIn: React.FC = () => {
 
       <Grid container spacing={3}>
         {/* Flight Selection */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper elevation={3} className="flight-list-panel">
             <Typography variant="h6" gutterBottom>
               Select Flight
             </Typography>
             <List>
               {currentFlights.map((flight) => (
-                <ListItem
+                <ListItemButton
                   key={flight.id}
                   selected={selectedFlight?.id === flight.id}
                   onClick={() => handleFlightSelect(flight)}
                   className="flight-item"
-                  sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
                 >
                   <ListItemText
                     primary={flight.name}
                     secondary={`${flight.time} | ${flight.from} → ${flight.to} | Gate: ${flight.gate}`}
                   />
-                </ListItem>
+                </ListItemButton>
               ))}
             </List>
           </Paper>
         </Grid>
 
         {/* Main Content */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           {selectedFlight ? (
             <>
               {/* Flight Details */}
@@ -168,13 +168,13 @@ const StaffCheckIn: React.FC = () => {
                   {selectedFlight.name}
                 </Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Typography variant="body2" color="textSecondary">
                       Time
                     </Typography>
                     <Typography variant="body1">{selectedFlight.time}</Typography>
                   </Grid>
-                  <Grid item xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Typography variant="body2" color="textSecondary">
                       Route
                     </Typography>
@@ -182,13 +182,13 @@ const StaffCheckIn: React.FC = () => {
                       {selectedFlight.from} → {selectedFlight.to}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Typography variant="body2" color="textSecondary">
                       Gate
                     </Typography>
                     <Typography variant="body1">{selectedFlight.gate}</Typography>
                   </Grid>
-                  <Grid item xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Typography variant="body2" color="textSecondary">
                       Status
                     </Typography>
@@ -203,7 +203,7 @@ const StaffCheckIn: React.FC = () => {
                   Filters
                 </Typography>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12} sm={4}>
+                  <Grid size={{ xs: 12, sm: 4 }}>
                     <FormControl fullWidth size="small">
                       <InputLabel>Check-In Status</InputLabel>
                       <Select
@@ -229,7 +229,7 @@ const StaffCheckIn: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <FormGroup row>
                       <FormControlLabel
                         control={
@@ -255,7 +255,7 @@ const StaffCheckIn: React.FC = () => {
                       />
                     </FormGroup>
                   </Grid>
-                  <Grid item xs={12} sm={2}>
+                  <Grid size={{ xs: 12, sm: 2 }}>
                     <Button
                       variant="outlined"
                       size="small"
@@ -270,7 +270,7 @@ const StaffCheckIn: React.FC = () => {
 
               <Grid container spacing={2}>
                 {/* Seat Map */}
-                <Grid item xs={12} lg={7}>
+                <Grid size={{ xs: 12, lg: 7 }}>
                   <Paper elevation={3} sx={{ p: 2 }}>
                     <SeatMapVisual
                       passengers={flightPassengers}
@@ -281,7 +281,7 @@ const StaffCheckIn: React.FC = () => {
                 </Grid>
 
                 {/* Passenger List */}
-                <Grid item xs={12} lg={5}>
+                <Grid size={{ xs: 12, lg: 5 }}>
                   <Paper elevation={3} className="passenger-list-panel" sx={{ p: 2 }}>
                     <Typography variant="h6" gutterBottom>
                       Passengers ({filteredPassengers.length})
@@ -290,12 +290,16 @@ const StaffCheckIn: React.FC = () => {
                       {filteredPassengers.map((passenger) => (
                         <ListItem
                           key={passenger.id}
-                          className={`passenger-item ${
-                            selectedPassenger?.id === passenger.id ? 'selected' : ''
-                          }`}
-                          onClick={() => setSelectedPassenger(passenger)}
+                          disablePadding
                         >
-                          <Box sx={{ width: '100%' }}>
+                          <ListItemButton
+                            className={`passenger-item ${
+                              selectedPassenger?.id === passenger.id ? 'selected' : ''
+                            }`}
+                            onClick={() => setSelectedPassenger(passenger)}
+                            selected={selectedPassenger?.id === passenger.id}
+                          >
+                            <Box sx={{ width: '100%' }}>
                             <Box
                               sx={{
                                 display: 'flex',
@@ -363,6 +367,7 @@ const StaffCheckIn: React.FC = () => {
                               </Button>
                             </Box>
                           </Box>
+                          </ListItemButton>
                         </ListItem>
                       ))}
                     </List>
@@ -377,19 +382,19 @@ const StaffCheckIn: React.FC = () => {
                     Passenger Details
                   </Typography>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary">
                         Name
                       </Typography>
                       <Typography variant="body1">{selectedPassenger.name}</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary">
                         Seat
                       </Typography>
                       <Typography variant="body1">{selectedPassenger.seat}</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary">
                         Booking Reference
                       </Typography>
@@ -397,7 +402,7 @@ const StaffCheckIn: React.FC = () => {
                         {selectedPassenger.bookingReference}
                       </Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary">
                         Status
                       </Typography>
@@ -405,7 +410,7 @@ const StaffCheckIn: React.FC = () => {
                         {selectedPassenger.checkedIn ? 'Checked In' : 'Not Checked In'}
                       </Typography>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <Typography variant="body2" color="textSecondary">
                         Ancillary Services
                       </Typography>
@@ -415,7 +420,7 @@ const StaffCheckIn: React.FC = () => {
                         ))}
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <Typography variant="body2" color="textSecondary">
                         Special Requirements
                       </Typography>
@@ -428,7 +433,7 @@ const StaffCheckIn: React.FC = () => {
                         )}
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <Typography variant="body2" color="textSecondary">
                         Special Meal
                       </Typography>

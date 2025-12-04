@@ -23,7 +23,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Grid,
   Box,
   Tabs,
   Tab,
@@ -41,6 +40,7 @@ import {
   ListItemText,
   Divider,
   SelectChangeEvent,
+  Grid
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -146,15 +146,20 @@ const AdminDashboard: React.FC = () => {
     if (passenger) {
       setEditMode(true);
       // Ensure all fields have default values to prevent undefined errors
+      // Ensure consistency between flags and services
+      const services = passenger.ancillaryServices || [];
+      const hasWheelchairService = services.includes('Wheelchair Assistance');
+      const hasInfantService = services.includes('Infant Care Kit');
+      
       setPassengerForm({
         ...passenger,
         passport: passenger.passport || { number: '', expiryDate: '', country: '' },
         address: passenger.address || '',
         dateOfBirth: passenger.dateOfBirth || '',
-        ancillaryServices: passenger.ancillaryServices || [],
+        ancillaryServices: services,
         specialMeal: passenger.specialMeal || 'Regular',
-        wheelchair: passenger.wheelchair || false,
-        infant: passenger.infant || false,
+        wheelchair: passenger.wheelchair || hasWheelchairService,
+        infant: passenger.infant || hasInfantService,
         checkedIn: passenger.checkedIn || false,
         bookingReference: passenger.bookingReference || '',
         shopRequests: passenger.shopRequests || [],
@@ -196,11 +201,8 @@ const AdminDashboard: React.FC = () => {
       return;
     }
     
-    console.log('Saving passenger:', { editMode, passengerForm });
-    
     if (editMode) {
       const result = await updatePassenger(passengerForm.id, passengerForm);
-      console.log('Update result:', result);
       if (result) {
         showToast(`Passenger ${passengerForm.name} updated successfully`, 'success');
       } else {
@@ -387,7 +389,7 @@ const AdminDashboard: React.FC = () => {
           <>
             {/* Search & Filters */}
             <Grid container spacing={2} sx={{ mb: 3 }}>
-              <Grid item xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -397,7 +399,7 @@ const AdminDashboard: React.FC = () => {
                   placeholder="Enter passenger name..."
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Filter by Flight</InputLabel>
                   <Select
@@ -417,7 +419,7 @@ const AdminDashboard: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                   <Typography variant="body2">Missing:</Typography>
                   <FormGroup row>
@@ -564,7 +566,7 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 1 && (
           <Grid container spacing={3}>
             {/* Ancillary Services */}
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper variant="outlined" sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="h6">Ancillary Services</Typography>
@@ -608,7 +610,7 @@ const AdminDashboard: React.FC = () => {
             </Grid>
 
             {/* Meal Options */}
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper variant="outlined" sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="h6">Meal Options</Typography>
@@ -652,7 +654,7 @@ const AdminDashboard: React.FC = () => {
             </Grid>
 
             {/* Shop Items */}
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper variant="outlined" sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="h6">Shop Items ({shopItems.length})</Typography>
@@ -706,7 +708,7 @@ const AdminDashboard: React.FC = () => {
         <DialogTitle>{editMode ? 'Edit Passenger' : 'Add Passenger'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Name"
@@ -714,7 +716,7 @@ const AdminDashboard: React.FC = () => {
                 onChange={(e) => setPassengerForm({ ...passengerForm, name: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid size={{ xs: 12, sm: 3 }}>
               <TextField
                 fullWidth
                 label="Seat"
@@ -722,7 +724,7 @@ const AdminDashboard: React.FC = () => {
                 onChange={(e) => setPassengerForm({ ...passengerForm, seat: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid size={{ xs: 12, sm: 3 }}>
               <FormControl fullWidth>
                 <InputLabel>Flight</InputLabel>
                 <Select
@@ -739,55 +741,67 @@ const AdminDashboard: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Divider sx={{ my: 1 }}>
                 <Typography variant="caption">Passport Details</Typography>
               </Divider>
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 fullWidth
                 label="Passport Number"
-                value={passengerForm.passport.number}
+                value={passengerForm.passport?.number || ''}
                 onChange={(e) =>
                   setPassengerForm({
                     ...passengerForm,
-                    passport: { ...passengerForm.passport, number: e.target.value },
+                    passport: { 
+                      number: e.target.value,
+                      expiryDate: passengerForm.passport?.expiryDate || '',
+                      country: passengerForm.passport?.country || ''
+                    },
                   })
                 }
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 fullWidth
                 label="Expiry Date"
                 type="date"
                 InputLabelProps={{ shrink: true }}
-                value={passengerForm.passport.expiryDate}
+                value={passengerForm.passport?.expiryDate || ''}
                 onChange={(e) =>
                   setPassengerForm({
                     ...passengerForm,
-                    passport: { ...passengerForm.passport, expiryDate: e.target.value },
+                    passport: { 
+                      number: passengerForm.passport?.number || '',
+                      expiryDate: e.target.value,
+                      country: passengerForm.passport?.country || ''
+                    },
                   })
                 }
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 fullWidth
                 label="Country"
-                value={passengerForm.passport.country}
+                value={passengerForm.passport?.country || ''}
                 onChange={(e) =>
                   setPassengerForm({
                     ...passengerForm,
-                    passport: { ...passengerForm.passport, country: e.target.value },
+                    passport: { 
+                      number: passengerForm.passport?.number || '',
+                      expiryDate: passengerForm.passport?.expiryDate || '',
+                      country: e.target.value
+                    },
                   })
                 }
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Address"
@@ -798,7 +812,7 @@ const AdminDashboard: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Date of Birth"
@@ -809,7 +823,7 @@ const AdminDashboard: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Booking Reference"
@@ -820,15 +834,32 @@ const AdminDashboard: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormGroup row>
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={passengerForm.wheelchair}
-                      onChange={(e) =>
-                        setPassengerForm({ ...passengerForm, wheelchair: e.target.checked })
-                      }
+                      onChange={(e) => {
+                        const isWheelchair = e.target.checked;
+                        let updatedServices = [...passengerForm.ancillaryServices];
+                        
+                        if (isWheelchair) {
+                          // Add "Wheelchair Assistance" if not already present
+                          if (!updatedServices.includes('Wheelchair Assistance')) {
+                            updatedServices.push('Wheelchair Assistance');
+                          }
+                        } else {
+                          // Remove "Wheelchair Assistance" when unchecking
+                          updatedServices = updatedServices.filter(s => s !== 'Wheelchair Assistance');
+                        }
+                        
+                        setPassengerForm({ 
+                          ...passengerForm, 
+                          wheelchair: isWheelchair,
+                          ancillaryServices: updatedServices
+                        });
+                      }}
                     />
                   }
                   label="Wheelchair"
@@ -837,9 +868,26 @@ const AdminDashboard: React.FC = () => {
                   control={
                     <Checkbox
                       checked={passengerForm.infant}
-                      onChange={(e) =>
-                        setPassengerForm({ ...passengerForm, infant: e.target.checked })
-                      }
+                      onChange={(e) => {
+                        const isInfant = e.target.checked;
+                        let updatedServices = [...passengerForm.ancillaryServices];
+                        
+                        if (isInfant) {
+                          // Add "Infant Care Kit" if not already present
+                          if (!updatedServices.includes('Infant Care Kit')) {
+                            updatedServices.push('Infant Care Kit');
+                          }
+                        } else {
+                          // Remove "Infant Care Kit" when unchecking
+                          updatedServices = updatedServices.filter(s => s !== 'Infant Care Kit');
+                        }
+                        
+                        setPassengerForm({ 
+                          ...passengerForm, 
+                          infant: isInfant,
+                          ancillaryServices: updatedServices
+                        });
+                      }}
                     />
                   }
                   label="Infant"
@@ -885,7 +933,7 @@ const AdminDashboard: React.FC = () => {
         <DialogTitle>{editMode ? 'Edit Shop Item' : 'Add Shop Item'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Item Name"
@@ -893,7 +941,7 @@ const AdminDashboard: React.FC = () => {
                 onChange={(e) => setShopItemForm({ ...shopItemForm, name: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select
@@ -909,7 +957,7 @@ const AdminDashboard: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={8}>
+            <Grid size={8}>
               <TextField
                 fullWidth
                 label="Price"
@@ -920,7 +968,7 @@ const AdminDashboard: React.FC = () => {
                 }
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid size={4}>
               <TextField
                 fullWidth
                 label="Currency"

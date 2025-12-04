@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body suppressHydrationWarning>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />

@@ -246,6 +246,87 @@ const useDataStore = create<DataStore>()(
       setMealOptions: (meals: MealOption[]) => set({ mealOptions: meals }),
       setShopItems: (items: ShopItem[]) => set({ shopItems: items }),
       setShopCategories: (categories: ShopCategory[]) => set({ shopCategories: categories }),
+
+      // Ancillary services management
+      addAncillaryServiceToPassenger: async (passengerId: string, service: string) => {
+        const state = _get();
+        const passenger = state.passengers.find(p => p.id === passengerId);
+        if (passenger) {
+          // Check if service already exists to prevent duplicates
+          if (!passenger.ancillaryServices.includes(service)) {
+            const updatedServices = [...(passenger.ancillaryServices || []), service];
+            await state.updatePassenger(passengerId, { ancillaryServices: updatedServices });
+          }
+        }
+      },
+
+      removeAncillaryServiceFromPassenger: async (passengerId: string, service: string) => {
+        const state = _get();
+        const passenger = state.passengers.find(p => p.id === passengerId);
+        if (passenger) {
+          const updatedServices = passenger.ancillaryServices.filter(s => s !== service);
+          const updates: Partial<Passenger> = { ancillaryServices: updatedServices };
+          
+          // Also update related flags when removing special services
+          if (service === 'Infant Care Kit') {
+            updates.infant = false;
+          } else if (service === 'Wheelchair Assistance') {
+            updates.wheelchair = false;
+          }
+          
+          await state.updatePassenger(passengerId, updates);
+        }
+      },
+
+      // Meal preference management
+      changeMealPreference: async (passengerId: string, meal: string) => {
+        const state = _get();
+        await state.updatePassenger(passengerId, { specialMeal: meal });
+      },
+
+      // Shop request management
+      addShopRequest: async (passengerId: string, itemName: string, quantity: number, price: number) => {
+        const state = _get();
+        const passenger = state.passengers.find(p => p.id === passengerId);
+        if (passenger) {
+          const existingRequests = passenger.shopRequests || [];
+          const existingItem = existingRequests.find(r => r.itemName === itemName);
+          
+          let updatedRequests;
+          if (existingItem) {
+            // Update quantity if item already exists
+            updatedRequests = existingRequests.map(r =>
+              r.itemName === itemName ? { ...r, quantity: r.quantity + quantity } : r
+            );
+          } else {
+            // Add new item - need to find the shop item for full details
+            const shopItem = state.shopItems.find(item => item.name === itemName);
+            if (shopItem) {
+              updatedRequests = [...existingRequests, { 
+                itemId: shopItem.id,
+                itemName: shopItem.name,
+                category: shopItem.category,
+                quantity, 
+                price,
+                currency: shopItem.currency
+              }];
+            } else {
+              return; // Shop item not found
+            }
+          }
+          
+          await state.updatePassenger(passengerId, { shopRequests: updatedRequests });
+        }
+      },
+
+      removeShopRequest: async (passengerId: string, itemName: string) => {
+        const state = _get();
+        const passenger = state.passengers.find(p => p.id === passengerId);
+        if (passenger && passenger.shopRequests) {
+          const updatedRequests = passenger.shopRequests.filter(r => r.itemName !== itemName);
+          await state.updatePassenger(passengerId, { shopRequests: updatedRequests });
+        }
+      },
     }),
     { name: 'DataStore' }
   )
