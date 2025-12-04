@@ -1,18 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  selectFlight,
-  setFilter,
-  clearFilters,
-} from '../slices/checkInSlice';
-import {
-  checkInPassenger,
-  undoCheckIn,
-  changeSeat,
-} from '../slices/dataSlice';
-import { showToast } from '../slices/toastSlice';
+import React, { useState, useEffect } from 'react';
+import useCheckInStore from '@/stores/useCheckInStore';
+import useDataStore from '@/stores/useDataStore';
+import useToastStore from '@/stores/useToastStore';
 import SeatMapVisual from './SeatMapVisual';
 import {
   Container,
@@ -41,9 +32,14 @@ import {
 import '../styles/StaffCheckIn.scss';
 
 const StaffCheckIn = () => {
-  const dispatch = useDispatch();
-  const { flights, passengers } = useSelector((state) => state.data);
-  const { selectedFlight, filterOptions } = useSelector((state) => state.checkIn);
+  const { flights, passengers, fetchFlights, fetchPassengers, checkInPassenger, undoCheckIn, changeSeat } = useDataStore();
+  const { selectedFlight, filterOptions, selectFlight, setFilter, clearFilters } = useCheckInStore();
+  const { showToast } = useToastStore();
+
+  useEffect(() => {
+    fetchFlights();
+    fetchPassengers();
+  }, [fetchFlights, fetchPassengers]);
 
   const [selectedPassenger, setSelectedPassenger] = useState(null);
   const [changeSeatDialog, setChangeSeatDialog] = useState(false);
@@ -72,20 +68,28 @@ const StaffCheckIn = () => {
   });
 
   const handleFlightSelect = (flight) => {
-    dispatch(selectFlight(flight));
+    selectFlight(flight);
     setSelectedPassenger(null);
   };
 
-  const handleCheckIn = (passengerId) => {
+  const handleCheckIn = async (passengerId) => {
     const passenger = passengers.find(p => p.id === passengerId);
-    dispatch(checkInPassenger(passengerId));
-    dispatch(showToast({ message: `${passenger?.name || 'Passenger'} checked in successfully`, severity: 'success' }));
+    const result = await checkInPassenger(passengerId);
+    if (result) {
+      showToast(`${passenger?.name || 'Passenger'} checked in successfully`, 'success');
+    } else {
+      showToast('Check-in failed', 'error');
+    }
   };
 
-  const handleUndoCheckIn = (passengerId) => {
+  const handleUndoCheckIn = async (passengerId) => {
     const passenger = passengers.find(p => p.id === passengerId);
-    dispatch(undoCheckIn(passengerId));
-    dispatch(showToast({ message: `Check-in cancelled for ${passenger?.name || 'passenger'}`, severity: 'info' }));
+    const result = await undoCheckIn(passengerId);
+    if (result) {
+      showToast(`Check-in cancelled for ${passenger?.name || 'passenger'}`, 'info');
+    } else {
+      showToast('Undo check-in failed', 'error');
+    }
   };
 
   const handleSeatClick = (seat) => {
@@ -95,25 +99,29 @@ const StaffCheckIn = () => {
     }
   };
 
-  const handleChangeSeat = () => {
+  const handleChangeSeat = async () => {
     if (!newSeatNumber || !newSeatNumber.trim()) {
-      dispatch(showToast({ message: 'Please enter a valid seat number', severity: 'error' }));
+      showToast('Please enter a valid seat number', 'error');
       return;
     }
     if (selectedPassenger && newSeatNumber) {
-      dispatch(changeSeat({ passengerId: selectedPassenger.id, newSeat: newSeatNumber.trim() }));
-      dispatch(showToast({ message: `Seat changed to ${newSeatNumber.trim()} for ${selectedPassenger.name}`, severity: 'success' }));
-      setChangeSeatDialog(false);
-      setNewSeatNumber('');
+      const result = await changeSeat(selectedPassenger.id, newSeatNumber.trim());
+      if (result) {
+        showToast(`Seat changed to ${newSeatNumber.trim()} for ${selectedPassenger.name}`, 'success');
+        setChangeSeatDialog(false);
+        setNewSeatNumber('');
+      } else {
+        showToast('Seat change failed', 'error');
+      }
     }
   };
 
   const handleFilterChange = (filterType, value) => {
-    dispatch(setFilter({ [filterType]: value }));
+    setFilter({ [filterType]: value });
   };
 
   const handleClearFilters = () => {
-    dispatch(clearFilters());
+    clearFilters();
   };
 
   return (
@@ -133,10 +141,10 @@ const StaffCheckIn = () => {
               {currentFlights.map((flight) => (
                 <ListItem
                   key={flight.id}
-                  button
                   selected={selectedFlight?.id === flight.id}
                   onClick={() => handleFlightSelect(flight)}
                   className="flight-item"
+                  sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
                 >
                   <ListItemText
                     primary={flight.name}

@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React, { useState, lazy, Suspense } from "react";
-import { useSelector } from "react-redux";
+import useAuthStore from "@/stores/useAuthStore";
 import Auth from "@/components/Auth";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { 
@@ -32,7 +32,7 @@ const LoadingFallback = () => (
 
 export default function Home() {
   const [currentView, setCurrentView] = useState("checkin");
-  const { isAuthenticated, role } = useSelector((state: any) => state.auth);
+  const { isAuthenticated, role } = useAuthStore();
 
   if (!isAuthenticated) {
     return <Auth />;

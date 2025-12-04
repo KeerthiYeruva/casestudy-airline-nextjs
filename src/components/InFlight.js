@@ -1,17 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectFlight } from '../slices/checkInSlice';
-import {
-  addAncillaryServiceToPassenger,
-  removeAncillaryServiceFromPassenger,
-  changeMealPreference,
-  addShopRequest,
-  removeShopRequest,
-  updateShopRequestQuantity,
-} from '../slices/dataSlice';
-import { showToast } from '../slices/toastSlice';
+import React, { useState, useEffect } from 'react';
+import useCheckInStore from '@/stores/useCheckInStore';
+import useDataStore from '@/stores/useDataStore';
+import useToastStore from '@/stores/useToastStore';
 import SeatMapVisual from './SeatMapVisual';
 import {
   Container,
@@ -41,10 +33,14 @@ import AddIcon from '@mui/icons-material/Add';
 import '../styles/InFlight.scss';
 
 const InFlight = () => {
-  const dispatch = useDispatch();
-  const { flights, passengers, ancillaryServices, mealOptions, shopItems, shopCategories } =
-    useSelector((state) => state.data);
-  const { selectedFlight } = useSelector((state) => state.checkIn);
+  const { flights, passengers, ancillaryServices, mealOptions, shopItems, shopCategories, fetchFlights, fetchPassengers, addAncillaryServiceToPassenger, removeAncillaryServiceFromPassenger, changeMealPreference, addShopRequest, removeShopRequest, updatePassenger } = useDataStore();
+  const { selectedFlight, selectFlight } = useCheckInStore();
+  const { showToast } = useToastStore();
+
+  useEffect(() => {
+    fetchFlights();
+    fetchPassengers();
+  }, [fetchFlights, fetchPassengers]);
 
   const [selectedPassenger, setSelectedPassenger] = useState(null);
   const [addServiceDialog, setAddServiceDialog] = useState(false);
@@ -62,7 +58,7 @@ const InFlight = () => {
     : [];
 
   const handleFlightSelect = (flight) => {
-    dispatch(selectFlight(flight));
+    selectFlight(flight);
     setSelectedPassenger(null);
   };
 
@@ -73,102 +69,75 @@ const InFlight = () => {
     }
   };
 
-  const handleAddService = () => {
+  const handleAddService = async () => {
     if (!selectedPassenger) {
-      dispatch(showToast({ message: 'Please select a passenger first', severity: 'warning' }));
+      showToast('Please select a passenger first', 'warning');
       return;
     }
     if (!selectedService) {
-      dispatch(showToast({ message: 'Please select a service', severity: 'warning' }));
+      showToast('Please select a service', 'warning');
       return;
     }
-    dispatch(
-      addAncillaryServiceToPassenger({
-        passengerId: selectedPassenger.id,
-        service: selectedService,
-      })
-    );
-    dispatch(showToast({ message: `${selectedService} added for ${selectedPassenger.name}`, severity: 'success' }));
+    await addAncillaryServiceToPassenger(selectedPassenger.id, selectedService);
+    showToast(`${selectedService} added for ${selectedPassenger.name}`, 'success');
     setAddServiceDialog(false);
     setSelectedService('');
   };
 
-  const handleRemoveService = (service) => {
+  const handleRemoveService = async (service) => {
     if (selectedPassenger) {
-      dispatch(
-        removeAncillaryServiceFromPassenger({
-          passengerId: selectedPassenger.id,
-          service: service,
-        })
-      );
-      dispatch(showToast({ message: `${service} removed`, severity: 'info' }));
+      await removeAncillaryServiceFromPassenger(selectedPassenger.id, service);
+      showToast(`${service} removed`, 'info');
     }
   };
 
-  const handleChangeMeal = () => {
+  const handleChangeMeal = async () => {
     if (!selectedPassenger) {
-      dispatch(showToast({ message: 'Please select a passenger first', severity: 'warning' }));
+      showToast('Please select a passenger first', 'warning');
       return;
     }
     if (!selectedMeal) {
-      dispatch(showToast({ message: 'Please select a meal option', severity: 'warning' }));
+      showToast('Please select a meal option', 'warning');
       return;
     }
-    dispatch(
-      changeMealPreference({
-        passengerId: selectedPassenger.id,
-        meal: selectedMeal,
-      })
-    );
-    dispatch(showToast({ message: `Meal changed to ${selectedMeal} for ${selectedPassenger.name}`, severity: 'success' }));
+    await changeMealPreference(selectedPassenger.id, selectedMeal);
+    showToast(`Meal changed to ${selectedMeal} for ${selectedPassenger.name}`, 'success');
     setChangeMealDialog(false);
     setSelectedMeal('');
   };
 
-  const handleAddShopItem = () => {
+  const handleAddShopItem = async () => {
     if (!selectedPassenger || !selectedShopItem) {
-      dispatch(showToast({ message: 'Please select a passenger and shop item', severity: 'warning' }));
+      showToast('Please select a passenger and shop item', 'warning');
       return;
     }
     if (!shopQuantity || shopQuantity <= 0) {
-      dispatch(showToast({ message: 'Quantity must be at least 1', severity: 'warning' }));
+      showToast('Quantity must be at least 1', 'warning');
       return;
     }
-    dispatch(
-      addShopRequest({
-        passengerId: selectedPassenger.id,
-        item: selectedShopItem.name,
-        quantity: shopQuantity,
-        price: selectedShopItem.price,
-      })
-    );
-    dispatch(showToast({ message: `${selectedShopItem.name} (x${shopQuantity}) added to cart`, severity: 'success' }));
+    await addShopRequest(selectedPassenger.id, selectedShopItem.name, shopQuantity, selectedShopItem.price);
+    showToast(`${selectedShopItem.name} (x${shopQuantity}) added to cart`, 'success');
     setShopDialog(false);
     setSelectedShopItem(null);
     setShopQuantity(1);
   };
 
-  const handleRemoveShopItem = (item) => {
+  const handleRemoveShopItem = async (item) => {
     if (selectedPassenger) {
-      dispatch(
-        removeShopRequest({
-          passengerId: selectedPassenger.id,
-          item: item,
-        })
-      );
-      dispatch(showToast({ message: `${item} removed from cart`, severity: 'info' }));
+      await removeShopRequest(selectedPassenger.id, item);
+      showToast(`${item} removed from cart`, 'info');
     }
   };
 
-  const handleUpdateQuantity = (item, newQuantity) => {
-    if (selectedPassenger) {
-      dispatch(
-        updateShopRequestQuantity({
-          passengerId: selectedPassenger.id,
-          item: item,
-          quantity: newQuantity,
-        })
-      );
+  const handleUpdateQuantity = async (item, newQuantity) => {
+    if (selectedPassenger && newQuantity > 0) {
+      const passenger = passengers.find(p => p.id === selectedPassenger.id);
+      if (passenger && passenger.shopRequests) {
+        const updatedRequests = passenger.shopRequests.map(r =>
+          r.item === item ? { ...r, quantity: newQuantity } : r
+        );
+        await updatePassenger(selectedPassenger.id, { shopRequests: updatedRequests });
+      }
     }
   };
 
@@ -212,10 +181,10 @@ const InFlight = () => {
               {flights.map((flight) => (
                 <ListItem
                   key={flight.id}
-                  button
                   selected={selectedFlight?.id === flight.id}
                   onClick={() => handleFlightSelect(flight)}
                   className="flight-item"
+                  sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
                 >
                   <ListItemText
                     primary={flight.name}
@@ -288,7 +257,7 @@ const InFlight = () => {
                             selectedPassenger?.id === passenger.id ? 'selected' : ''
                           }`}
                           onClick={() => setSelectedPassenger(passenger)}
-                          button
+                          sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
                         >
                           <Box sx={{ width: '100%' }}>
                             <Box

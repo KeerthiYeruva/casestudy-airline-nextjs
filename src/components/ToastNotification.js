@@ -1,19 +1,17 @@
 'use client';
 
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import useToastStore from '@/stores/useToastStore';
 import { Snackbar, Alert } from '@mui/material';
-import { hideToast } from '../slices/toastSlice';
 
 const ToastNotification = () => {
-  const dispatch = useDispatch();
-  const { open, message, severity } = useSelector((state) => state.toast);
+  const { open, message, severity, hideToast } = useToastStore();
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    dispatch(hideToast());
+    hideToast();
   };
 
   return (

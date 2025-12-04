@@ -3,7 +3,6 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./theme";
-import ReduxProvider from "@/lib/ReduxProvider";
 import ToastNotification from "@/components/ToastNotification";
 import "@/styles/App.scss";
 import "@/styles/Accessibility.scss";
@@ -24,10 +23,8 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <ReduxProvider>
-              {children}
-              <ToastNotification />
-            </ReduxProvider>
+            {children}
+            <ToastNotification />
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

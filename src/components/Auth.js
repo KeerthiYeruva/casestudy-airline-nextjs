@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginStart, loginSuccess, loginFailure, logout, setRole } from '../slices/authSlice';
+import useAuthStore from '@/stores/useAuthStore';
 import {
   Dialog,
   DialogTitle,
@@ -50,8 +49,7 @@ const MOCK_USERS = [
 ];
 
 const Auth = () => {
-  const dispatch = useDispatch();
-  const { user, role, loading, error, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, role, loading, error, isAuthenticated, loginStart, loginSuccess, logout, setRole } = useAuthStore();
   const [roleDialog, setRoleDialog] = useState(false);
   const [selectedRole, setSelectedRole] = useState('staff');
   const [selectedMockUser, setSelectedMockUser] = useState(0);
@@ -72,14 +70,13 @@ const Auth = () => {
   // MOCK LOGIN: Comment out when using Firebase
   // ========================================
   const handleLogin = () => {
-    dispatch(loginStart());
+    loginStart();
     try {
       // Simulate async login
       setTimeout(() => {
         setRoleDialog(true);
       }, 500);
     } catch (error) {
-      dispatch(loginFailure(error.message));
       console.error('Login error:', error);
     }
   };
@@ -103,10 +100,10 @@ const Auth = () => {
   // ========================================
   const handleRoleSelection = () => {
     const mockUser = MOCK_USERS[selectedMockUser];
-    dispatch(loginSuccess({
+    loginSuccess({
       user: mockUser,
       role: selectedRole,
-    }));
+    });
     setRoleDialog(false);
   };
 
@@ -133,7 +130,7 @@ const Auth = () => {
   // MOCK LOGOUT: Comment out when using Firebase
   // ========================================
   const handleLogout = () => {
-    dispatch(logout());
+    logout();
   };
 
   // ========================================
@@ -149,7 +146,7 @@ const Auth = () => {
   // };
 
   const handleRoleChange = (newRole) => {
-    dispatch(setRole(newRole));
+    setRole(newRole);
   };
 
   if (!isAuthenticated) {

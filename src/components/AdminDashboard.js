@@ -1,27 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  selectFlight,
-  setAdminFilter,
-  clearAdminFilters,
-} from '../slices/adminSlice';
-import {
-  addPassenger,
-  updatePassenger,
-  deletePassenger,
-  addAncillaryService,
-  updateAncillaryService,
-  deleteAncillaryService,
-  addMealOption,
-  updateMealOption,
-  deleteMealOption,
-  addShopItem,
-  updateShopItem,
-  deleteShopItem,
-} from '../slices/dataSlice';
-import { showToast } from '../slices/toastSlice';
+import React, { useState, useEffect } from 'react';
+import useAdminStore from '@/stores/useAdminStore';
+import useDataStore from '@/stores/useDataStore';
+import useToastStore from '@/stores/useToastStore';
 import SimpleInputDialog from './SimpleInputDialog';
 import ConfirmDialog from './ConfirmDialog';
 import { SHOP_CATEGORIES } from '../constants/appConstants';
@@ -65,10 +47,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const AdminDashboard = () => {
-  const dispatch = useDispatch();
-  const { flights, passengers, ancillaryServices, mealOptions, shopItems } =
-    useSelector((state) => state.data);
-  const { selectedFlight, filterOptions } = useSelector((state) => state.admin);
+  const { flights, passengers, ancillaryServices, mealOptions, shopItems, fetchFlights, fetchPassengers, addPassenger, updatePassenger, deletePassenger, setAncillaryServices, setMealOptions, setShopItems } = useDataStore();
+  const { selectedFlight, filterOptions, selectFlight, setAdminFilter, clearAdminFilters } = useAdminStore();
+  const { showToast } = useToastStore();
+
+  useEffect(() => {
+    fetchFlights();
+    fetchPassengers();
+  }, [fetchFlights, fetchPassengers]);
 
   const [activeTab, setActiveTab] = useState(0);
   const [passengerDialog, setPassengerDialog] = useState(false);
@@ -124,7 +110,7 @@ const AdminDashboard = () => {
       });
 
   const handleFlightSelect = (flight) => {
-    dispatch(selectFlight(flight));
+    selectFlight(flight);
   };
 
   const handleOpenPassengerDialog = (passenger = null) => {
@@ -166,27 +152,35 @@ const AdminDashboard = () => {
     setPassengerDialog(true);
   };
 
-  const handleSavePassenger = () => {
+  const handleSavePassenger = async () => {
     // Validate required fields
     if (!passengerForm.name || !passengerForm.name.trim()) {
-      dispatch(showToast({ message: 'Passenger name is required', severity: 'error' }));
+      showToast('Passenger name is required', 'error');
       return;
     }
     if (!passengerForm.seat || !passengerForm.seat.trim()) {
-      dispatch(showToast({ message: 'Seat number is required', severity: 'error' }));
+      showToast('Seat number is required', 'error');
       return;
     }
     if (!passengerForm.flightId) {
-      dispatch(showToast({ message: 'Flight selection is required', severity: 'error' }));
+      showToast('Flight selection is required', 'error');
       return;
     }
     
     if (editMode) {
-      dispatch(updatePassenger(passengerForm));
-      dispatch(showToast({ message: `Passenger ${passengerForm.name} updated successfully`, severity: 'success' }));
+      const result = await updatePassenger(passengerForm.id, passengerForm);
+      if (result) {
+        showToast(`Passenger ${passengerForm.name} updated successfully`, 'success');
+      } else {
+        showToast('Update failed', 'error');
+      }
     } else {
-      dispatch(addPassenger(passengerForm));
-      dispatch(showToast({ message: `Passenger ${passengerForm.name} added successfully`, severity: 'success' }));
+      const result = await addPassenger(passengerForm);
+      if (result) {
+        showToast(`Passenger ${passengerForm.name} added successfully`, 'success');
+      } else {
+        showToast('Add failed', 'error');
+      }
     }
     setPassengerDialog(false);
   };
@@ -198,9 +192,13 @@ const AdminDashboard = () => {
       title: 'Delete Passenger',
       message: `Are you sure you want to delete ${passenger?.name || 'this passenger'}?`,
       severity: 'error',
-      onConfirm: () => {
-        dispatch(deletePassenger(id));
-        dispatch(showToast({ message: `Passenger ${passenger?.name || id} deleted successfully`, severity: 'success' }));
+      onConfirm: async () => {
+        const result = await deletePassenger(id);
+        if (result) {
+          showToast(`Passenger ${passenger?.name || id} deleted successfully`, 'success');
+        } else {
+          showToast('Delete failed', 'error');
+        }
       },
     });
   };
@@ -218,15 +216,16 @@ const AdminDashboard = () => {
 
   const handleSaveService = () => {
     if (!serviceForm || !serviceForm.trim()) {
-      dispatch(showToast({ message: 'Service name cannot be empty', severity: 'error' }));
+      showToast('Service name cannot be empty', 'error');
       return;
     }
     if (editingService) {
-      dispatch(updateAncillaryService({ oldService: editingService, newService: serviceForm.trim() }));
-      dispatch(showToast({ message: 'Service updated successfully', severity: 'success' }));
+      const updated = ancillaryServices.map(s => s === editingService ? serviceForm.trim() : s);
+      setAncillaryServices(updated);
+      showToast('Service updated successfully', 'success');
     } else {
-      dispatch(addAncillaryService(serviceForm.trim()));
-      dispatch(showToast({ message: 'Service added successfully', severity: 'success' }));
+      setAncillaryServices([...ancillaryServices, serviceForm.trim()]);
+      showToast('Service added successfully', 'success');
     }
     setServiceDialog(false);
   };
@@ -238,8 +237,8 @@ const AdminDashboard = () => {
       message: `Delete "${service}"?`,
       severity: 'error',
       onConfirm: () => {
-        dispatch(deleteAncillaryService(service));
-        dispatch(showToast({ message: 'Service deleted successfully', severity: 'success' }));
+        setAncillaryServices(ancillaryServices.filter(s => s !== service));
+        showToast('Service deleted successfully', 'success');
       },
     });
   };
@@ -257,15 +256,16 @@ const AdminDashboard = () => {
 
   const handleSaveMeal = () => {
     if (!mealForm || !mealForm.trim()) {
-      dispatch(showToast({ message: 'Meal option name cannot be empty', severity: 'error' }));
+      showToast('Meal option name cannot be empty', 'error');
       return;
     }
     if (editingMeal) {
-      dispatch(updateMealOption({ oldMeal: editingMeal, newMeal: mealForm.trim() }));
-      dispatch(showToast({ message: 'Meal option updated successfully', severity: 'success' }));
+      const updated = mealOptions.map(m => m === editingMeal ? mealForm.trim() : m);
+      setMealOptions(updated);
+      showToast('Meal option updated successfully', 'success');
     } else {
-      dispatch(addMealOption(mealForm.trim()));
-      dispatch(showToast({ message: 'Meal option added successfully', severity: 'success' }));
+      setMealOptions([...mealOptions, mealForm.trim()]);
+      showToast('Meal option added successfully', 'success');
     }
     setMealDialog(false);
   };
@@ -277,8 +277,8 @@ const AdminDashboard = () => {
       message: `Delete "${meal}"?`,
       severity: 'error',
       onConfirm: () => {
-        dispatch(deleteMealOption(meal));
-        dispatch(showToast({ message: 'Meal option deleted successfully', severity: 'success' }));
+        setMealOptions(mealOptions.filter(m => m !== meal));
+        showToast('Meal option deleted successfully', 'success');
       },
     });
   };
@@ -302,19 +302,20 @@ const AdminDashboard = () => {
 
   const handleSaveShopItem = () => {
     if (!shopItemForm.name || !shopItemForm.name.trim()) {
-      dispatch(showToast({ message: 'Item name is required', severity: 'error' }));
+      showToast('Item name is required', 'error');
       return;
     }
     if (!shopItemForm.price || shopItemForm.price <= 0) {
-      dispatch(showToast({ message: 'Item price must be greater than 0', severity: 'error' }));
+      showToast('Item price must be greater than 0', 'error');
       return;
     }
     if (editMode) {
-      dispatch(updateShopItem(shopItemForm));
-      dispatch(showToast({ message: `${shopItemForm.name} updated successfully`, severity: 'success' }));
+      const updated = shopItems.map(item => item.id === shopItemForm.id ? shopItemForm : item);
+      setShopItems(updated);
+      showToast(`${shopItemForm.name} updated successfully`, 'success');
     } else {
-      dispatch(addShopItem({ ...shopItemForm, id: `SHOP${Date.now()}` }));
-      dispatch(showToast({ message: `${shopItemForm.name} added successfully`, severity: 'success' }));
+      setShopItems([...shopItems, { ...shopItemForm, id: `SHOP${Date.now()}` }]);
+      showToast(`${shopItemForm.name} added successfully`, 'success');
     }
     setShopItemDialog(false);
   };
@@ -327,8 +328,8 @@ const AdminDashboard = () => {
       message: `Are you sure you want to delete ${item?.name || 'this item'}?`,
       severity: 'error',
       onConfirm: () => {
-        dispatch(deleteShopItem(id));
-        dispatch(showToast({ message: `${item?.name || 'Item'} deleted successfully`, severity: 'success' }));
+        setShopItems(shopItems.filter(item => item.id !== id));
+        showToast(`${item?.name || 'Item'} deleted successfully`, 'success');
       },
     });
   };
@@ -383,7 +384,7 @@ const AdminDashboard = () => {
                         <Checkbox
                           checked={filterOptions.missingPassport}
                           onChange={(e) =>
-                            dispatch(setAdminFilter({ missingPassport: e.target.checked }))
+                            setAdminFilter({ missingPassport: e.target.checked })
                           }
                         />
                       }
@@ -394,7 +395,7 @@ const AdminDashboard = () => {
                         <Checkbox
                           checked={filterOptions.missingAddress}
                           onChange={(e) =>
-                            dispatch(setAdminFilter({ missingAddress: e.target.checked }))
+                            setAdminFilter({ missingAddress: e.target.checked })
                           }
                         />
                       }
@@ -405,14 +406,14 @@ const AdminDashboard = () => {
                         <Checkbox
                           checked={filterOptions.missingDOB}
                           onChange={(e) =>
-                            dispatch(setAdminFilter({ missingDOB: e.target.checked }))
+                            setAdminFilter({ missingDOB: e.target.checked })
                           }
                         />
                       }
                       label="DOB"
                     />
                   </FormGroup>
-                  <Button size="small" onClick={() => dispatch(clearAdminFilters())}>
+                  <Button size="small" onClick={() => clearAdminFilters()}>
                     Clear
                   </Button>
                 </Box>
