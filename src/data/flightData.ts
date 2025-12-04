@@ -59,6 +59,82 @@ export const flights: Flight[] = [
     totalSeats: 200,
     availableSeats: 194
   },
+  { 
+    id: 'FL004',
+    name: 'Flight DD404',
+    flightNumber: 'DD404',
+    origin: 'Boston (BOS)',
+    destination: 'Denver (DEN)',
+    from: 'Boston (BOS)',
+    to: 'Denver (DEN)',
+    departureTime: '06:45 AM',
+    arrivalTime: '09:30 AM',
+    time: '06:45 AM',
+    date: '2025-12-04',
+    status: 'Delayed',
+    aircraft: 'Boeing 737 MAX',
+    gate: 'D10',
+    terminal: '3',
+    totalSeats: 172,
+    availableSeats: 165
+  },
+  { 
+    id: 'FL005',
+    name: 'Flight EE505',
+    flightNumber: 'EE505',
+    origin: 'Dallas (DFW)',
+    destination: 'Atlanta (ATL)',
+    from: 'Dallas (DFW)',
+    to: 'Atlanta (ATL)',
+    departureTime: '02:20 PM',
+    arrivalTime: '05:40 PM',
+    time: '02:20 PM',
+    date: '2025-12-04',
+    status: 'On Time',
+    aircraft: 'Airbus A321',
+    gate: 'E15',
+    terminal: '5',
+    totalSeats: 190,
+    availableSeats: 182
+  },
+  { 
+    id: 'FL006',
+    name: 'Flight FF606',
+    flightNumber: 'FF606',
+    origin: 'Las Vegas (LAS)',
+    destination: 'Phoenix (PHX)',
+    from: 'Las Vegas (LAS)',
+    to: 'Phoenix (PHX)',
+    departureTime: '08:00 PM',
+    arrivalTime: '09:15 PM',
+    time: '08:00 PM',
+    date: '2025-12-04',
+    status: 'Departed',
+    aircraft: 'Boeing 737',
+    gate: 'F22',
+    terminal: '1',
+    totalSeats: 160,
+    availableSeats: 0
+  },
+  { 
+    id: 'FL007',
+    name: 'Flight GG707',
+    flightNumber: 'GG707',
+    origin: 'Orlando (MCO)',
+    destination: 'New York (JFK)',
+    from: 'Orlando (MCO)',
+    to: 'New York (JFK)',
+    departureTime: '11:30 AM',
+    arrivalTime: '02:10 PM',
+    time: '11:30 AM',
+    date: '2025-12-05',
+    status: 'Cancelled',
+    aircraft: 'Airbus A320',
+    gate: 'G8',
+    terminal: '2',
+    totalSeats: 150,
+    availableSeats: 150
+  },
 ];
 
 export const passengers: Passenger[] = [
@@ -77,7 +153,10 @@ export const passengers: Passenger[] = [
     passport: { number: 'US123456789', expiryDate: '2028-05-15', country: 'USA' },
     address: '123 Main St, New York, NY 10001',
     dateOfBirth: '1985-03-20',
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP017', itemName: 'Travel Pillow Set', category: 'Travel Essentials', quantity: 1, price: 29.99, currency: 'USD' },
+      { itemId: 'SHOP013', itemName: 'Swiss Chocolate Box', category: 'Food & Beverages', quantity: 2, price: 19.99, currency: 'USD' }
+    ]
   },
   { 
     id: 'P002', 
@@ -109,7 +188,9 @@ export const passengers: Passenger[] = [
     passport: { number: 'CA987654321', expiryDate: '2027-11-30', country: 'Canada' },
     address: '', // Missing address only
     dateOfBirth: '1988-09-10',
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP005', itemName: 'Wireless Headphones - Sony', category: 'Electronics', quantity: 1, price: 199.99, currency: 'USD' }
+    ]
   },
   { 
     id: 'P004', 
@@ -125,7 +206,10 @@ export const passengers: Passenger[] = [
     passport: { number: 'GB456789123', expiryDate: '2029-02-20', country: 'UK' },
     address: '789 Pine Rd, Miami, FL 33101',
     dateOfBirth: '', // Missing DOB only
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP009', itemName: 'Sunglasses - Ray-Ban', category: 'Fashion & Accessories', quantity: 1, price: 159.99, currency: 'USD' },
+      { itemId: 'SHOP002', itemName: 'Perfume - Dior Sauvage', category: 'Perfumes & Cosmetics', quantity: 1, price: 79.99, currency: 'USD' }
+    ]
   },
   { 
     id: 'P005', 
@@ -173,7 +257,9 @@ export const passengers: Passenger[] = [
     passport: { number: 'AU555666777', expiryDate: '2026-08-15', country: 'Australia' },
     address: '', // Missing address & DOB
     dateOfBirth: '',
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP015', itemName: 'Wine - French Bordeaux', category: 'Food & Beverages', quantity: 1, price: 89.99, currency: 'USD' }
+    ]
   },
   { 
     id: 'P008', 
@@ -207,7 +293,10 @@ export const passengers: Passenger[] = [
     passport: { number: 'FR888999000', expiryDate: '2029-03-10', country: 'France' },
     address: '100 Seine St, Paris, France',
     dateOfBirth: '1992-05-18',
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP021', itemName: 'Teddy Bear - Premium', category: 'Toys & Gifts', quantity: 1, price: 34.99, currency: 'USD' },
+      { itemId: 'SHOP018', itemName: 'Eye Mask & Ear Plugs', category: 'Travel Essentials', quantity: 2, price: 14.99, currency: 'USD' }
+    ]
   },
   { 
     id: 'P010', 
@@ -223,7 +312,9 @@ export const passengers: Passenger[] = [
     passport: { number: 'ES111222333', expiryDate: '2027-06-25', country: 'Spain' },
     address: '', // Missing address only
     dateOfBirth: '1980-12-03',
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP010', itemName: 'Silk Scarf - Hermès', category: 'Fashion & Accessories', quantity: 1, price: 395.00, currency: 'USD' }
+    ]
   },
   { 
     id: 'P011', 
@@ -255,7 +346,10 @@ export const passengers: Passenger[] = [
     passport: { number: 'IT444555666', expiryDate: '2028-10-20', country: 'Italy' },
     address: '789 Venice Blvd, Rome, Italy',
     dateOfBirth: '', // Missing DOB only
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP014', itemName: 'Premium Coffee Set', category: 'Food & Beverages', quantity: 1, price: 34.99, currency: 'USD' },
+      { itemId: 'SHOP003', itemName: 'Lipstick Set - MAC', category: 'Perfumes & Cosmetics', quantity: 1, price: 45.00, currency: 'USD' }
+    ]
   },
   { 
     id: 'P013', 
@@ -287,7 +381,9 @@ export const passengers: Passenger[] = [
     passport: { number: 'DE777888999', expiryDate: '2030-01-15', country: 'Germany' },
     address: '321 Berlin St, Munich, Germany',
     dateOfBirth: '1983-07-09',
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP006', itemName: 'Portable Charger - Anker', category: 'Electronics', quantity: 2, price: 39.99, currency: 'USD' }
+    ]
   },
 
   // Flight FL003 passengers - Complete information mix
@@ -305,7 +401,10 @@ export const passengers: Passenger[] = [
     passport: { number: 'JP123789456', expiryDate: '2026-12-31', country: 'Japan' },
     address: '456 Tokyo Ave, Shibuya, Japan',
     dateOfBirth: '1991-04-15',
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP007', itemName: 'Smart Watch - Samsung', category: 'Electronics', quantity: 1, price: 299.99, currency: 'USD' },
+      { itemId: 'SHOP011', itemName: 'Leather Wallet', category: 'Fashion & Accessories', quantity: 1, price: 89.99, currency: 'USD' }
+    ]
   },
   { 
     id: 'P016', 
@@ -369,7 +468,10 @@ export const passengers: Passenger[] = [
     passport: { number: 'SE456123789', expiryDate: '2027-09-10', country: 'Sweden' },
     address: '234 Stockholm St, Sweden',
     dateOfBirth: '', // Missing DOB only
-    shopRequests: []
+    shopRequests: [
+      { itemId: 'SHOP022', itemName: 'Puzzle Game Set', category: 'Toys & Gifts', quantity: 1, price: 24.99, currency: 'USD' },
+      { itemId: 'SHOP016', itemName: 'Gourmet Snack Box', category: 'Food & Beverages', quantity: 3, price: 24.99, currency: 'USD' }
+    ]
   },
   { 
     id: 'P020', 
@@ -385,7 +487,170 @@ export const passengers: Passenger[] = [
     passport: { number: 'BR789456123', expiryDate: '2028-11-05', country: 'Brazil' },
     address: '567 Rio Blvd, Rio de Janeiro, Brazil',
     dateOfBirth: '1989-08-22',
+    shopRequests: [
+      { itemId: 'SHOP004', itemName: 'Face Cream - La Mer', category: 'Perfumes & Cosmetics', quantity: 1, price: 120.00, currency: 'USD' },
+      { itemId: 'SHOP020', itemName: 'Compression Socks', category: 'Travel Essentials', quantity: 2, price: 12.99, currency: 'USD' }
+    ]
+  },
+
+  // Flight FL004 passengers - Boston to Denver
+  { 
+    id: 'P021', 
+    name: 'Thomas Anderson', 
+    seat: '1A', 
+    flightId: 'FL004',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Priority Boarding', 'Extra Legroom'],
+    specialMeal: 'Regular',
+    bookingReference: 'JKL401',
+    passport: { number: 'US789012345', expiryDate: '2027-03-15', country: 'USA' },
+    address: '890 Beacon St, Boston, MA 02215',
+    dateOfBirth: '1982-06-10',
+    shopRequests: [
+      { itemId: 'SHOP008', itemName: 'Travel Adapter', category: 'Electronics', quantity: 1, price: 24.99, currency: 'USD' }
+    ]
+  },
+  { 
+    id: 'P022', 
+    name: 'Rebecca Chen', 
+    seat: '1B', 
+    flightId: 'FL004',
+    checkedIn: false,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Wi-Fi Access'],
+    specialMeal: 'Vegetarian',
+    bookingReference: 'JKL402',
+    passport: { number: '', expiryDate: '', country: '' }, // Missing passport
+    address: '234 Commonwealth Ave, Boston, MA 02116',
+    dateOfBirth: '1994-11-28',
     shopRequests: []
+  },
+  { 
+    id: 'P023', 
+    name: 'Marcus Johnson', 
+    seat: '2A', 
+    flightId: 'FL004',
+    checkedIn: true,
+    wheelchair: true,
+    infant: false,
+    ancillaryServices: ['Wheelchair Assistance', 'Priority Boarding'],
+    specialMeal: 'Diabetic',
+    bookingReference: 'JKL403',
+    passport: { number: 'US345678901', expiryDate: '2029-08-20', country: 'USA' },
+    address: '',
+    dateOfBirth: '1978-02-14',
+    shopRequests: []
+  },
+  { 
+    id: 'P024', 
+    name: 'Linda Martinez', 
+    seat: '2B', 
+    flightId: 'FL004',
+    checkedIn: false,
+    wheelchair: false,
+    infant: true,
+    ancillaryServices: ['Infant Care Kit', 'Extra Baggage'],
+    specialMeal: 'Regular',
+    bookingReference: 'JKL404',
+    passport: { number: 'MX567890123', expiryDate: '2026-12-10', country: 'Mexico' },
+    address: '567 Tremont St, Boston, MA 02118',
+    dateOfBirth: '',
+    shopRequests: [
+      { itemId: 'SHOP021', itemName: 'Teddy Bear - Premium', category: 'Toys & Gifts', quantity: 1, price: 34.99, currency: 'USD' }
+    ]
+  },
+
+  // Flight FL005 passengers - Dallas to Atlanta
+  { 
+    id: 'P025', 
+    name: 'Robert Williams', 
+    seat: '1A', 
+    flightId: 'FL005',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Priority Boarding', 'Lounge Access'],
+    specialMeal: 'Kosher',
+    bookingReference: 'MNO501',
+    passport: { number: 'US456789012', expiryDate: '2028-05-25', country: 'USA' },
+    address: '123 Oak Lawn Ave, Dallas, TX 75219',
+    dateOfBirth: '1986-09-05',
+    shopRequests: [
+      { itemId: 'SHOP012', itemName: 'Travel Bag - Samsonite', category: 'Fashion & Accessories', quantity: 1, price: 149.99, currency: 'USD' }
+    ]
+  },
+  { 
+    id: 'P026', 
+    name: 'Angela Davis', 
+    seat: '1B', 
+    flightId: 'FL005',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Extra Baggage', 'Fast Track Security'],
+    specialMeal: 'Vegan',
+    bookingReference: 'MNO502',
+    passport: { number: '', expiryDate: '', country: '' },
+    address: '',
+    dateOfBirth: '',
+    shopRequests: []
+  },
+  { 
+    id: 'P027', 
+    name: 'Kevin Thompson', 
+    seat: '2A', 
+    flightId: 'FL005',
+    checkedIn: false,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Wi-Fi Access', 'Extra Legroom'],
+    specialMeal: 'Gluten-Free',
+    bookingReference: 'MNO503',
+    passport: { number: 'CA234567890', expiryDate: '2027-11-18', country: 'Canada' },
+    address: '456 Peachtree St, Atlanta, GA 30303',
+    dateOfBirth: '1990-04-22',
+    shopRequests: [
+      { itemId: 'SHOP005', itemName: 'Wireless Headphones - Sony', category: 'Electronics', quantity: 1, price: 199.99, currency: 'USD' }
+    ]
+  },
+
+  // Flight FL006 passengers - Las Vegas to Phoenix (Departed)
+  { 
+    id: 'P028', 
+    name: 'Michelle Rodriguez', 
+    seat: '1A', 
+    flightId: 'FL006',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Priority Boarding'],
+    specialMeal: 'Regular',
+    bookingReference: 'PQR601',
+    passport: { number: 'US678901234', expiryDate: '2029-01-30', country: 'USA' },
+    address: '789 Las Vegas Blvd, Las Vegas, NV 89109',
+    dateOfBirth: '1993-07-16',
+    shopRequests: []
+  },
+  { 
+    id: 'P029', 
+    name: 'Brian Lee', 
+    seat: '1B', 
+    flightId: 'FL006',
+    checkedIn: true,
+    wheelchair: false,
+    infant: false,
+    ancillaryServices: ['Extra Baggage'],
+    specialMeal: 'Regular',
+    bookingReference: 'PQR602',
+    passport: { number: 'KR890123456', expiryDate: '2026-09-12', country: 'South Korea' },
+    address: '',
+    dateOfBirth: '1988-12-03',
+    shopRequests: [
+      { itemId: 'SHOP023', itemName: 'Playing Cards - Luxury', category: 'Toys & Gifts', quantity: 2, price: 15.99, currency: 'USD' }
+    ]
   },
 ];
 
