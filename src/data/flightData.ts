@@ -809,22 +809,6 @@ export const passengers: Passenger[] = [
     shopRequests: []
   },
   { 
-    id: 'P038', 
-    name: 'Test User 123!@#$%', // Name with numbers and special characters
-    seat: '5A', 
-    flightId: 'FL008',
-    checkedIn: false,
-    wheelchair: true,
-    infant: true, // Both wheelchair AND infant (unusual combination)
-    ancillaryServices: ['Wheelchair Assistance', 'Infant Care Kit', 'Pet Care', 'Sports Equipment'],
-    specialMeal: 'Vegan',
-    bookingReference: 'STU809',
-    passport: { number: '!@#$%^&*()', expiryDate: '2025-12-04', country: 'Test' }, // Special characters in passport
-    address: '',
-    dateOfBirth: '1999-01-01',
-    shopRequests: []
-  },
-  { 
     id: 'P039', 
     name: 'Future Traveler', 
     seat: '5B', 
@@ -873,24 +857,6 @@ export const passengers: Passenger[] = [
     shopRequests: []
   },
   { 
-    id: 'P042', 
-    name: 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z', // Alphabet name
-    seat: '7A', 
-    flightId: 'FL008',
-    checkedIn: true,
-    wheelchair: false,
-    infant: false,
-    ancillaryServices: ['Priority Boarding', 'Extra Baggage', 'Wi-Fi Access', 'Extra Legroom', 'Lounge Access', 'Fast Track Security', 'Pet Care', 'Sports Equipment'], // All services
-    specialMeal: 'Fruit Platter',
-    bookingReference: 'ABCD12345',
-    passport: { number: '0000000000', expiryDate: '2025-12-05', country: 'AAA' }, // All zeros passport
-    address: '0',
-    dateOfBirth: '1900-01-01', // Very old date (125 years old)
-    shopRequests: [
-      { itemId: 'SHOP024', itemName: 'Souvenir Keychain Set', category: 'Toys & Gifts', quantity: 100, price: 9.99, currency: 'USD' } // Extreme quantity
-    ]
-  },
-  { 
     id: 'P043', 
     name: 'João da Silva Pereira Júnior', // Portuguese with accents and junior
     seat: '7B', 
@@ -921,22 +887,6 @@ export const passengers: Passenger[] = [
     address: 'Οδός Αθηνάς 45, Αθήνα, Ελλάδα',
     dateOfBirth: '1985-06-30',
     shopRequests: []
-  },
-  { 
-    id: 'P045', 
-    name: 'Empty Everything', 
-    seat: '8B', 
-    flightId: 'FL008',
-    checkedIn: false,
-    wheelchair: false,
-    infant: false,
-    ancillaryServices: [], // Empty array
-    specialMeal: 'Regular',
-    bookingReference: 'STU815',
-    passport: { number: '', expiryDate: '', country: '' }, // All empty
-    address: '', // Empty
-    dateOfBirth: '', // Empty
-    shopRequests: [] // Empty array
   },
 ];
 

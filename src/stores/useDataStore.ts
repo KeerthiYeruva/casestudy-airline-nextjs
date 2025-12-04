@@ -1,8 +1,19 @@
 'use client';
 
 // Zustand store for data management with API integration
+// 
+// AUTOMATIC REACTIVITY:
+// - All components subscribed to this store automatically re-render when state changes
+// - Every action (add, update, delete) immediately updates Zustand state
+// - Zustand persist middleware automatically syncs to localStorage
+// - No manual useEffect needed in components - just use the store!
+// 
+// USAGE EXAMPLE:
+// const { passengers, addPassenger } = useDataStore();
+// await addPassenger(newData); // ← All components update instantly!
+
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import type { 
   DataStore, 
   Flight, 
@@ -14,24 +25,30 @@ import type {
   APIResponse 
 } from '@/types';
 import { 
+  flights as initialFlights,
+  passengers as initialPassengers,
   ancillaryServices as defaultAncillaryServices,
   mealOptions as defaultMealOptions,
   shopItems as defaultShopItems,
   shopCategories as defaultShopCategories
 } from '@/data/flightData';
 
+// Version for auto-sync detection
+const DATA_VERSION = 1;
+
 const useDataStore = create<DataStore>()(
   devtools(
-    (set, _get) => ({
-      // State
-      flights: [],
-      passengers: [],
-      ancillaryServices: defaultAncillaryServices,
-      mealOptions: defaultMealOptions,
-      shopItems: defaultShopItems,
-      shopCategories: defaultShopCategories,
-      loading: false,
-      error: null,
+    persist(
+      (set, _get) => ({
+        // State
+        flights: [],
+        passengers: [],
+        ancillaryServices: defaultAncillaryServices,
+        mealOptions: defaultMealOptions,
+        shopItems: defaultShopItems,
+        shopCategories: defaultShopCategories,
+        loading: false,
+        error: null,
 
       // Fetch all data from API
       fetchFlights: async () => {
@@ -41,6 +58,7 @@ const useDataStore = create<DataStore>()(
           const result: APIResponse<Flight[]> = await response.json();
           if (result.success && result.data) {
             set({ flights: result.data, loading: false });
+            // Zustand persist automatically saves to localStorage
           } else {
             set({ error: result.error || 'Failed to fetch flights', loading: false });
           }
@@ -57,6 +75,7 @@ const useDataStore = create<DataStore>()(
           const result: APIResponse<Passenger[]> = await response.json();
           if (result.success && result.data) {
             set({ passengers: result.data, loading: false });
+            // Zustand persist automatically saves to localStorage
           } else {
             set({ error: result.error || 'Failed to fetch passengers', loading: false });
           }
@@ -253,6 +272,34 @@ const useDataStore = create<DataStore>()(
       setShopItems: (items: ShopItem[]) => set({ shopItems: items }),
       setShopCategories: (categories: ShopCategory[]) => set({ shopCategories: categories }),
 
+      // Reset to initial data from flightData.ts
+      resetToInitialData: async () => {
+        set({ loading: true });
+        try {
+          // Call API to reset database
+          const response = await fetch('/api/reset', { method: 'POST' });
+          if (response.ok) {
+            // Clear Zustand persist storage and reload from source
+            localStorage.removeItem('airline-data-storage');
+            
+            // Set data directly from source
+            set({
+              flights: initialFlights,
+              passengers: initialPassengers,
+              ancillaryServices: defaultAncillaryServices,
+              mealOptions: defaultMealOptions,
+              shopItems: defaultShopItems,
+              shopCategories: defaultShopCategories,
+              loading: false
+            });
+          } else {
+            set({ error: 'Failed to reset data', loading: false });
+          }
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error', loading: false });
+        }
+      },
+
       // Ancillary services management
       addAncillaryServiceToPassenger: async (passengerId: string, service: string) => {
         const state = _get();
@@ -333,7 +380,39 @@ const useDataStore = create<DataStore>()(
           await state.updatePassenger(passengerId, { shopRequests: updatedRequests });
         }
       },
-    }),
+      }),
+      {
+        name: 'airline-data-storage',
+        version: DATA_VERSION,
+        partialize: (state) => ({
+          flights: state.flights,
+          passengers: state.passengers,
+          ancillaryServices: state.ancillaryServices,
+          mealOptions: state.mealOptions,
+          shopItems: state.shopItems,
+          shopCategories: state.shopCategories,
+        }),
+        onRehydrateStorage: () => (state) => {
+          // After rehydration, check if we need to sync with source data
+          if (state) {
+            const storedFlights = state.flights.length;
+            const storedPassengers = state.passengers.length;
+            
+            // If counts don't match, trigger initial fetch
+            if (storedFlights !== initialFlights.length || 
+                storedPassengers !== initialPassengers.length) {
+              console.log('Data structure changed, syncing from source...');
+              state.flights = initialFlights;
+              state.passengers = initialPassengers;
+              state.ancillaryServices = defaultAncillaryServices;
+              state.mealOptions = defaultMealOptions;
+              state.shopItems = defaultShopItems;
+              state.shopCategories = defaultShopCategories;
+            }
+          }
+        },
+      }
+    ),
     { name: 'DataStore' }
   )
 );

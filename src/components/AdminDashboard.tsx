@@ -1,13 +1,13 @@
-﻿'use client';
+﻿"use client";
 
-import React, { useState, useEffect } from 'react';
-import useAdminStore from '@/stores/useAdminStore';
-import useDataStore from '@/stores/useDataStore';
-import useToastStore from '@/stores/useToastStore';
-import SimpleInputDialog from './SimpleInputDialog';
-import ConfirmDialog from './ConfirmDialog';
-import { SHOP_CATEGORIES } from '../constants/appConstants';
-import { Passenger, ShopItem } from '@/types';
+import React, { useState, useEffect } from "react";
+import useAdminStore from "@/stores/useAdminStore";
+import useDataStore from "@/stores/useDataStore";
+import useToastStore from "@/stores/useToastStore";
+import SimpleInputDialog from "./SimpleInputDialog";
+import ConfirmDialog from "./ConfirmDialog";
+import { SHOP_CATEGORIES } from "../constants/appConstants";
+import { Passenger, ShopItem } from "@/types";
 import {
   Container,
   Paper,
@@ -40,15 +40,15 @@ import {
   ListItemText,
   Divider,
   SelectChangeEvent,
-  Grid
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import PersonIcon from '@mui/icons-material/Person';
-import SettingsIcon from '@mui/icons-material/Settings';
+  Grid,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import PersonIcon from "@mui/icons-material/Person";
+import SettingsIcon from "@mui/icons-material/Settings";
 
-interface PassengerFormData extends Omit<Passenger, 'id'> {
+interface PassengerFormData extends Omit<Passenger, "id"> {
   id: string;
 }
 
@@ -64,13 +64,34 @@ interface ConfirmDialogState {
   open: boolean;
   title?: string;
   message: string;
-  severity?: 'info' | 'error' | 'warning' | 'success';
+  severity?: "info" | "error" | "warning" | "success";
   onConfirm: () => void;
 }
 
 const AdminDashboard: React.FC = () => {
-  const { flights, passengers, ancillaryServices, mealOptions, shopItems, fetchFlights, fetchPassengers, addPassenger, updatePassenger, deletePassenger, setAncillaryServices, setMealOptions, setShopItems } = useDataStore();
-  const { selectedFlight, filterOptions, selectFlight, setAdminFilter, clearAdminFilters } = useAdminStore();
+  const {
+    flights,
+    passengers,
+    ancillaryServices,
+    mealOptions,
+    shopItems,
+    fetchFlights,
+    fetchPassengers,
+    addPassenger,
+    updatePassenger,
+    deletePassenger,
+    setAncillaryServices,
+    setMealOptions,
+    setShopItems,
+    resetToInitialData,
+  } = useDataStore();
+  const {
+    selectedFlight,
+    filterOptions,
+    selectFlight,
+    setAdminFilter,
+    clearAdminFilters,
+  } = useAdminStore();
   const { showToast } = useToastStore();
 
   useEffect(() => {
@@ -84,61 +105,71 @@ const AdminDashboard: React.FC = () => {
   const [mealDialog, setMealDialog] = useState(false);
   const [shopItemDialog, setShopItemDialog] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState>({ 
-    open: false, 
-    message: '', 
-    onConfirm: () => {} 
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState>({
+    open: false,
+    message: "",
+    onConfirm: () => {},
   });
 
   const [passengerForm, setPassengerForm] = useState<PassengerFormData>({
-    id: '',
-    name: '',
-    seat: '',
-    flightId: '',
-    passport: { number: '', expiryDate: '', country: '' },
-    address: '',
-    dateOfBirth: '',
+    id: "",
+    name: "",
+    seat: "",
+    flightId: "",
+    passport: { number: "", expiryDate: "", country: "" },
+    address: "",
+    dateOfBirth: "",
     ancillaryServices: [],
-    specialMeal: 'Regular',
+    specialMeal: "Regular",
     wheelchair: false,
     infant: false,
     checkedIn: false,
-    bookingReference: '',
+    bookingReference: "",
     shopRequests: [],
   });
 
-  const [serviceForm, setServiceForm] = useState('');
-  const [editingService, setEditingService] = useState('');
-  const [mealForm, setMealForm] = useState('');
-  const [editingMeal, setEditingMeal] = useState('');
+  const [serviceForm, setServiceForm] = useState("");
+  const [editingService, setEditingService] = useState("");
+  const [mealForm, setMealForm] = useState("");
+  const [editingMeal, setEditingMeal] = useState("");
   const [shopItemForm, setShopItemForm] = useState<ShopItemFormData>({
-    id: '',
-    name: '',
-    category: 'Perfumes & Cosmetics',
+    id: "",
+    name: "",
+    category: "Perfumes & Cosmetics",
     price: 0,
-    currency: 'USD',
+    currency: "USD",
   });
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Filter passengers
   const filteredPassengers = selectedFlight
     ? passengers.filter((p) => {
         if (p.flightId !== selectedFlight.id) return false;
-        if (filterOptions.missingPassport && p.passport?.number?.trim()) return false;
+        if (filterOptions.missingPassport && p.passport?.number?.trim())
+          return false;
         if (filterOptions.missingAddress && p.address?.trim()) return false;
         if (filterOptions.missingDOB && p.dateOfBirth?.trim()) return false;
-        if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+        if (
+          searchQuery &&
+          !p.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+          return false;
         return true;
       })
     : passengers.filter((p) => {
-        if (filterOptions.missingPassport && p.passport?.number?.trim()) return false;
+        if (filterOptions.missingPassport && p.passport?.number?.trim())
+          return false;
         if (filterOptions.missingAddress && p.address?.trim()) return false;
         if (filterOptions.missingDOB && p.dateOfBirth?.trim()) return false;
-        if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+        if (
+          searchQuery &&
+          !p.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+          return false;
         return true;
       });
 
-  const handleFlightSelect = (flight: typeof flights[0] | null) => {
+  const handleFlightSelect = (flight: (typeof flights)[0] | null) => {
     selectFlight(flight);
   };
 
@@ -148,34 +179,38 @@ const AdminDashboard: React.FC = () => {
       // Ensure all fields have default values to prevent undefined errors
       // Ensure consistency between flags and services
       const services = passenger.ancillaryServices || [];
-      const hasWheelchairService = services.includes('Wheelchair Assistance');
-      const hasInfantService = services.includes('Infant Care Kit');
-      
+      const hasWheelchairService = services.includes("Wheelchair Assistance");
+      const hasInfantService = services.includes("Infant Care Kit");
+
       setPassengerForm({
         ...passenger,
-        passport: passenger.passport || { number: '', expiryDate: '', country: '' },
-        address: passenger.address || '',
-        dateOfBirth: passenger.dateOfBirth || '',
+        passport: passenger.passport || {
+          number: "",
+          expiryDate: "",
+          country: "",
+        },
+        address: passenger.address || "",
+        dateOfBirth: passenger.dateOfBirth || "",
         ancillaryServices: services,
-        specialMeal: passenger.specialMeal || 'Regular',
+        specialMeal: passenger.specialMeal || "Regular",
         wheelchair: passenger.wheelchair || hasWheelchairService,
         infant: passenger.infant || hasInfantService,
         checkedIn: passenger.checkedIn || false,
-        bookingReference: passenger.bookingReference || '',
+        bookingReference: passenger.bookingReference || "",
         shopRequests: passenger.shopRequests || [],
       });
     } else {
       setEditMode(false);
       setPassengerForm({
         id: `P${Date.now()}`,
-        name: '',
-        seat: '',
-        flightId: selectedFlight?.id || '',
-        passport: { number: '', expiryDate: '', country: '' },
-        address: '',
-        dateOfBirth: '',
+        name: "",
+        seat: "",
+        flightId: selectedFlight?.id || "",
+        passport: { number: "", expiryDate: "", country: "" },
+        address: "",
+        dateOfBirth: "",
         ancillaryServices: [],
-        specialMeal: 'Regular',
+        specialMeal: "Regular",
         wheelchair: false,
         infant: false,
         checkedIn: false,
@@ -189,49 +224,60 @@ const AdminDashboard: React.FC = () => {
   const handleSavePassenger = async () => {
     // Validate required fields
     if (!passengerForm.name || !passengerForm.name.trim()) {
-      showToast('Passenger name is required', 'error');
+      showToast("Passenger name is required", "error");
       return;
     }
     if (!passengerForm.seat || !passengerForm.seat.trim()) {
-      showToast('Seat number is required', 'error');
+      showToast("Seat number is required", "error");
       return;
     }
     if (!passengerForm.flightId) {
-      showToast('Flight selection is required', 'error');
+      showToast("Flight selection is required", "error");
       return;
     }
-    
+
     if (editMode) {
       const result = await updatePassenger(passengerForm.id, passengerForm);
       if (result) {
-        showToast(`Passenger ${passengerForm.name} updated successfully`, 'success');
+        showToast(
+          `Passenger ${passengerForm.name} updated successfully`,
+          "success"
+        );
       } else {
-        showToast('Update failed', 'error');
+        showToast("Update failed", "error");
       }
     } else {
       const result = await addPassenger(passengerForm);
       if (result) {
-        showToast(`Passenger ${passengerForm.name} added successfully`, 'success');
+        showToast(
+          `Passenger ${passengerForm.name} added successfully`,
+          "success"
+        );
       } else {
-        showToast('Add failed', 'error');
+        showToast("Add failed", "error");
       }
     }
     setPassengerDialog(false);
   };
 
   const handleDeletePassenger = (id: string) => {
-    const passenger = passengers.find(p => p.id === id);
+    const passenger = passengers.find((p) => p.id === id);
     setConfirmDialog({
       open: true,
-      title: 'Delete Passenger',
-      message: `Are you sure you want to delete ${passenger?.name || 'this passenger'}?`,
-      severity: 'error',
+      title: "Delete Passenger",
+      message: `Are you sure you want to delete ${
+        passenger?.name || "this passenger"
+      }?`,
+      severity: "error",
       onConfirm: async () => {
         const result = await deletePassenger(id);
         if (result) {
-          showToast(`Passenger ${passenger?.name || id} deleted successfully`, 'success');
+          showToast(
+            `Passenger ${passenger?.name || id} deleted successfully`,
+            "success"
+          );
         } else {
-          showToast('Delete failed', 'error');
+          showToast("Delete failed", "error");
         }
       },
     });
@@ -242,24 +288,26 @@ const AdminDashboard: React.FC = () => {
       setEditingService(service);
       setServiceForm(service);
     } else {
-      setEditingService('');
-      setServiceForm('');
+      setEditingService("");
+      setServiceForm("");
     }
     setServiceDialog(true);
   };
 
   const handleSaveService = () => {
     if (!serviceForm || !serviceForm.trim()) {
-      showToast('Service name cannot be empty', 'error');
+      showToast("Service name cannot be empty", "error");
       return;
     }
     if (editingService) {
-      const updated = ancillaryServices.map(s => s === editingService ? serviceForm.trim() : s);
+      const updated = ancillaryServices.map((s) =>
+        s === editingService ? serviceForm.trim() : s
+      );
       setAncillaryServices(updated);
-      showToast('Service updated successfully', 'success');
+      showToast("Service updated successfully", "success");
     } else {
       setAncillaryServices([...ancillaryServices, serviceForm.trim()]);
-      showToast('Service added successfully', 'success');
+      showToast("Service added successfully", "success");
     }
     setServiceDialog(false);
   };
@@ -267,12 +315,12 @@ const AdminDashboard: React.FC = () => {
   const handleDeleteService = (service: string) => {
     setConfirmDialog({
       open: true,
-      title: 'Delete Service',
+      title: "Delete Service",
       message: `Delete "${service}"?`,
-      severity: 'error',
+      severity: "error",
       onConfirm: () => {
-        setAncillaryServices(ancillaryServices.filter(s => s !== service));
-        showToast('Service deleted successfully', 'success');
+        setAncillaryServices(ancillaryServices.filter((s) => s !== service));
+        showToast("Service deleted successfully", "success");
       },
     });
   };
@@ -282,24 +330,26 @@ const AdminDashboard: React.FC = () => {
       setEditingMeal(meal);
       setMealForm(meal);
     } else {
-      setEditingMeal('');
-      setMealForm('');
+      setEditingMeal("");
+      setMealForm("");
     }
     setMealDialog(true);
   };
 
   const handleSaveMeal = () => {
     if (!mealForm || !mealForm.trim()) {
-      showToast('Meal option name cannot be empty', 'error');
+      showToast("Meal option name cannot be empty", "error");
       return;
     }
     if (editingMeal) {
-      const updated = mealOptions.map(m => m === editingMeal ? mealForm.trim() : m);
+      const updated = mealOptions.map((m) =>
+        m === editingMeal ? mealForm.trim() : m
+      );
       setMealOptions(updated);
-      showToast('Meal option updated successfully', 'success');
+      showToast("Meal option updated successfully", "success");
     } else {
       setMealOptions([...mealOptions, mealForm.trim()]);
-      showToast('Meal option added successfully', 'success');
+      showToast("Meal option added successfully", "success");
     }
     setMealDialog(false);
   };
@@ -307,12 +357,12 @@ const AdminDashboard: React.FC = () => {
   const handleDeleteMeal = (meal: string) => {
     setConfirmDialog({
       open: true,
-      title: 'Delete Meal',
+      title: "Delete Meal",
       message: `Delete "${meal}"?`,
-      severity: 'error',
+      severity: "error",
       onConfirm: () => {
-        setMealOptions(mealOptions.filter(m => m !== meal));
-        showToast('Meal option deleted successfully', 'success');
+        setMealOptions(mealOptions.filter((m) => m !== meal));
+        showToast("Meal option deleted successfully", "success");
       },
     });
   };
@@ -325,10 +375,10 @@ const AdminDashboard: React.FC = () => {
       setEditMode(false);
       setShopItemForm({
         id: `SHOP${Date.now()}`,
-        name: '',
-        category: 'Perfumes & Cosmetics',
+        name: "",
+        category: "Perfumes & Cosmetics",
         price: 0,
-        currency: 'USD',
+        currency: "USD",
       });
     }
     setShopItemDialog(true);
@@ -336,53 +386,70 @@ const AdminDashboard: React.FC = () => {
 
   const handleSaveShopItem = () => {
     if (!shopItemForm.name || !shopItemForm.name.trim()) {
-      showToast('Item name is required', 'error');
+      showToast("Item name is required", "error");
       return;
     }
     if (!shopItemForm.price || shopItemForm.price <= 0) {
-      showToast('Item price must be greater than 0', 'error');
+      showToast("Item price must be greater than 0", "error");
       return;
     }
     if (editMode) {
-      const updated = shopItems.map(item => item.id === shopItemForm.id ? shopItemForm : item);
+      const updated = shopItems.map((item) =>
+        item.id === shopItemForm.id ? shopItemForm : item
+      );
       setShopItems(updated);
-      showToast(`${shopItemForm.name} updated successfully`, 'success');
+      showToast(`${shopItemForm.name} updated successfully`, "success");
     } else {
-      setShopItems([...shopItems, { ...shopItemForm, id: `SHOP${Date.now()}` }]);
-      showToast(`${shopItemForm.name} added successfully`, 'success');
+      setShopItems([
+        ...shopItems,
+        { ...shopItemForm, id: `SHOP${Date.now()}` },
+      ]);
+      showToast(`${shopItemForm.name} added successfully`, "success");
     }
     setShopItemDialog(false);
   };
 
   const handleDeleteShopItem = (id: string) => {
-    const item = shopItems.find(i => i.id === id);
+    const item = shopItems.find((i) => i.id === id);
     setConfirmDialog({
       open: true,
-      title: 'Delete Shop Item',
-      message: `Are you sure you want to delete ${item?.name || 'this item'}?`,
-      severity: 'error',
+      title: "Delete Shop Item",
+      message: `Are you sure you want to delete ${item?.name || "this item"}?`,
+      severity: "error",
       onConfirm: () => {
-        setShopItems(shopItems.filter(item => item.id !== id));
-        showToast(`${item?.name || 'Item'} deleted successfully`, 'success');
+        setShopItems(shopItems.filter((item) => item.id !== id));
+        showToast(`${item?.name || "Item"} deleted successfully`, "success");
       },
     });
   };
 
   const hasMissingInfo = (passenger: Passenger) => {
-    return !passenger.passport?.number || !passenger.address || !passenger.dateOfBirth;
+    return (
+      !passenger.passport?.number ||
+      !passenger.address ||
+      !passenger.dateOfBirth
+    );
   };
 
   return (
     <Container maxWidth="xl" sx={{ mt: 3, mb: 3 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          <SettingsIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+          <SettingsIcon sx={{ mr: 1, verticalAlign: "middle" }} />
           Admin Dashboard
         </Typography>
 
-        <Tabs value={activeTab} onChange={(_e, v) => setActiveTab(v)} sx={{ mb: 3 }}>
+        <Tabs
+          value={activeTab}
+          onChange={(_e, v) => setActiveTab(v)}
+          sx={{ mb: 3 }}
+        >
           <Tab label="Passengers" icon={<PersonIcon />} iconPosition="start" />
-          <Tab label="Services & Menu" icon={<SettingsIcon />} iconPosition="start" />
+          <Tab
+            label="Services & Menu"
+            icon={<SettingsIcon />}
+            iconPosition="start"
+          />
         </Tabs>
 
         {activeTab === 0 && (
@@ -403,10 +470,12 @@ const AdminDashboard: React.FC = () => {
                 <FormControl fullWidth size="small">
                   <InputLabel>Filter by Flight</InputLabel>
                   <Select
-                    value={selectedFlight?.id || ''}
+                    value={selectedFlight?.id || ""}
                     label="Filter by Flight"
                     onChange={(e: SelectChangeEvent) => {
-                      const flight = flights.find((f) => f.id === e.target.value);
+                      const flight = flights.find(
+                        (f) => f.id === e.target.value
+                      );
                       handleFlightSelect(flight || null);
                     }}
                   >
@@ -419,53 +488,76 @@ const AdminDashboard: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                  <Typography variant="body2">Missing:</Typography>
-                  <FormGroup row>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={filterOptions.missingPassport}
-                          onChange={(e) =>
-                            setAdminFilter({ missingPassport: e.target.checked })
-                          }
-                        />
-                      }
-                      label="Passport"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={filterOptions.missingAddress}
-                          onChange={(e) =>
-                            setAdminFilter({ missingAddress: e.target.checked })
-                          }
-                        />
-                      }
-                      label="Address"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={filterOptions.missingDOB}
-                          onChange={(e) =>
-                            setAdminFilter({ missingDOB: e.target.checked })
-                          }
-                        />
-                      }
-                      label="DOB"
-                    />
-                  </FormGroup>
-                  <Button size="small" onClick={() => clearAdminFilters()}>
-                    Clear
-                  </Button>
-                </Box>
-              </Grid>
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography variant="body2">Missing:</Typography>
+                <FormGroup row>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={filterOptions.missingPassport}
+                        onChange={(e) =>
+                          setAdminFilter({ missingPassport: e.target.checked })
+                        }
+                      />
+                    }
+                    label="Passport"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={filterOptions.missingAddress}
+                        onChange={(e) =>
+                          setAdminFilter({ missingAddress: e.target.checked })
+                        }
+                      />
+                    }
+                    label="Address"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={filterOptions.missingDOB}
+                        onChange={(e) =>
+                          setAdminFilter({ missingDOB: e.target.checked })
+                        }
+                      />
+                    }
+                    label="DOB"
+                  />
+                </FormGroup>
+                <Button size="small" onClick={() => clearAdminFilters()}>
+                  Clear
+                </Button>
+                <Button
+                  size="small"
+                  color="warning"
+                  onClick={async () => {
+                    if (
+                      window.confirm(
+                        "This will reset all data to initial state from flightData.ts. Continue?"
+                      )
+                    ) {
+                      await resetToInitialData();
+                      showToast("Data reset to initial state", "success");
+                    }
+                  }}
+                >
+                  Reset Data
+                </Button>
+              </Box>
             </Grid>
 
             {/* Passenger List */}
-            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box
+              sx={{
+                mb: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <Typography variant="h6">
                 Passengers ({filteredPassengers.length})
               </Typography>
@@ -496,46 +588,65 @@ const AdminDashboard: React.FC = () => {
                   <TableRow
                     key={passenger.id}
                     sx={{
-                      bgcolor: hasMissingInfo(passenger) ? '#fff3e0' : 'transparent',
+                      bgcolor: hasMissingInfo(passenger)
+                        ? "#fff3e0"
+                        : "transparent",
                     }}
                   >
                     <TableCell>
                       {passenger.name}
                       {hasMissingInfo(passenger) && (
-                        <Chip label="Incomplete" size="small" color="warning" sx={{ ml: 1 }} />
+                        <Chip
+                          label="Incomplete"
+                          size="small"
+                          color="warning"
+                          sx={{ ml: 1 }}
+                        />
                       )}
                     </TableCell>
                     <TableCell>
-                      {flights.find((f) => f.id === passenger.flightId)?.name || 'N/A'}
+                      {flights.find((f) => f.id === passenger.flightId)?.name ||
+                        "N/A"}
                     </TableCell>
                     <TableCell>{passenger.seat}</TableCell>
                     <TableCell>
-                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                        {passenger.ancillaryServices?.slice(0, 2).map((service) => (
-                          <Chip key={service} label={service} size="small" />
-                        ))}
+                      <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
+                        {passenger.ancillaryServices
+                          ?.slice(0, 2)
+                          .map((service) => (
+                            <Chip key={service} label={service} size="small" />
+                          ))}
                         {passenger.ancillaryServices?.length > 2 && (
-                          <Chip label={`+${passenger.ancillaryServices.length - 2}`} size="small" />
+                          <Chip
+                            label={`+${passenger.ancillaryServices.length - 2}`}
+                            size="small"
+                          />
                         )}
                       </Box>
                     </TableCell>
                     <TableCell>
                       {passenger.passport?.number ? (
-                        <Typography variant="body2">{passenger.passport.number}</Typography>
+                        <Typography variant="body2">
+                          {passenger.passport.number}
+                        </Typography>
                       ) : (
                         <Chip label="Missing" color="error" size="small" />
                       )}
                     </TableCell>
                     <TableCell>
                       {passenger.address ? (
-                        <Typography variant="body2">{passenger.address}</Typography>
+                        <Typography variant="body2">
+                          {passenger.address}
+                        </Typography>
                       ) : (
                         <Chip label="Missing" color="error" size="small" />
                       )}
                     </TableCell>
                     <TableCell>
                       {passenger.dateOfBirth ? (
-                        <Typography variant="body2">{passenger.dateOfBirth}</Typography>
+                        <Typography variant="body2">
+                          {passenger.dateOfBirth}
+                        </Typography>
                       ) : (
                         <Chip label="Missing" color="error" size="small" />
                       )}
@@ -568,7 +679,13 @@ const AdminDashboard: React.FC = () => {
             {/* Ancillary Services */}
             <Grid size={{ xs: 12, md: 4 }}>
               <Paper variant="outlined" sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 2,
+                  }}
+                >
                   <Typography variant="h6">Ancillary Services</Typography>
                   <Button
                     size="small"
@@ -612,7 +729,13 @@ const AdminDashboard: React.FC = () => {
             {/* Meal Options */}
             <Grid size={{ xs: 12, md: 4 }}>
               <Paper variant="outlined" sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 2,
+                  }}
+                >
                   <Typography variant="h6">Meal Options</Typography>
                   <Button
                     size="small"
@@ -656,8 +779,16 @@ const AdminDashboard: React.FC = () => {
             {/* Shop Items */}
             <Grid size={{ xs: 12, md: 4 }}>
               <Paper variant="outlined" sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  <Typography variant="h6">Shop Items ({shopItems.length})</Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 2,
+                  }}
+                >
+                  <Typography variant="h6">
+                    Shop Items ({shopItems.length})
+                  </Typography>
                   <Button
                     size="small"
                     variant="outlined"
@@ -667,7 +798,7 @@ const AdminDashboard: React.FC = () => {
                     Add
                   </Button>
                 </Box>
-                <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+                <List sx={{ maxHeight: 400, overflow: "auto" }}>
                   {shopItems.map((item) => (
                     <ListItem
                       key={item.id}
@@ -704,8 +835,15 @@ const AdminDashboard: React.FC = () => {
       </Paper>
 
       {/* Passenger Dialog */}
-      <Dialog open={passengerDialog} onClose={() => setPassengerDialog(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editMode ? 'Edit Passenger' : 'Add Passenger'}</DialogTitle>
+      <Dialog
+        open={passengerDialog}
+        onClose={() => setPassengerDialog(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          {editMode ? "Edit Passenger" : "Add Passenger"}
+        </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid size={{ xs: 12, sm: 6 }}>
@@ -713,7 +851,9 @@ const AdminDashboard: React.FC = () => {
                 fullWidth
                 label="Name"
                 value={passengerForm.name}
-                onChange={(e) => setPassengerForm({ ...passengerForm, name: e.target.value })}
+                onChange={(e) =>
+                  setPassengerForm({ ...passengerForm, name: e.target.value })
+                }
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 3 }}>
@@ -721,7 +861,9 @@ const AdminDashboard: React.FC = () => {
                 fullWidth
                 label="Seat"
                 value={passengerForm.seat}
-                onChange={(e) => setPassengerForm({ ...passengerForm, seat: e.target.value })}
+                onChange={(e) =>
+                  setPassengerForm({ ...passengerForm, seat: e.target.value })
+                }
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 3 }}>
@@ -730,7 +872,12 @@ const AdminDashboard: React.FC = () => {
                 <Select
                   value={passengerForm.flightId}
                   label="Flight"
-                  onChange={(e: SelectChangeEvent) => setPassengerForm({ ...passengerForm, flightId: e.target.value })}
+                  onChange={(e: SelectChangeEvent) =>
+                    setPassengerForm({
+                      ...passengerForm,
+                      flightId: e.target.value,
+                    })
+                  }
                 >
                   {flights.map((flight) => (
                     <MenuItem key={flight.id} value={flight.id}>
@@ -751,14 +898,14 @@ const AdminDashboard: React.FC = () => {
               <TextField
                 fullWidth
                 label="Passport Number"
-                value={passengerForm.passport?.number || ''}
+                value={passengerForm.passport?.number || ""}
                 onChange={(e) =>
                   setPassengerForm({
                     ...passengerForm,
-                    passport: { 
+                    passport: {
                       number: e.target.value,
-                      expiryDate: passengerForm.passport?.expiryDate || '',
-                      country: passengerForm.passport?.country || ''
+                      expiryDate: passengerForm.passport?.expiryDate || "",
+                      country: passengerForm.passport?.country || "",
                     },
                   })
                 }
@@ -770,14 +917,14 @@ const AdminDashboard: React.FC = () => {
                 label="Expiry Date"
                 type="date"
                 InputLabelProps={{ shrink: true }}
-                value={passengerForm.passport?.expiryDate || ''}
+                value={passengerForm.passport?.expiryDate || ""}
                 onChange={(e) =>
                   setPassengerForm({
                     ...passengerForm,
-                    passport: { 
-                      number: passengerForm.passport?.number || '',
+                    passport: {
+                      number: passengerForm.passport?.number || "",
                       expiryDate: e.target.value,
-                      country: passengerForm.passport?.country || ''
+                      country: passengerForm.passport?.country || "",
                     },
                   })
                 }
@@ -787,14 +934,14 @@ const AdminDashboard: React.FC = () => {
               <TextField
                 fullWidth
                 label="Country"
-                value={passengerForm.passport?.country || ''}
+                value={passengerForm.passport?.country || ""}
                 onChange={(e) =>
                   setPassengerForm({
                     ...passengerForm,
-                    passport: { 
-                      number: passengerForm.passport?.number || '',
-                      expiryDate: passengerForm.passport?.expiryDate || '',
-                      country: e.target.value
+                    passport: {
+                      number: passengerForm.passport?.number || "",
+                      expiryDate: passengerForm.passport?.expiryDate || "",
+                      country: e.target.value,
                     },
                   })
                 }
@@ -808,7 +955,12 @@ const AdminDashboard: React.FC = () => {
                 multiline
                 rows={2}
                 value={passengerForm.address}
-                onChange={(e) => setPassengerForm({ ...passengerForm, address: e.target.value })}
+                onChange={(e) =>
+                  setPassengerForm({
+                    ...passengerForm,
+                    address: e.target.value,
+                  })
+                }
               />
             </Grid>
 
@@ -819,7 +971,12 @@ const AdminDashboard: React.FC = () => {
                 type="date"
                 InputLabelProps={{ shrink: true }}
                 value={passengerForm.dateOfBirth}
-                onChange={(e) => setPassengerForm({ ...passengerForm, dateOfBirth: e.target.value })}
+                onChange={(e) =>
+                  setPassengerForm({
+                    ...passengerForm,
+                    dateOfBirth: e.target.value,
+                  })
+                }
               />
             </Grid>
 
@@ -829,7 +986,10 @@ const AdminDashboard: React.FC = () => {
                 label="Booking Reference"
                 value={passengerForm.bookingReference}
                 onChange={(e) =>
-                  setPassengerForm({ ...passengerForm, bookingReference: e.target.value })
+                  setPassengerForm({
+                    ...passengerForm,
+                    bookingReference: e.target.value,
+                  })
                 }
               />
             </Grid>
@@ -842,22 +1002,28 @@ const AdminDashboard: React.FC = () => {
                       checked={passengerForm.wheelchair}
                       onChange={(e) => {
                         const isWheelchair = e.target.checked;
-                        let updatedServices = [...passengerForm.ancillaryServices];
-                        
+                        let updatedServices = [
+                          ...passengerForm.ancillaryServices,
+                        ];
+
                         if (isWheelchair) {
                           // Add "Wheelchair Assistance" if not already present
-                          if (!updatedServices.includes('Wheelchair Assistance')) {
-                            updatedServices.push('Wheelchair Assistance');
+                          if (
+                            !updatedServices.includes("Wheelchair Assistance")
+                          ) {
+                            updatedServices.push("Wheelchair Assistance");
                           }
                         } else {
                           // Remove "Wheelchair Assistance" when unchecking
-                          updatedServices = updatedServices.filter(s => s !== 'Wheelchair Assistance');
+                          updatedServices = updatedServices.filter(
+                            (s) => s !== "Wheelchair Assistance"
+                          );
                         }
-                        
-                        setPassengerForm({ 
-                          ...passengerForm, 
+
+                        setPassengerForm({
+                          ...passengerForm,
                           wheelchair: isWheelchair,
-                          ancillaryServices: updatedServices
+                          ancillaryServices: updatedServices,
                         });
                       }}
                     />
@@ -870,22 +1036,26 @@ const AdminDashboard: React.FC = () => {
                       checked={passengerForm.infant}
                       onChange={(e) => {
                         const isInfant = e.target.checked;
-                        let updatedServices = [...passengerForm.ancillaryServices];
-                        
+                        let updatedServices = [
+                          ...passengerForm.ancillaryServices,
+                        ];
+
                         if (isInfant) {
                           // Add "Infant Care Kit" if not already present
-                          if (!updatedServices.includes('Infant Care Kit')) {
-                            updatedServices.push('Infant Care Kit');
+                          if (!updatedServices.includes("Infant Care Kit")) {
+                            updatedServices.push("Infant Care Kit");
                           }
                         } else {
                           // Remove "Infant Care Kit" when unchecking
-                          updatedServices = updatedServices.filter(s => s !== 'Infant Care Kit');
+                          updatedServices = updatedServices.filter(
+                            (s) => s !== "Infant Care Kit"
+                          );
                         }
-                        
-                        setPassengerForm({ 
-                          ...passengerForm, 
+
+                        setPassengerForm({
+                          ...passengerForm,
                           infant: isInfant,
-                          ancillaryServices: updatedServices
+                          ancillaryServices: updatedServices,
                         });
                       }}
                     />
@@ -899,7 +1069,7 @@ const AdminDashboard: React.FC = () => {
         <DialogActions>
           <Button onClick={() => setPassengerDialog(false)}>Cancel</Button>
           <Button onClick={handleSavePassenger} variant="contained">
-            {editMode ? 'Update' : 'Add'}
+            {editMode ? "Update" : "Add"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -908,7 +1078,7 @@ const AdminDashboard: React.FC = () => {
       <SimpleInputDialog
         open={serviceDialog}
         onClose={() => setServiceDialog(false)}
-        title={editingService ? 'Edit Service' : 'Add Service'}
+        title={editingService ? "Edit Service" : "Add Service"}
         label="Service Name"
         value={serviceForm}
         onChange={(e) => setServiceForm(e.target.value)}
@@ -920,7 +1090,7 @@ const AdminDashboard: React.FC = () => {
       <SimpleInputDialog
         open={mealDialog}
         onClose={() => setMealDialog(false)}
-        title={editingMeal ? 'Edit Meal' : 'Add Meal'}
+        title={editingMeal ? "Edit Meal" : "Add Meal"}
         label="Meal Name"
         value={mealForm}
         onChange={(e) => setMealForm(e.target.value)}
@@ -930,7 +1100,9 @@ const AdminDashboard: React.FC = () => {
 
       {/* Shop Item Dialog */}
       <Dialog open={shopItemDialog} onClose={() => setShopItemDialog(false)}>
-        <DialogTitle>{editMode ? 'Edit Shop Item' : 'Add Shop Item'}</DialogTitle>
+        <DialogTitle>
+          {editMode ? "Edit Shop Item" : "Add Shop Item"}
+        </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid size={12}>
@@ -938,7 +1110,9 @@ const AdminDashboard: React.FC = () => {
                 fullWidth
                 label="Item Name"
                 value={shopItemForm.name}
-                onChange={(e) => setShopItemForm({ ...shopItemForm, name: e.target.value })}
+                onChange={(e) =>
+                  setShopItemForm({ ...shopItemForm, name: e.target.value })
+                }
               />
             </Grid>
             <Grid size={12}>
@@ -947,7 +1121,12 @@ const AdminDashboard: React.FC = () => {
                 <Select
                   value={shopItemForm.category}
                   label="Category"
-                  onChange={(e: SelectChangeEvent) => setShopItemForm({ ...shopItemForm, category: e.target.value })}
+                  onChange={(e: SelectChangeEvent) =>
+                    setShopItemForm({
+                      ...shopItemForm,
+                      category: e.target.value,
+                    })
+                  }
                 >
                   {SHOP_CATEGORIES.map((category) => (
                     <MenuItem key={category} value={category}>
@@ -964,7 +1143,10 @@ const AdminDashboard: React.FC = () => {
                 type="number"
                 value={shopItemForm.price}
                 onChange={(e) =>
-                  setShopItemForm({ ...shopItemForm, price: parseFloat(e.target.value) })
+                  setShopItemForm({
+                    ...shopItemForm,
+                    price: parseFloat(e.target.value),
+                  })
                 }
               />
             </Grid>
@@ -973,7 +1155,9 @@ const AdminDashboard: React.FC = () => {
                 fullWidth
                 label="Currency"
                 value={shopItemForm.currency}
-                onChange={(e) => setShopItemForm({ ...shopItemForm, currency: e.target.value })}
+                onChange={(e) =>
+                  setShopItemForm({ ...shopItemForm, currency: e.target.value })
+                }
               />
             </Grid>
           </Grid>
@@ -981,7 +1165,7 @@ const AdminDashboard: React.FC = () => {
         <DialogActions>
           <Button onClick={() => setShopItemDialog(false)}>Cancel</Button>
           <Button onClick={handleSaveShopItem} variant="contained">
-            {editMode ? 'Update' : 'Add'}
+            {editMode ? "Update" : "Add"}
           </Button>
         </DialogActions>
       </Dialog>

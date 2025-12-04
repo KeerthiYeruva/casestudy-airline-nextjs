@@ -152,6 +152,7 @@ export interface DataActions {
   setMealOptions: (meals: string[]) => void;
   setShopItems: (items: ShopItem[]) => void;
   setShopCategories: (categories: string[]) => void;
+  resetToInitialData: () => Promise<void>;
   addAncillaryServiceToPassenger: (passengerId: string, service: string) => Promise<void>;
   removeAncillaryServiceFromPassenger: (passengerId: string, service: string) => Promise<void>;
   changeMealPreference: (passengerId: string, meal: string) => Promise<void>;
