@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -469,3 +471,4 @@ const StaffCheckIn = () => {
 };
 
 export default StaffCheckIn;
+

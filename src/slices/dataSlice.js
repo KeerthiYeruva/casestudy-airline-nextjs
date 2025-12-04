@@ -1,3 +1,5 @@
+'use client';
+
 // src/slices/dataSlice.js
 // Single source of truth for all shared data
 import { createSlice } from '@reduxjs/toolkit';
@@ -217,3 +219,4 @@ export const {
 } = dataSlice.actions;
 
 export default dataSlice.reducer;
+

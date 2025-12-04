@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Box, Button, Chip, Typography } from '@mui/material';
 
@@ -85,3 +87,4 @@ const SeatMapVisual = ({ passengers, onSeatClick, mode = 'checkin' }) => {
 };
 
 export default SeatMapVisual;
+

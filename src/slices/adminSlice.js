@@ -1,3 +1,5 @@
+'use client';
+
 // src/slices/adminSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 

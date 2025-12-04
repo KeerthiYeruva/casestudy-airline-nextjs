@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Box, Typography, Button, Paper, Alert } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -127,3 +129,4 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
+

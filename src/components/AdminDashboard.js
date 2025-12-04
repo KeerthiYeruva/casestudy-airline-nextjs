@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -907,3 +909,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+

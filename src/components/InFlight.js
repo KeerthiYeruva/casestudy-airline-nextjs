@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectFlight } from '../slices/checkInSlice';
@@ -752,3 +754,4 @@ const InFlight = () => {
 };
 
 export default InFlight;
+

@@ -1,3 +1,5 @@
+'use client';
+
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -23,3 +25,4 @@ const toastSlice = createSlice({
 
 export const { showToast, hideToast } = toastSlice.actions;
 export default toastSlice.reducer;
+

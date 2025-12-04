@@ -1,3 +1,5 @@
+'use client';
+
 import { createSlice } from '@reduxjs/toolkit';
 
 // CheckIn slice now only handles view-specific state (selected flight and filters)
@@ -38,3 +40,4 @@ export const {
 } = checkInSlice.actions;
 
 export default checkInSlice.reducer;
+
