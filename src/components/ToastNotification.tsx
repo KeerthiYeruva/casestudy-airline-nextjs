@@ -4,10 +4,10 @@ import React from 'react';
 import useToastStore from '@/stores/useToastStore';
 import { Snackbar, Alert } from '@mui/material';
 
-const ToastNotification = () => {
+const ToastNotification: React.FC = () => {
   const { open, message, severity, hideToast } = useToastStore();
 
-  const handleClose = (event, reason) => {
+  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -29,4 +29,3 @@ const ToastNotification = () => {
 };
 
 export default ToastNotification;
-

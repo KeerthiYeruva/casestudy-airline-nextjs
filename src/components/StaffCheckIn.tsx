@@ -5,11 +5,11 @@ import useCheckInStore from '@/stores/useCheckInStore';
 import useDataStore from '@/stores/useDataStore';
 import useToastStore from '@/stores/useToastStore';
 import SeatMapVisual from './SeatMapVisual';
+import { Passenger } from '@/types';
 import {
   Container,
   Paper,
   Typography,
-  Grid,
   List,
   ListItem,
   ListItemText,
@@ -28,10 +28,12 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  SelectChangeEvent,
+  Grid,
 } from '@mui/material';
 import '../styles/StaffCheckIn.scss';
 
-const StaffCheckIn = () => {
+const StaffCheckIn: React.FC = () => {
   const { flights, passengers, fetchFlights, fetchPassengers, checkInPassenger, undoCheckIn, changeSeat } = useDataStore();
   const { selectedFlight, filterOptions, selectFlight, setFilter, clearFilters } = useCheckInStore();
   const { showToast } = useToastStore();
@@ -41,7 +43,7 @@ const StaffCheckIn = () => {
     fetchPassengers();
   }, [fetchFlights, fetchPassengers]);
 
-  const [selectedPassenger, setSelectedPassenger] = useState(null);
+  const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
   const [changeSeatDialog, setChangeSeatDialog] = useState(false);
   const [newSeatNumber, setNewSeatNumber] = useState('');
 
@@ -67,12 +69,12 @@ const StaffCheckIn = () => {
     return true;
   });
 
-  const handleFlightSelect = (flight) => {
+  const handleFlightSelect = (flight: typeof flights[0]) => {
     selectFlight(flight);
     setSelectedPassenger(null);
   };
 
-  const handleCheckIn = async (passengerId) => {
+  const handleCheckIn = async (passengerId: string) => {
     const passenger = passengers.find(p => p.id === passengerId);
     const result = await checkInPassenger(passengerId);
     if (result) {
@@ -82,7 +84,7 @@ const StaffCheckIn = () => {
     }
   };
 
-  const handleUndoCheckIn = async (passengerId) => {
+  const handleUndoCheckIn = async (passengerId: string) => {
     const passenger = passengers.find(p => p.id === passengerId);
     const result = await undoCheckIn(passengerId);
     if (result) {
@@ -92,7 +94,7 @@ const StaffCheckIn = () => {
     }
   };
 
-  const handleSeatClick = (seat) => {
+  const handleSeatClick = (seat: string) => {
     const passenger = flightPassengers.find((p) => p.seat === seat);
     if (passenger) {
       setSelectedPassenger(passenger);
@@ -116,7 +118,7 @@ const StaffCheckIn = () => {
     }
   };
 
-  const handleFilterChange = (filterType, value) => {
+  const handleFilterChange = (filterType: string, value: boolean | null) => {
     setFilter({ [filterType]: value });
   };
 
@@ -213,7 +215,7 @@ const StaffCheckIn = () => {
                             : 'not-checked'
                         }
                         label="Check-In Status"
-                        onChange={(e) => {
+                        onChange={(e: SelectChangeEvent) => {
                           const value =
                             e.target.value === 'all'
                               ? null
@@ -479,4 +481,3 @@ const StaffCheckIn = () => {
 };
 
 export default StaffCheckIn;
-

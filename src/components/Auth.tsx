@@ -48,10 +48,10 @@ const MOCK_USERS = [
   },
 ];
 
-const Auth = () => {
+const Auth: React.FC = () => {
   const { user, role, loading, error, isAuthenticated, loginStart, loginSuccess, logout, setRole } = useAuthStore();
   const [roleDialog, setRoleDialog] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('staff');
+  const [selectedRole, setSelectedRole] = useState<'staff' | 'admin'>('staff');
   const [selectedMockUser, setSelectedMockUser] = useState(0);
 
   // ========================================
@@ -145,7 +145,7 @@ const Auth = () => {
   //   }
   // };
 
-  const handleRoleChange = (newRole) => {
+  const handleRoleChange = (newRole: 'staff' | 'admin') => {
     setRole(newRole);
   };
 
@@ -208,7 +208,7 @@ const Auth = () => {
               <Select
                 value={selectedMockUser}
                 label="User"
-                onChange={(e) => setSelectedMockUser(e.target.value)}
+                onChange={(e) => setSelectedMockUser(e.target.value as number)}
               >
                 {MOCK_USERS.map((mockUser, index) => (
                   <MenuItem key={mockUser.uid} value={index}>
@@ -234,7 +234,7 @@ const Auth = () => {
               <Select
                 value={selectedRole}
                 label="Role"
-                onChange={(e) => setSelectedRole(e.target.value)}
+                onChange={(e) => setSelectedRole(e.target.value as 'staff' | 'admin')}
               >
                 <MenuItem value="staff">Airline Staff</MenuItem>
                 <MenuItem value="admin">Administrator</MenuItem>
@@ -265,7 +265,7 @@ const Auth = () => {
         padding: 1,
       }}
     >
-      <Avatar src={user?.photoURL} alt={user?.displayName}>
+      <Avatar src={user?.photoURL || undefined} alt={user?.displayName || undefined}>
         <PersonIcon />
       </Avatar>
       <Box>
@@ -282,7 +282,7 @@ const Auth = () => {
       <FormControl size="small" sx={{ minWidth: 100 }}>
         <Select
           value={role || 'staff'}
-          onChange={(e) => handleRoleChange(e.target.value)}
+          onChange={(e) => handleRoleChange(e.target.value as 'staff' | 'admin')}
           displayEmpty
         >
           <MenuItem value="staff">Staff</MenuItem>

@@ -52,11 +52,15 @@ export interface Passenger {
 
 export interface Flight {
   id: string;
+  name?: string; // Legacy property for backward compatibility
   flightNumber: string;
   origin: string;
   destination: string;
+  from?: string; // Legacy property (same as origin)
+  to?: string; // Legacy property (same as destination)
   departureTime: string;
   arrivalTime: string;
+  time?: string; // Legacy property (same as departureTime)
   date: string;
   status: 'On Time' | 'Delayed' | 'Boarding' | 'Departed' | 'Arrived' | 'Cancelled';
   aircraft: string;
@@ -67,19 +71,10 @@ export interface Flight {
 }
 
 // ============ Services & Shop ============
-export interface AncillaryService {
-  id: string;
-  name: string;
-  price?: number;
-  category?: string;
-}
-
-export interface MealOption {
-  id: string;
-  name: string;
-  type: string;
-  description?: string;
-}
+// Note: ancillaryServices and mealOptions are used as simple string arrays in the application
+export type AncillaryService = string;
+export type MealOption = string;
+export type ShopCategory = string;
 
 export interface ShopItem {
   id: string;
@@ -91,20 +86,14 @@ export interface ShopItem {
   image?: string;
 }
 
-export interface ShopCategory {
-  id: string;
-  name: string;
-  icon?: string;
-}
-
 // ============ Store States ============
 export interface DataState {
   flights: Flight[];
   passengers: Passenger[];
-  ancillaryServices: AncillaryService[];
-  mealOptions: MealOption[];
+  ancillaryServices: string[];
+  mealOptions: string[];
   shopItems: ShopItem[];
-  shopCategories: ShopCategory[];
+  shopCategories: string[];
   loading: boolean;
   error: string | null;
 }
@@ -159,21 +148,26 @@ export interface DataActions {
   checkInPassenger: (id: string) => Promise<Passenger | null>;
   undoCheckIn: (id: string) => Promise<Passenger | null>;
   changeSeat: (id: string, newSeat: string) => Promise<Passenger | null>;
-  setAncillaryServices: (services: AncillaryService[]) => void;
-  setMealOptions: (meals: MealOption[]) => void;
+  setAncillaryServices: (services: string[]) => void;
+  setMealOptions: (meals: string[]) => void;
   setShopItems: (items: ShopItem[]) => void;
-  setShopCategories: (categories: ShopCategory[]) => void;
+  setShopCategories: (categories: string[]) => void;
+  addAncillaryServiceToPassenger: (passengerId: string, service: string) => Promise<void>;
+  removeAncillaryServiceFromPassenger: (passengerId: string, service: string) => Promise<void>;
+  changeMealPreference: (passengerId: string, meal: string) => Promise<void>;
+  addShopRequest: (passengerId: string, itemName: string, quantity: number, price: number) => Promise<void>;
+  removeShopRequest: (passengerId: string, itemName: string) => Promise<void>;
 }
 
 export interface CheckInActions {
   selectFlight: (flight: Flight | null) => void;
-  setFilter: (filterKey: keyof FilterOptions, value: boolean | null) => void;
+  setFilter: (updates: Partial<FilterOptions>) => void;
   clearFilters: () => void;
 }
 
 export interface AdminActions {
   selectFlight: (flight: Flight | null) => void;
-  setAdminFilter: (filterKey: keyof FilterOptions, value: boolean) => void;
+  setAdminFilter: (updates: Partial<FilterOptions>) => void;
   clearAdminFilters: () => void;
 }
 

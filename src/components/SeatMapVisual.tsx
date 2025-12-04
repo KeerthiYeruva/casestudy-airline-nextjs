@@ -2,12 +2,19 @@
 
 import React from 'react';
 import { Box, Button, Chip, Typography } from '@mui/material';
+import { Passenger } from '@/types';
 
-const SeatMapVisual = ({ passengers, onSeatClick, mode = 'checkin' }) => {
+interface SeatMapVisualProps {
+  passengers: Passenger[];
+  onSeatClick: (seat: string) => void;
+  mode?: 'checkin' | 'inflight';
+}
+
+const SeatMapVisual: React.FC<SeatMapVisualProps> = ({ passengers, onSeatClick, mode = 'checkin' }) => {
   const rows = 10;
   const seatsPerRow = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-  const getSeatColor = (seat) => {
+  const getSeatColor = (seat: string): string => {
     const passenger = passengers.find((p) => p.seat === seat);
     if (!passenger) return 'available';
 
@@ -87,4 +94,3 @@ const SeatMapVisual = ({ passengers, onSeatClick, mode = 'checkin' }) => {
 };
 
 export default SeatMapVisual;
-

@@ -5,11 +5,11 @@ import useCheckInStore from '@/stores/useCheckInStore';
 import useDataStore from '@/stores/useDataStore';
 import useToastStore from '@/stores/useToastStore';
 import SeatMapVisual from './SeatMapVisual';
+import { Passenger, ShopItem } from '@/types';
 import {
   Container,
   Paper,
   Typography,
-  Grid,
   List,
   ListItem,
   ListItemText,
@@ -27,12 +27,14 @@ import {
   Card,
   CardContent,
   Divider,
+  SelectChangeEvent,
+  Grid,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import '../styles/InFlight.scss';
 
-const InFlight = () => {
+const InFlight: React.FC = () => {
   const { flights, passengers, ancillaryServices, mealOptions, shopItems, shopCategories, fetchFlights, fetchPassengers, addAncillaryServiceToPassenger, removeAncillaryServiceFromPassenger, changeMealPreference, addShopRequest, removeShopRequest, updatePassenger } = useDataStore();
   const { selectedFlight, selectFlight } = useCheckInStore();
   const { showToast } = useToastStore();
@@ -42,13 +44,13 @@ const InFlight = () => {
     fetchPassengers();
   }, [fetchFlights, fetchPassengers]);
 
-  const [selectedPassenger, setSelectedPassenger] = useState(null);
+  const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
   const [addServiceDialog, setAddServiceDialog] = useState(false);
   const [changeMealDialog, setChangeMealDialog] = useState(false);
   const [shopDialog, setShopDialog] = useState(false);
   const [selectedService, setSelectedService] = useState('');
   const [selectedMeal, setSelectedMeal] = useState('');
-  const [selectedShopItem, setSelectedShopItem] = useState(null);
+  const [selectedShopItem, setSelectedShopItem] = useState<ShopItem | null>(null);
   const [shopQuantity, setShopQuantity] = useState(1);
   const [shopCategory, setShopCategory] = useState('All');
 
@@ -57,12 +59,12 @@ const InFlight = () => {
     ? passengers.filter((p) => p.flightId === selectedFlight.id)
     : [];
 
-  const handleFlightSelect = (flight) => {
+  const handleFlightSelect = (flight: typeof flights[0]) => {
     selectFlight(flight);
     setSelectedPassenger(null);
   };
 
-  const handleSeatClick = (seat) => {
+  const handleSeatClick = (seat: string) => {
     const passenger = flightPassengers.find((p) => p.seat === seat);
     if (passenger) {
       setSelectedPassenger(passenger);
@@ -84,7 +86,7 @@ const InFlight = () => {
     setSelectedService('');
   };
 
-  const handleRemoveService = async (service) => {
+  const handleRemoveService = async (service: string) => {
     if (selectedPassenger) {
       await removeAncillaryServiceFromPassenger(selectedPassenger.id, service);
       showToast(`${service} removed`, 'info');
@@ -122,14 +124,14 @@ const InFlight = () => {
     setShopQuantity(1);
   };
 
-  const handleRemoveShopItem = async (item) => {
+  const handleRemoveShopItem = async (item: string) => {
     if (selectedPassenger) {
       await removeShopRequest(selectedPassenger.id, item);
       showToast(`${item} removed from cart`, 'info');
     }
   };
 
-  const handleUpdateQuantity = async (item, newQuantity) => {
+  const handleUpdateQuantity = async (item: string, newQuantity: number) => {
     if (selectedPassenger && newQuantity > 0) {
       const passenger = passengers.find(p => p.id === selectedPassenger.id);
       if (passenger && passenger.shopRequests) {
@@ -145,7 +147,7 @@ const InFlight = () => {
     ? shopItems 
     : shopItems.filter(item => item.category === shopCategory);
 
-  const calculateShopTotal = (shopRequests) => {
+  const calculateShopTotal = (shopRequests: Passenger['shopRequests']) => {
     if (!shopRequests || shopRequests.length === 0) return 0;
     return shopRequests.reduce((total, request) => {
       const price = Number(request.price) || 0;
@@ -542,7 +544,7 @@ const InFlight = () => {
             <Select
               value={selectedService}
               label="Select Service"
-              onChange={(e) => setSelectedService(e.target.value)}
+              onChange={(e: SelectChangeEvent) => setSelectedService(e.target.value)}
             >
               {ancillaryServices
                 .filter(
@@ -582,7 +584,7 @@ const InFlight = () => {
             <Select
               value={selectedMeal}
               label="Select Meal"
-              onChange={(e) => setSelectedMeal(e.target.value)}
+              onChange={(e: SelectChangeEvent) => setSelectedMeal(e.target.value)}
             >
               {mealOptions.map((meal) => (
                 <MenuItem key={meal} value={meal}>
@@ -620,7 +622,7 @@ const InFlight = () => {
               <Select
                 value={shopCategory}
                 label="Category"
-                onChange={(e) => setShopCategory(e.target.value)}
+                onChange={(e: SelectChangeEvent) => setShopCategory(e.target.value)}
               >
                 {shopCategories.map((category) => (
                   <MenuItem key={category} value={category}>
@@ -723,4 +725,3 @@ const InFlight = () => {
 };
 
 export default InFlight;
-

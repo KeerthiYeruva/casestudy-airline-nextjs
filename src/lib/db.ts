@@ -11,13 +11,40 @@ import {
 } from '@/data/flightData';
 import type { Flight, Passenger } from '@/types';
 
-// Deep clone initial data
-const flights: Flight[] = JSON.parse(JSON.stringify(initialFlights));
-let passengers: Passenger[] = JSON.parse(JSON.stringify(initialPassengers));
-let services: string[] = [...ancillaryServices];
-let meals: string[] = [...mealOptions];
-const shop = JSON.parse(JSON.stringify(shopItems));
-let categories: string[] = [...shopCategories];
+// Helper to check if we're in browser environment
+const isBrowser = typeof window !== 'undefined';
+
+// Helper functions for localStorage persistence
+const saveToStorage = (key: string, data: any) => {
+  if (isBrowser) {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+      console.error('Failed to save to localStorage:', e);
+    }
+  }
+};
+
+const loadFromStorage = <T>(key: string, fallback: T): T => {
+  if (isBrowser) {
+    try {
+      const stored = localStorage.getItem(key);
+      return stored ? JSON.parse(stored) : fallback;
+    } catch (e) {
+      console.error('Failed to load from localStorage:', e);
+      return fallback;
+    }
+  }
+  return fallback;
+};
+
+// Load data from localStorage or use initial data
+let flights: Flight[] = loadFromStorage('flights', JSON.parse(JSON.stringify(initialFlights)));
+let passengers: Passenger[] = loadFromStorage('passengers', JSON.parse(JSON.stringify(initialPassengers)));
+let services: string[] = loadFromStorage('services', [...ancillaryServices]);
+let meals: string[] = loadFromStorage('meals', [...mealOptions]);
+let shop = loadFromStorage('shop', JSON.parse(JSON.stringify(shopItems)));
+let categories: string[] = loadFromStorage('categories', [...shopCategories]);
 
 // Database operations for Flights
 export const flightDB = {
@@ -31,6 +58,7 @@ export const flightDB = {
       id: `FL${Date.now()}` 
     };
     flights.push(newFlight);
+    saveToStorage('flights', flights);
     return newFlight;
   },
   
@@ -38,6 +66,7 @@ export const flightDB = {
     const index = flights.findIndex(f => f.id === id);
     if (index !== -1) {
       flights[index] = { ...flights[index], ...updates };
+      saveToStorage('flights', flights);
       return flights[index];
     }
     return null;
@@ -50,6 +79,8 @@ export const flightDB = {
       flights.splice(index, 1);
       // Also delete associated passengers
       passengers = passengers.filter(p => p.flightId !== id);
+      saveToStorage('flights', flights);
+      saveToStorage('passengers', passengers);
       return deleted;
     }
     return null;
@@ -82,6 +113,7 @@ export const passengerDB = {
       dateOfBirth: passenger.dateOfBirth || '',
     };
     passengers.push(newPassenger);
+    saveToStorage('passengers', passengers);
     return newPassenger;
   },
   
@@ -89,6 +121,7 @@ export const passengerDB = {
     const index = passengers.findIndex(p => p.id === id);
     if (index !== -1) {
       passengers[index] = { ...passengers[index], ...updates };
+      saveToStorage('passengers', passengers);
       return passengers[index];
     }
     return null;
@@ -99,6 +132,7 @@ export const passengerDB = {
     if (index !== -1) {
       const deleted = passengers[index];
       passengers.splice(index, 1);
+      saveToStorage('passengers', passengers);
       return deleted;
     }
     return null;
@@ -108,6 +142,7 @@ export const passengerDB = {
     const passenger = passengers.find(p => p.id === id);
     if (passenger) {
       passenger.checkedIn = true;
+      saveToStorage('passengers', passengers);
       return passenger;
     }
     return null;
@@ -117,6 +152,7 @@ export const passengerDB = {
     const passenger = passengers.find(p => p.id === id);
     if (passenger) {
       passenger.checkedIn = false;
+      saveToStorage('passengers', passengers);
       return passenger;
     }
     return null;
@@ -126,6 +162,7 @@ export const passengerDB = {
     const passenger = passengers.find(p => p.id === id);
     if (passenger) {
       passenger.seat = newSeat;
+      saveToStorage('passengers', passengers);
       return passenger;
     }
     return null;
@@ -138,10 +175,12 @@ export const serviceDB = {
   add: (service: string): void => {
     if (!services.includes(service)) {
       services.push(service);
+      saveToStorage('services', services);
     }
   },
   remove: (service: string): void => {
     services = services.filter(s => s !== service);
+    saveToStorage('services', services);
   },
 };
 
@@ -151,10 +190,12 @@ export const mealDB = {
   add: (meal: string): void => {
     if (!meals.includes(meal)) {
       meals.push(meal);
+      saveToStorage('meals', meals);
     }
   },
   remove: (meal: string): void => {
     meals = meals.filter(m => m !== meal);
+    saveToStorage('meals', meals);
   },
 };
 
@@ -165,12 +206,14 @@ export const shopDB = {
   getByCategory: (category: string) => shop.filter((item: any) => item.category === category),
   add: (item: any) => {
     shop.push(item);
+    saveToStorage('shop', shop);
     return item;
   },
   update: (id: string, updates: any) => {
     const index = shop.findIndex((item: any) => item.id === id);
     if (index !== -1) {
       shop[index] = { ...shop[index], ...updates };
+      saveToStorage('shop', shop);
       return shop[index];
     }
     return null;
@@ -180,6 +223,7 @@ export const shopDB = {
     if (index !== -1) {
       const deleted = shop[index];
       shop.splice(index, 1);
+      saveToStorage('shop', shop);
       return deleted;
     }
     return null;
@@ -192,9 +236,31 @@ export const categoryDB = {
   add: (category: string): void => {
     if (!categories.includes(category)) {
       categories.push(category);
+      saveToStorage('categories', categories);
     }
   },
   remove: (category: string): void => {
     categories = categories.filter(c => c !== category);
+    saveToStorage('categories', categories);
   },
+};
+
+// Reset database to initial state (clears localStorage)
+export const resetDatabase = () => {
+  if (isBrowser) {
+    localStorage.removeItem('flights');
+    localStorage.removeItem('passengers');
+    localStorage.removeItem('services');
+    localStorage.removeItem('meals');
+    localStorage.removeItem('shop');
+    localStorage.removeItem('categories');
+    
+    // Reload initial data
+    flights = JSON.parse(JSON.stringify(initialFlights));
+    passengers = JSON.parse(JSON.stringify(initialPassengers));
+    services = [...ancillaryServices];
+    meals = [...mealOptions];
+    shop = JSON.parse(JSON.stringify(shopItems));
+    categories = [...shopCategories];
+  }
 };

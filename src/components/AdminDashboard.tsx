@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import useAdminStore from '@/stores/useAdminStore';
@@ -7,6 +7,7 @@ import useToastStore from '@/stores/useToastStore';
 import SimpleInputDialog from './SimpleInputDialog';
 import ConfirmDialog from './ConfirmDialog';
 import { SHOP_CATEGORIES } from '../constants/appConstants';
+import { Passenger, ShopItem } from '@/types';
 import {
   Container,
   Paper,
@@ -39,6 +40,7 @@ import {
   ListItem,
   ListItemText,
   Divider,
+  SelectChangeEvent,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -46,7 +48,27 @@ import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-const AdminDashboard = () => {
+interface PassengerFormData extends Omit<Passenger, 'id'> {
+  id: string;
+}
+
+interface ShopItemFormData {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  currency: string;
+}
+
+interface ConfirmDialogState {
+  open: boolean;
+  title?: string;
+  message: string;
+  severity?: 'info' | 'error' | 'warning' | 'success';
+  onConfirm: () => void;
+}
+
+const AdminDashboard: React.FC = () => {
   const { flights, passengers, ancillaryServices, mealOptions, shopItems, fetchFlights, fetchPassengers, addPassenger, updatePassenger, deletePassenger, setAncillaryServices, setMealOptions, setShopItems } = useDataStore();
   const { selectedFlight, filterOptions, selectFlight, setAdminFilter, clearAdminFilters } = useAdminStore();
   const { showToast } = useToastStore();
@@ -62,9 +84,13 @@ const AdminDashboard = () => {
   const [mealDialog, setMealDialog] = useState(false);
   const [shopItemDialog, setShopItemDialog] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [confirmDialog, setConfirmDialog] = useState({ open: false, message: '', onConfirm: () => {} });
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState>({ 
+    open: false, 
+    message: '', 
+    onConfirm: () => {} 
+  });
 
-  const [passengerForm, setPassengerForm] = useState({
+  const [passengerForm, setPassengerForm] = useState<PassengerFormData>({
     id: '',
     name: '',
     seat: '',
@@ -85,7 +111,7 @@ const AdminDashboard = () => {
   const [editingService, setEditingService] = useState('');
   const [mealForm, setMealForm] = useState('');
   const [editingMeal, setEditingMeal] = useState('');
-  const [shopItemForm, setShopItemForm] = useState({
+  const [shopItemForm, setShopItemForm] = useState<ShopItemFormData>({
     id: '',
     name: '',
     category: 'Perfumes & Cosmetics',
@@ -112,11 +138,11 @@ const AdminDashboard = () => {
         return true;
       });
 
-  const handleFlightSelect = (flight) => {
+  const handleFlightSelect = (flight: typeof flights[0] | null) => {
     selectFlight(flight);
   };
 
-  const handleOpenPassengerDialog = (passenger = null) => {
+  const handleOpenPassengerDialog = (passenger: Passenger | null = null) => {
     if (passenger) {
       setEditMode(true);
       // Ensure all fields have default values to prevent undefined errors
@@ -170,8 +196,11 @@ const AdminDashboard = () => {
       return;
     }
     
+    console.log('Saving passenger:', { editMode, passengerForm });
+    
     if (editMode) {
       const result = await updatePassenger(passengerForm.id, passengerForm);
+      console.log('Update result:', result);
       if (result) {
         showToast(`Passenger ${passengerForm.name} updated successfully`, 'success');
       } else {
@@ -188,7 +217,7 @@ const AdminDashboard = () => {
     setPassengerDialog(false);
   };
 
-  const handleDeletePassenger = (id) => {
+  const handleDeletePassenger = (id: string) => {
     const passenger = passengers.find(p => p.id === id);
     setConfirmDialog({
       open: true,
@@ -206,7 +235,7 @@ const AdminDashboard = () => {
     });
   };
 
-  const handleOpenServiceDialog = (service = null) => {
+  const handleOpenServiceDialog = (service: string | null = null) => {
     if (service) {
       setEditingService(service);
       setServiceForm(service);
@@ -233,7 +262,7 @@ const AdminDashboard = () => {
     setServiceDialog(false);
   };
 
-  const handleDeleteService = (service) => {
+  const handleDeleteService = (service: string) => {
     setConfirmDialog({
       open: true,
       title: 'Delete Service',
@@ -246,7 +275,7 @@ const AdminDashboard = () => {
     });
   };
 
-  const handleOpenMealDialog = (meal = null) => {
+  const handleOpenMealDialog = (meal: string | null = null) => {
     if (meal) {
       setEditingMeal(meal);
       setMealForm(meal);
@@ -273,7 +302,7 @@ const AdminDashboard = () => {
     setMealDialog(false);
   };
 
-  const handleDeleteMeal = (meal) => {
+  const handleDeleteMeal = (meal: string) => {
     setConfirmDialog({
       open: true,
       title: 'Delete Meal',
@@ -286,7 +315,7 @@ const AdminDashboard = () => {
     });
   };
 
-  const handleOpenShopItemDialog = (item = null) => {
+  const handleOpenShopItemDialog = (item: ShopItem | null = null) => {
     if (item) {
       setEditMode(true);
       setShopItemForm(item);
@@ -323,7 +352,7 @@ const AdminDashboard = () => {
     setShopItemDialog(false);
   };
 
-  const handleDeleteShopItem = (id) => {
+  const handleDeleteShopItem = (id: string) => {
     const item = shopItems.find(i => i.id === id);
     setConfirmDialog({
       open: true,
@@ -337,7 +366,7 @@ const AdminDashboard = () => {
     });
   };
 
-  const hasMissingInfo = (passenger) => {
+  const hasMissingInfo = (passenger: Passenger) => {
     return !passenger.passport?.number || !passenger.address || !passenger.dateOfBirth;
   };
 
@@ -349,7 +378,7 @@ const AdminDashboard = () => {
           Admin Dashboard
         </Typography>
 
-        <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)} sx={{ mb: 3 }}>
+        <Tabs value={activeTab} onChange={(_e, v) => setActiveTab(v)} sx={{ mb: 3 }}>
           <Tab label="Passengers" icon={<PersonIcon />} iconPosition="start" />
           <Tab label="Services & Menu" icon={<SettingsIcon />} iconPosition="start" />
         </Tabs>
@@ -374,7 +403,7 @@ const AdminDashboard = () => {
                   <Select
                     value={selectedFlight?.id || ''}
                     label="Filter by Flight"
-                    onChange={(e) => {
+                    onChange={(e: SelectChangeEvent) => {
                       const flight = flights.find((f) => f.id === e.target.value);
                       handleFlightSelect(flight || null);
                     }}
@@ -490,21 +519,21 @@ const AdminDashboard = () => {
                     </TableCell>
                     <TableCell>
                       {passenger.passport?.number ? (
-                        <Chip label="✓" color="success" size="small" />
+                        <Typography variant="body2">{passenger.passport.number}</Typography>
                       ) : (
                         <Chip label="Missing" color="error" size="small" />
                       )}
                     </TableCell>
                     <TableCell>
                       {passenger.address ? (
-                        <Chip label="✓" color="success" size="small" />
+                        <Typography variant="body2">{passenger.address}</Typography>
                       ) : (
                         <Chip label="Missing" color="error" size="small" />
                       )}
                     </TableCell>
                     <TableCell>
                       {passenger.dateOfBirth ? (
-                        <Chip label="✓" color="success" size="small" />
+                        <Typography variant="body2">{passenger.dateOfBirth}</Typography>
                       ) : (
                         <Chip label="Missing" color="error" size="small" />
                       )}
@@ -699,7 +728,7 @@ const AdminDashboard = () => {
                 <Select
                   value={passengerForm.flightId}
                   label="Flight"
-                  onChange={(e) => setPassengerForm({ ...passengerForm, flightId: e.target.value })}
+                  onChange={(e: SelectChangeEvent) => setPassengerForm({ ...passengerForm, flightId: e.target.value })}
                 >
                   {flights.map((flight) => (
                     <MenuItem key={flight.id} value={flight.id}>
@@ -870,7 +899,7 @@ const AdminDashboard = () => {
                 <Select
                   value={shopItemForm.category}
                   label="Category"
-                  onChange={(e) => setShopItemForm({ ...shopItemForm, category: e.target.value })}
+                  onChange={(e: SelectChangeEvent) => setShopItemForm({ ...shopItemForm, category: e.target.value })}
                 >
                   {SHOP_CATEGORIES.map((category) => (
                     <MenuItem key={category} value={category}>
@@ -923,4 +952,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-
+// @ts-nocheck

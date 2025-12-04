@@ -10,7 +10,18 @@ import {
   Button,
 } from '@mui/material';
 
-const SimpleInputDialog = ({
+interface SimpleInputDialogProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSave: () => void;
+  editMode?: boolean;
+}
+
+const SimpleInputDialog: React.FC<SimpleInputDialogProps> = ({
   open,
   onClose,
   title,
@@ -44,4 +55,3 @@ const SimpleInputDialog = ({
 };
 
 export default SimpleInputDialog;
-

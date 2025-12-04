@@ -3,12 +3,16 @@ import type { Flight, Passenger, ShopItem } from '@/types';
 
 export const flights: Flight[] = [
   { 
-    id: 'FL001', 
+    id: 'FL001',
+    name: 'Flight AA101',
     flightNumber: 'AA101',
     origin: 'New York (JFK)',
     destination: 'Los Angeles (LAX)',
+    from: 'New York (JFK)',
+    to: 'Los Angeles (LAX)',
     departureTime: '10:00 AM',
     arrivalTime: '01:30 PM',
+    time: '10:00 AM',
     date: '2025-12-03',
     status: 'On Time',
     aircraft: 'Boeing 737',
@@ -18,12 +22,16 @@ export const flights: Flight[] = [
     availableSeats: 172
   },
   { 
-    id: 'FL002', 
+    id: 'FL002',
+    name: 'Flight BB202',
     flightNumber: 'BB202',
     origin: 'Chicago (ORD)',
     destination: 'Miami (MIA)',
+    from: 'Chicago (ORD)',
+    to: 'Miami (MIA)',
     departureTime: '12:30 PM',
     arrivalTime: '04:45 PM',
+    time: '12:30 PM',
     date: '2025-12-03',
     status: 'Boarding',
     aircraft: 'Airbus A320',
@@ -33,12 +41,16 @@ export const flights: Flight[] = [
     availableSeats: 144
   },
   { 
-    id: 'FL003', 
+    id: 'FL003',
+    name: 'Flight CC303',
     flightNumber: 'CC303',
     origin: 'San Francisco (SFO)',
     destination: 'Seattle (SEA)',
+    from: 'San Francisco (SFO)',
+    to: 'Seattle (SEA)',
     departureTime: '03:15 PM',
     arrivalTime: '05:45 PM',
+    time: '03:15 PM',
     date: '2025-12-03',
     status: 'On Time',
     aircraft: 'Boeing 787',

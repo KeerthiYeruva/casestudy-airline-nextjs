@@ -1,12 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { Box, Typography, Button, Paper, Alert } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: ErrorInfo | null;
+}
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
       hasError: false,
@@ -15,12 +25,12 @@ class ErrorBoundary extends React.Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(_error: Error): Partial<ErrorBoundaryState> {
     // Update state so the next render will show the fallback UI
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Log error details for debugging
     console.error('Error caught by ErrorBoundary:', error, errorInfo);
     this.setState({
@@ -32,7 +42,7 @@ class ErrorBoundary extends React.Component {
     // Example: logErrorToService(error, errorInfo);
   }
 
-  handleReset = () => {
+  handleReset = (): void => {
     this.setState({
       hasError: false,
       error: null,
@@ -40,7 +50,7 @@ class ErrorBoundary extends React.Component {
     });
   };
 
-  render() {
+  render(): ReactNode {
     if (this.state.hasError) {
       return (
         <Box
@@ -129,4 +139,3 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
-
