@@ -1,0 +1,173 @@
+// Breakpoints for responsive design
+$breakpoint-small: 600px;
+$breakpoint-medium: 960px;
+$breakpoint-large: 1280px;
+
+// Mixins for responsive design
+@mixin respond-to-small {
+  @media (max-width: $breakpoint-small) {
+    @content;
+  }
+}
+
+@mixin respond-to-medium {
+  @media (min-width: #{$breakpoint-small + 1}) and (max-width: $breakpoint-medium) {
+    @content;
+  }
+}
+
+@mixin respond-to-large {
+  @media (min-width: #{$breakpoint-medium + 1}) {
+    @content;
+  }
+}
+
+// Global styles
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// Loading container for lazy loaded components
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  padding: 2rem;
+}
+
+body {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+// Responsive navigation
+.MuiToolbar-root {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  @include respond-to-small {
+    flex-wrap: wrap;
+    padding: 8px 16px;
+
+    .MuiButton-root {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      margin: 2px;
+    }
+
+    .MuiTypography-h6 {
+      font-size: 1rem;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+  }
+
+  @include respond-to-medium {
+    .MuiButton-root {
+      font-size: 0.875rem;
+      padding: 6px 12px;
+    }
+  }
+}
+
+// Responsive containers
+.responsive-container {
+  width: 100%;
+  padding: 16px;
+
+  @include respond-to-small {
+    padding: 8px;
+  }
+
+  @include respond-to-medium {
+    padding: 12px;
+  }
+
+  @include respond-to-large {
+    padding: 24px;
+  }
+}
+
+// Flex utilities
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+// Responsive text
+.responsive-text {
+  @include respond-to-small {
+    font-size: 0.875rem;
+  }
+
+  @include respond-to-medium {
+    font-size: 1rem;
+  }
+
+  @include respond-to-large {
+    font-size: 1.125rem;
+  }
+}
+
+// Loading indicator
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  width: 100%;
+}

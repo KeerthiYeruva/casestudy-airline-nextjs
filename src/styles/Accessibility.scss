@@ -1,0 +1,152 @@
+// WCAG 2.0 Level A Accessibility Styles
+
+// Focus indicators
+*:focus,
+*:focus-visible {
+  outline: 3px solid #1976d2;
+  outline-offset: 2px;
+}
+
+button:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 3px solid #1976d2;
+  outline-offset: 2px;
+}
+
+// Skip to main content link
+.skip-to-main {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1em;
+  background-color: #1976d2;
+  color: white;
+  text-decoration: none;
+
+  &:focus {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10px;
+  }
+}
+
+// Screen reader only content
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  button,
+  a,
+  .MuiButton-root {
+    border: 2px solid currentColor;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Keyboard navigation styles
+.keyboard-focus {
+  outline: 3px dashed #1976d2;
+  outline-offset: 3px;
+}
+
+// Error message accessibility
+.error-message {
+  color: #d32f2f;
+  font-weight: 500;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+
+  &::before {
+    content: '⚠';
+    margin-right: 8px;
+    font-size: 1.2em;
+  }
+}
+
+// Success message accessibility
+.success-message {
+  color: #2e7d32;
+  font-weight: 500;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+
+  &::before {
+    content: '✓';
+    margin-right: 8px;
+    font-size: 1.2em;
+  }
+}
+
+// Ensure sufficient color contrast
+.text-primary {
+  color: #1976d2;
+}
+
+.text-secondary {
+  color: #424242;
+}
+
+.text-error {
+  color: #d32f2f;
+}
+
+.text-success {
+  color: #2e7d32;
+}
+
+// Touch target size (minimum 44x44px for WCAG)
+button,
+a,
+.clickable {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Focus trap for modals
+.modal-open {
+  overflow: hidden;
+}
+
+// Improve link visibility
+a {
+  text-decoration: underline;
+  color: #1976d2;
+
+  &:hover {
+    color: #1565c0;
+  }
+
+  &:visited {
+    color: #7b1fa2;
+  }
+}
+  

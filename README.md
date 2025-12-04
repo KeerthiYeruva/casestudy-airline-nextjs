@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Airline Management System - Next.js
 
-## Getting Started
+Modern airline check-in and in-flight management system built with Next.js 15, React 19, Redux Toolkit, Firebase, and Material-UI.
 
-First, run the development server:
+##  Migration from Create React App
 
+This project has been migrated from Create React App to Next.js for improved performance, SEO, and developer experience.
+
+### Key Changes:
+- **Next.js App Router**: Modern routing with React Server Components
+- **Optimized Bundle**: Better code splitting and lazy loading
+- **TypeScript Support**: Enhanced type safety
+- **Server-Side Rendering**: Improved initial page load
+- **Material-UI Next.js Integration**: Optimized styling for SSR
+
+##  Prerequisites
+
+- Node.js 18.17 or higher
+- npm or yarn
+- Firebase account with project setup
+
+##  Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/YOUR_USERNAME/casestudy-airline-nextjs.git
+cd casestudy-airline-nextjs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Configure Firebase:
+   - Create a `.env.local` file in the root directory
+   - Add your Firebase configuration:
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+##  Running the Application
 
-## Learn More
+### Development Mode
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+### Production Build
+```bash
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Run Tests
+```bash
+npm test
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+##  Project Structure
 
-## Deploy on Vercel
+```
+casestudy-airline-nextjs/
+ src/
+    app/                    # Next.js App Router
+       layout.tsx         # Root layout with providers
+       page.tsx           # Main application page
+       theme.ts           # Material-UI theme
+    components/            # React components
+       AdminDashboard.js
+       Auth.js
+       ErrorBoundary.js
+       InFlight.js
+       SeatMapVisual.js
+       StaffCheckIn.js
+       ...
+    lib/                   # Library utilities
+       store.js          # Redux store
+       firebaseConfig.js # Firebase configuration
+       ReduxProvider.jsx # Redux provider wrapper
+    slices/               # Redux slices
+    constants/            # App constants
+    data/                 # Static data
+    styles/               # SCSS stylesheets
+ next.config.js            # Next.js configuration
+ jest.config.js            # Jest testing configuration
+ package.json
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+##  Features
+
+- **Staff Check-In**: Passenger check-in management
+- **In-Flight Services**: Meal service and ancillary tracking
+- **Admin Dashboard**: Flight and passenger management
+- **Authentication**: Firebase Authentication (Google Sign-In)
+- **Role-Based Access**: Admin and staff roles
+- **Accessibility**: WCAG 2.1 Level AA compliant
+- **Responsive Design**: Mobile-first approach
+
+##  Testing
+
+The project uses Jest and React Testing Library:
+- Unit tests for components
+- Integration tests for Redux slices
+- Accessibility tests
+
+##  Documentation
+
+- [Quick Start Guide](./QUICKSTART.md)
+- [Implementation Details](./IMPLEMENTATION.md)
+- [Authentication Guide](./AUTHENTICATION_GUIDE.md)
+- [Accessibility Features](./ACCESSIBILITY.md)
+- [Testing Notes](./TESTING_NOTES.md)
+
+##  Technologies
+
+- **Next.js 15**: React framework with App Router
+- **React 19**: UI library
+- **Redux Toolkit**: State management
+- **Firebase**: Authentication and backend
+- **Material-UI**: Component library
+- **Sass**: CSS preprocessor
+- **Jest**: Testing framework
+
+##  License
+
+This project is private and proprietary.
+
+##  Contributing
+
+Please read the contributing guidelines before submitting pull requests.

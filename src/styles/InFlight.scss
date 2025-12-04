@@ -1,0 +1,185 @@
+.inflight {
+  .flight-list-panel {
+    padding: 16px;
+    max-height: 600px;
+    overflow-y: auto;
+
+    .flight-item {
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: rgba(25, 118, 210, 0.08);
+      }
+
+      &.Mui-selected {
+        background-color: rgba(25, 118, 210, 0.12);
+        border-left: 4px solid #1976d2;
+      }
+    }
+  }
+
+  .flight-details {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+
+    .MuiTypography-root {
+      color: white;
+    }
+
+    .MuiTypography-body2 {
+      opacity: 0.9;
+    }
+  }
+
+  .seat-map.inflight {
+    .legend {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+
+      .seat-chip {
+        &.available {
+          background-color: #e0e0e0;
+          border: 1px solid #bdbdbd;
+        }
+
+        &.regular {
+          background-color: #4caf50;
+          color: white;
+        }
+
+        &.special-meal {
+          background-color: #ff5722;
+          color: white;
+        }
+      }
+    }
+
+    .seats-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px;
+      background-color: #fafafa;
+      border-radius: 8px;
+      overflow-x: auto;
+
+      .seat-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .row-number {
+          width: 30px;
+          text-align: center;
+          font-weight: 600;
+          color: #666;
+        }
+
+        .seat {
+          min-width: 45px;
+          height: 45px;
+          font-size: 11px;
+          font-weight: 600;
+          border-radius: 8px 8px 4px 4px;
+          transition: all 0.2s ease;
+
+          &.available {
+            background-color: #e0e0e0;
+            border-color: #bdbdbd;
+            color: #757575;
+          }
+
+          &.regular {
+            background-color: #4caf50;
+            border-color: #388e3c;
+            color: white;
+
+            &:hover {
+              background-color: #45a049;
+              transform: scale(1.05);
+            }
+          }
+
+          &.special-meal {
+            background-color: #ff5722;
+            border-color: #e64a19;
+            color: white;
+            position: relative;
+
+            &::after {
+              content: '🍽️';
+              position: absolute;
+              top: 2px;
+              right: 2px;
+              font-size: 10px;
+            }
+
+            &:hover {
+              background-color: #f4511e;
+              transform: scale(1.05);
+            }
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+
+            &:hover {
+              transform: none;
+            }
+          }
+        }
+
+        .aisle {
+          width: 24px;
+        }
+      }
+    }
+  }
+
+  .passenger-list-panel {
+    max-height: 600px;
+    overflow-y: auto;
+
+    .passenger-item {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #f5f5f5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      &.selected {
+        border-color: #1976d2;
+        background-color: rgba(25, 118, 210, 0.08);
+      }
+    }
+  }
+
+  .MuiCard-root {
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .MuiChip-root {
+    margin: 2px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
