@@ -92,6 +92,7 @@ const AdminDashboard = () => {
     price: 0,
     currency: 'USD',
   });
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Filter passengers
   const filteredPassengers = selectedFlight
@@ -100,12 +101,14 @@ const AdminDashboard = () => {
         if (filterOptions.missingPassport && p.passport?.number) return false;
         if (filterOptions.missingAddress && p.address) return false;
         if (filterOptions.missingDOB && p.dateOfBirth) return false;
+        if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
         return true;
       })
     : passengers.filter((p) => {
         if (filterOptions.missingPassport && p.passport?.number) return false;
         if (filterOptions.missingAddress && p.address) return false;
         if (filterOptions.missingDOB && p.dateOfBirth) return false;
+        if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
         return true;
       });
 
@@ -353,9 +356,19 @@ const AdminDashboard = () => {
 
         {activeTab === 0 && (
           <>
-            {/* Flight Selection & Filters */}
+            {/* Search & Filters */}
             <Grid container spacing={2} sx={{ mb: 3 }}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Search by Passenger Name"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Enter passenger name..."
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Filter by Flight</InputLabel>
                   <Select
@@ -375,9 +388,9 @@ const AdminDashboard = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                  <Typography variant="body2">Filter by missing:</Typography>
+                  <Typography variant="body2">Missing:</Typography>
                   <FormGroup row>
                     <FormControlLabel
                       control={
