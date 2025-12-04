@@ -124,16 +124,16 @@ const AdminDashboard: React.FC = () => {
   const filteredPassengers = selectedFlight
     ? passengers.filter((p) => {
         if (p.flightId !== selectedFlight.id) return false;
-        if (filterOptions.missingPassport && p.passport?.number) return false;
-        if (filterOptions.missingAddress && p.address) return false;
-        if (filterOptions.missingDOB && p.dateOfBirth) return false;
+        if (filterOptions.missingPassport && p.passport?.number?.trim()) return false;
+        if (filterOptions.missingAddress && p.address?.trim()) return false;
+        if (filterOptions.missingDOB && p.dateOfBirth?.trim()) return false;
         if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
         return true;
       })
     : passengers.filter((p) => {
-        if (filterOptions.missingPassport && p.passport?.number) return false;
-        if (filterOptions.missingAddress && p.address) return false;
-        if (filterOptions.missingDOB && p.dateOfBirth) return false;
+        if (filterOptions.missingPassport && p.passport?.number?.trim()) return false;
+        if (filterOptions.missingAddress && p.address?.trim()) return false;
+        if (filterOptions.missingDOB && p.dateOfBirth?.trim()) return false;
         if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
         return true;
       });
