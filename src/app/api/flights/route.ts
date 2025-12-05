@@ -4,11 +4,23 @@ import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
 import { CreateFlightSchema, validateSchema } from '@/lib/validationSchemas';
 import type { Flight } from '@/types';
 
-// GET all flights
+// Enable caching for this route
+export const dynamic = 'force-static';
+export const revalidate = 60; // Revalidate every 60 seconds
+
+// GET all flights with caching
 export async function GET() {
   try {
     const flights = await flightDB.getAll();
-    return successResponse(flights);
+    const response = successResponse(flights);
+    
+    // Add cache control headers
+    response.headers.set(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=120'
+    );
+    
+    return response;
   } catch (error) {
     return handleApiError(error);
   }

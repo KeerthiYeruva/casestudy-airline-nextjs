@@ -3,13 +3,14 @@ import { passengerDB } from '@/lib/db';
 import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtils';
 import { UpdatePassengerSchema, validateSchema } from '@/lib/validationSchemas';
 import { eventBroadcaster } from '@/lib/eventBroadcaster';
+import { revalidatePath } from 'next/cache';
 import type { Passenger } from '@/types';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-// GET single passenger by ID
+// GET single passenger by ID with caching
 export async function GET(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -19,13 +20,19 @@ export async function GET(_request: Request, { params }: RouteParams) {
       return notFoundResponse('Passenger');
     }
     
-    return successResponse(passenger);
+    const response = successResponse(passenger);
+    response.headers.set(
+      'Cache-Control',
+      'public, s-maxage=30, stale-while-revalidate=60'
+    );
+    
+    return response;
   } catch (error) {
     return handleApiError(error);
   }
 }
 
-// PUT update passenger
+// PUT update passenger with cache revalidation
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -35,6 +42,14 @@ export async function PUT(request: Request, { params }: RouteParams) {
     
     if (!updatedPassenger) {
       return notFoundResponse('Passenger');
+    }
+    
+    // Revalidate cache
+    try {
+      revalidatePath('/api/passengers');
+      revalidatePath(`/api/passengers/${id}`);
+    } catch (e) {
+      console.warn('Cache revalidation failed:', e);
     }
     
     // Broadcast update to all connected clients
@@ -49,7 +64,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
   }
 }
 
-// DELETE passenger
+// DELETE passenger with cache revalidation
 export async function DELETE(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -57,6 +72,14 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     
     if (!deletedPassenger) {
       return notFoundResponse('Passenger');
+    }
+    
+    // Revalidate cache
+    try {
+      revalidatePath('/api/passengers');
+      revalidatePath(`/api/passengers/${id}`);
+    } catch (e) {
+      console.warn('Cache revalidation failed:', e);
     }
     
     // Broadcast deletion to all connected clients
