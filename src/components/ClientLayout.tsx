@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import ToastNotification from '@/components/ToastNotification';
 import FirestoreSync from '@/components/FirestoreSync';
+import FirestoreInitializer from '@/components/FirestoreInitializer';
 
 interface ClientLayoutProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ interface ClientLayoutProps {
  * 
  * Wraps the application with client-side features:
  * - Toast notifications for user feedback
+ * - Firestore data initialization (seeds database on first load)
  * - Firestore real-time data synchronization
  * 
  * This is separated from the root layout to allow use of React hooks
@@ -23,6 +25,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   return (
     <>
       {children}
+      <FirestoreInitializer />
       <FirestoreSync />
       <ToastNotification />
     </>

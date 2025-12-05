@@ -234,7 +234,7 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
                 >
                   {flights.map((flight) => (
                     <MenuItem key={flight.id} value={flight.id}>
-                      {flight.name || flight.flightNumber}
+                      {flight.flightNumber} - {flight.origin} → {flight.destination} ({new Date(flight.departureTime).toLocaleDateString()})
                     </MenuItem>
                   ))}
                 </Select>
@@ -266,7 +266,7 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
                   >
                     {flights.map((flight) => (
                       <MenuItem key={flight.id} value={flight.id}>
-                        {flight.name || flight.flightNumber}
+                        {flight.flightNumber} - {flight.origin} → {flight.destination} ({new Date(flight.departureTime).toLocaleDateString()})
                       </MenuItem>
                     ))}
                   </Select>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useRef} from "react";
 import useCheckInStore from "@/stores/useCheckInStore";
 import useDataStore from "@/stores/useDataStore";
 import useToastStore from "@/stores/useToastStore";
@@ -49,14 +49,40 @@ const InFlight: React.FC = () => {
   const { showToast } = useToastStore();
   const { isConnected } = useRealtimeUpdates();
 
+  const hasFetchedRef = useRef(false);
+
   useEffect(() => {
-    fetchFlights();
-    fetchPassengers();
-    setShopItems(shopItemsData);
-    setShopCategories(shopCategoriesData);
-    setAncillaryServices(ancillaryServicesData);
-    setMealOptions(mealOptionsData);
+    // Only fetch once on initial mount if store is empty
+    if (!hasFetchedRef.current) {
+      if (flights.length === 0) {
+        fetchFlights();
+      }
+      if (passengers.length === 0) {
+        fetchPassengers();
+      }
+      
+      // Initialize static data
+      if (shopItems.length === 0) {
+        setShopItems(shopItemsData);
+      }
+      if (shopCategories.length === 0) {
+        setShopCategories(shopCategoriesData);
+      }
+      if (ancillaryServices.length === 0) {
+        setAncillaryServices(ancillaryServicesData);
+      }
+      if (mealOptions.length === 0) {
+        setMealOptions(mealOptionsData);
+      }
+      hasFetchedRef.current = true;
+    }
   }, [
+    flights.length,
+    passengers.length,
+    shopItems.length,
+    shopCategories.length,
+    ancillaryServices.length,
+    mealOptions.length,
     fetchFlights,
     fetchPassengers,
     setShopItems,
@@ -91,17 +117,14 @@ const InFlight: React.FC = () => {
     }
   };
 
-  const refreshSelectedPassenger = () => {
-    if (selectedPassenger) {
-      setTimeout(() => {
-        const updated = passengers.find((p) => p.id === selectedPassenger.id);
-        if (updated) setSelectedPassenger(updated);
-      }, 100);
-    }
-  };
+  // Derive the current passenger data from the passengers array
+  // This ensures we always show the latest data without setState in effect
+  const currentPassengerData = selectedPassenger 
+    ? passengers.find((p) => p.id === selectedPassenger.id) || selectedPassenger
+    : null;
 
   const availableServices = ancillaryServices.filter(
-    (service) => !selectedPassenger?.ancillaryServices.includes(service)
+    (service) => !currentPassengerData?.ancillaryServices.includes(service)
   );
 
   const handleAddService = async () => {
@@ -113,14 +136,12 @@ const InFlight: React.FC = () => {
     showToast(`${selectedService} added for ${selectedPassenger.name}`, "success");
     setAddServiceDialog(false);
     setSelectedService("");
-    refreshSelectedPassenger();
   };
 
   const handleRemoveService = async (service: string) => {
     if (selectedPassenger) {
       await removeAncillaryServiceFromPassenger(selectedPassenger.id, service);
       showToast(`${service} removed`, "info");
-      refreshSelectedPassenger();
     }
   };
 
@@ -133,7 +154,6 @@ const InFlight: React.FC = () => {
     showToast(`Meal changed to ${selectedMeal} for ${selectedPassenger.name}`, "success");
     setChangeMealDialog(false);
     setSelectedMeal("");
-    refreshSelectedPassenger();
   };
 
   const handleAddShopItem = async () => {
@@ -153,7 +173,6 @@ const InFlight: React.FC = () => {
     );
     showToast(`${selectedShopItem.name} (x${shopQuantity}) added to cart`, "success");
     handleCloseShopDialog();
-    refreshSelectedPassenger();
   };
 
   const handleCloseShopDialog = () => {
@@ -274,13 +293,13 @@ const InFlight: React.FC = () => {
                 </Grid>
               </Grid>
 
-              {selectedPassenger && (
+              {currentPassengerData && (
                 <PassengerServicePanel
-                  passenger={selectedPassenger}
+                  passenger={currentPassengerData}
                   onAddService={() => setAddServiceDialog(true)}
                   onRemoveService={handleRemoveService}
                   onChangeMeal={() => {
-                    setSelectedMeal(selectedPassenger.specialMeal);
+                    setSelectedMeal(currentPassengerData.specialMeal);
                     setChangeMealDialog(true);
                   }}
                   onAddShopItem={() => setShopDialog(true)}
@@ -309,11 +328,11 @@ const InFlight: React.FC = () => {
         onConfirm={handleAddService}
       />
 
-      {selectedPassenger && (
+      {currentPassengerData && (
         <>
           <ChangeMealDialog
             open={changeMealDialog}
-            currentMeal={selectedPassenger.specialMeal}
+            currentMeal={currentPassengerData.specialMeal}
             mealOptions={mealOptions}
             selectedMeal={selectedMeal}
             onMealChange={setSelectedMeal}

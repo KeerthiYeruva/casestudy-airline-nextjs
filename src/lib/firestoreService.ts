@@ -329,6 +329,49 @@ export function subscribeToPassengers(
   }
 }
 
+/**
+ * Reset Firestore data to initial state
+ * Deletes all existing data and re-seeds with initial data
+ */
+export async function resetFirestoreData(): Promise<void> {
+  if (!isFirebaseConfigured()) {
+    console.log('[Firestore] Not configured - skipping reset');
+    return;
+  }
+
+  try {
+    console.log('[Firestore] Resetting data...');
+
+    // Delete all existing flights
+    const flightsSnapshot = await getDocs(collection(db, COLLECTIONS.FLIGHTS));
+    for (const docSnapshot of flightsSnapshot.docs) {
+      await deleteDoc(doc(db, COLLECTIONS.FLIGHTS, docSnapshot.id));
+    }
+
+    // Delete all existing passengers
+    const passengersSnapshot = await getDocs(collection(db, COLLECTIONS.PASSENGERS));
+    for (const docSnapshot of passengersSnapshot.docs) {
+      await deleteDoc(doc(db, COLLECTIONS.PASSENGERS, docSnapshot.id));
+    }
+
+    // Delete all existing shop items
+    const shopItemsSnapshot = await getDocs(collection(db, COLLECTIONS.SHOP_ITEMS));
+    for (const docSnapshot of shopItemsSnapshot.docs) {
+      await deleteDoc(doc(db, COLLECTIONS.SHOP_ITEMS, docSnapshot.id));
+    }
+
+    console.log('[Firestore] Old data deleted');
+
+    // Re-initialize with sample data
+    await initializeFirestoreData();
+
+    console.log('[Firestore] Data reset complete');
+  } catch (error) {
+    console.error('[Firestore] Error resetting data:', error);
+    throw error;
+  }
+}
+
 // Initialize on module load (client-side only)
 if (typeof window !== 'undefined') {
   isFirebaseConfigured();

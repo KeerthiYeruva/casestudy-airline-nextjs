@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import useAdminStore from "@/stores/useAdminStore";
 import useDataStore from "@/stores/useDataStore";
 import useToastStore from "@/stores/useToastStore";
@@ -68,11 +68,20 @@ const AdminDashboard: React.FC = () => {
   } = useAdminStore();
   const { showToast } = useToastStore();
   const { isConnected } = useRealtimeUpdates();
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
-    fetchFlights();
-    fetchPassengers();
-  }, [fetchFlights, fetchPassengers]);
+    // Only fetch once on initial mount if store is empty
+    if (!hasFetchedRef.current) {
+      if (flights.length === 0) {
+        fetchFlights();
+      }
+      if (passengers.length === 0) {
+        fetchPassengers();
+      }
+      hasFetchedRef.current = true;
+    }
+  }, [flights.length, passengers.length, fetchFlights, fetchPassengers]);
 
   const [activeTab, setActiveTab] = useState(0);
   const [serviceDialog, setServiceDialog] = useState(false);

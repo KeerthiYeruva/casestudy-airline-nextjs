@@ -345,12 +345,23 @@ export const categoryDB = {
 };
 
 // Reset database to initial state
-export const resetDatabase = () => {
-  // Reload initial data
+export const resetDatabase = async (): Promise<void> => {
+  // Reload initial data for in-memory storage
   flights = JSON.parse(JSON.stringify(initialFlights));
   passengers = JSON.parse(JSON.stringify(initialPassengers));
   services = [...ancillaryServices];
   meals = [...mealOptions];
   shop = JSON.parse(JSON.stringify(shopItems));
   categories = [...shopCategories];
+
+  // If Firestore is configured, also reset Firestore data
+  if (useFirestore) {
+    try {
+      await firestoreService.resetFirestoreData();
+      console.log('[DB] Firestore data reset successfully');
+    } catch (error) {
+      console.error('[DB] Error resetting Firestore data:', error);
+      throw error;
+    }
+  }
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useCheckInStore from '@/stores/useCheckInStore';
 import useDataStore from '@/stores/useDataStore';
 import useToastStore from '@/stores/useToastStore';
@@ -22,11 +22,20 @@ const StaffCheckIn: React.FC = () => {
   const { selectedFlight, filterOptions, selectFlight, setFilter, clearFilters } = useCheckInStore();
   const { showToast } = useToastStore();
   const { isConnected, isSeatLocked, lockSeat, unlockSeat } = useRealtimeUpdates();
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
-    fetchFlights();
-    fetchPassengers();
-  }, [fetchFlights, fetchPassengers]);
+    // Only fetch once on initial mount if store is empty
+    if (!hasFetchedRef.current) {
+      if (flights.length === 0) {
+        fetchFlights();
+      }
+      if (passengers.length === 0) {
+        fetchPassengers();
+      }
+      hasFetchedRef.current = true;
+    }
+  }, [flights.length, passengers.length, fetchFlights, fetchPassengers]);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
   const [changeSeatDialog, setChangeSeatDialog] = useState(false);
