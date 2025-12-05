@@ -1,6 +1,6 @@
 // API Route for resetting data to initial state
-import { NextResponse } from 'next/server';
 import { resetDatabase } from '@/lib/db';
+import { handleApiError, successResponse } from '@/lib/apiUtils';
 
 // POST reset database to initial state
 export async function POST() {
@@ -9,16 +9,11 @@ export async function POST() {
     resetDatabase();
     
     // Return success - frontend will handle its own localStorage via Zustand
-    return NextResponse.json({ 
-      success: true, 
+    return successResponse({ 
       message: 'Database reset to initial state successfully',
       clearStorage: true // Signal to frontend to clear its persist storage
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

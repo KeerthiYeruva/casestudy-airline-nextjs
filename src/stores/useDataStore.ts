@@ -158,9 +158,13 @@ const useDataStore = create<DataStore>()(
             set((state) => ({ passengers: [...state.passengers, result.data!] }));
             return result.data;
           }
+          // Store the error message from API
+          const errorMsg = result.error || 'Failed to add passenger';
+          set({ error: errorMsg });
           return null;
         } catch (error) {
-          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          set({ error: errorMsg });
           return null;
         }
       },
@@ -179,9 +183,13 @@ const useDataStore = create<DataStore>()(
             }));
             return result.data;
           }
+          // Store the error message from API
+          const errorMsg = result.error || 'Failed to update passenger';
+          set({ error: errorMsg });
           return null;
         } catch (error) {
-          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          set({ error: errorMsg });
           return null;
         }
       },

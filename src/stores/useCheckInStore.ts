@@ -19,9 +19,9 @@ const useCheckInStore = create<CheckInStore>()(
       // Actions
       selectFlight: (flight: Flight | null) => set({ selectedFlight: flight }),
 
-      setFilter: (filterKey: keyof FilterOptions, value: boolean | null) =>
+      setFilter: (updates: Partial<FilterOptions>) =>
         set((state) => ({
-          filterOptions: { ...state.filterOptions, [filterKey]: value },
+          filterOptions: { ...state.filterOptions, ...updates },
         })),
 
       clearFilters: () =>

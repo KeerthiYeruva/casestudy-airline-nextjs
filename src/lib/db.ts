@@ -9,15 +9,32 @@ import {
   shopItems, 
   shopCategories 
 } from '@/data/flightData';
-import type { Flight, Passenger } from '@/types';
+import type { Flight, Passenger, ShopItem } from '@/types';
 
 // Use initial data directly - Zustand persist handles localStorage
 let flights: Flight[] = JSON.parse(JSON.stringify(initialFlights));
 let passengers: Passenger[] = JSON.parse(JSON.stringify(initialPassengers));
 let services: string[] = [...ancillaryServices];
 let meals: string[] = [...mealOptions];
-let shop = JSON.parse(JSON.stringify(shopItems));
+let shop: ShopItem[] = JSON.parse(JSON.stringify(shopItems));
 let categories: string[] = [...shopCategories];
+
+// Helper function to check if seat is available
+function validateSeatAvailability(
+  seat: string, 
+  flightId: string, 
+  excludePassengerId?: string
+): void {
+  const existingPassenger = passengers.find(p => 
+    p.id !== excludePassengerId &&
+    p.seat === seat && 
+    p.flightId === flightId
+  );
+  
+  if (existingPassenger) {
+    throw new Error(`Seat ${seat} is already occupied by ${existingPassenger.name}`);
+  }
+}
 
 // Database operations for Flights
 export const flightDB = {
@@ -69,6 +86,11 @@ export const passengerDB = {
   getByFlightId: (flightId: string): Passenger[] => passengers.filter(p => p.flightId === flightId),
   
   create: (passenger: Partial<Passenger>): Passenger => {
+    // Check if seat is already occupied on this flight
+    if (passenger.seat && passenger.flightId) {
+      validateSeatAvailability(passenger.seat, passenger.flightId);
+    }
+    
     const newPassenger: Passenger = { 
       id: `P${Date.now()}`,
       name: passenger.name || '',
@@ -92,12 +114,19 @@ export const passengerDB = {
   
   update: (id: string, updates: Partial<Passenger>): Passenger | null => {
     const index = passengers.findIndex(p => p.id === id);
-    if (index !== -1) {
-      passengers[index] = { ...passengers[index], ...updates };
-
-      return passengers[index];
+    if (index === -1) {
+      return null;
     }
-    return null;
+    
+    // If updating seat, check if it's already occupied on the same flight
+    if (updates.seat) {
+      const currentPassenger = passengers[index];
+      const flightId = updates.flightId || currentPassenger.flightId;
+      validateSeatAvailability(updates.seat, flightId, id);
+    }
+    
+    passengers[index] = { ...passengers[index], ...updates };
+    return passengers[index];
   },
   
   delete: (id: string): Passenger | null => {
@@ -133,12 +162,15 @@ export const passengerDB = {
   
   changeSeat: (id: string, newSeat: string): Passenger | null => {
     const passenger = passengers.find(p => p.id === id);
-    if (passenger) {
-      passenger.seat = newSeat;
-
-      return passenger;
+    if (!passenger) {
+      return null;
     }
-    return null;
+    
+    // Check if the new seat is already occupied by another passenger on the same flight
+    validateSeatAvailability(newSeat, passenger.flightId, id);
+    
+    passenger.seat = newSeat;
+    return passenger;
   },
 };
 
@@ -148,12 +180,10 @@ export const serviceDB = {
   add: (service: string): void => {
     if (!services.includes(service)) {
       services.push(service);
-
     }
   },
   remove: (service: string): void => {
     services = services.filter(s => s !== service);
-
   },
 };
 
@@ -174,15 +204,15 @@ export const mealDB = {
 
 // Database operations for Shop Items
 export const shopDB = {
-  getAll: () => [...shop],
-  getById: (id: string) => shop.find((item) => item.id === id),
-  getByCategory: (category: string) => shop.filter((item) => item.category === category),
-  add: (item: typeof shop[0]) => {
+  getAll: (): ShopItem[] => [...shop],
+  getById: (id: string): ShopItem | undefined => shop.find((item) => item.id === id),
+  getByCategory: (category: string): ShopItem[] => shop.filter((item) => item.category === category),
+  add: (item: ShopItem): ShopItem => {
     shop.push(item);
 
     return item;
   },
-  update: (id: string, updates: Partial<typeof shop[0]>) => {
+  update: (id: string, updates: Partial<ShopItem>): ShopItem | null => {
     const index = shop.findIndex((item) => item.id === id);
     if (index !== -1) {
       shop[index] = { ...shop[index], ...updates };
@@ -191,7 +221,7 @@ export const shopDB = {
     }
     return null;
   },
-  delete: (id: string) => {
+  delete: (id: string): ShopItem | null => {
     const index = shop.findIndex((item) => item.id === id);
     if (index !== -1) {
       const deleted = shop[index];

@@ -17,6 +17,7 @@ import {
   MenuItem,
   Paper,
   Chip,
+  Divider,
 } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import PersonIcon from '@mui/icons-material/Person';
@@ -158,25 +159,42 @@ const Auth: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          padding: 3,
+          background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+          padding: { xs: 2, sm: 3 },
         }}
       >
         <Paper
           elevation={10}
           sx={{
-            padding: 4,
+            padding: { xs: 3, sm: 5 },
             textAlign: 'center',
-            maxWidth: 400,
+            maxWidth: 450,
             width: '100%',
+            borderRadius: 3,
           }}
         >
-          <Typography variant="h4" gutterBottom color="primary">
-            Airline Management System
-          </Typography>
-          <Typography variant="body1" color="textSecondary" sx={{ mb: 3 }}>
-            Sign in to access check-in, in-flight services, and admin dashboard
-          </Typography>
+          <Box sx={{ mb: 3 }}>
+            <Avatar
+              sx={{
+                width: 64,
+                height: 64,
+                bgcolor: 'primary.main',
+                margin: '0 auto',
+                mb: 2,
+              }}
+            >
+              <PersonIcon sx={{ fontSize: 40 }} />
+            </Avatar>
+            <Typography variant="h4" gutterBottom fontWeight="bold" color="primary">
+              Airline Management
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+              Streamline check-in, in-flight services, and passenger management
+            </Typography>
+          </Box>
+          
+          <Divider sx={{ my: 3 }} />
+          
           <Button
             variant="contained"
             size="large"
@@ -184,42 +202,60 @@ const Auth: React.FC = () => {
             onClick={handleLogin}
             disabled={loading}
             fullWidth
-            sx={{ mb: 2 }}
+            sx={{ 
+              mb: 2, 
+              py: 1.5,
+              fontSize: '1rem',
+              textTransform: 'none',
+              boxShadow: 2,
+            }}
           >
             {loading ? 'Signing in...' : 'Sign in with Google'}
           </Button>
+          
           {error && (
-            <Typography color="error" variant="body2">
-              {error}
-            </Typography>
+            <Box sx={{ mt: 2, p: 1.5, bgcolor: 'error.50', borderRadius: 1 }}>
+              <Typography color="error" variant="body2">
+                {error}
+              </Typography>
+            </Box>
           )}
+          
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+            Secure authentication powered by Google
+          </Typography>
         </Paper>
 
         {/* Role Selection Dialog */}
         <Dialog open={roleDialog} onClose={() => {}} disableEscapeKeyDown maxWidth="sm" fullWidth>
-          <DialogTitle>Select User & Role</DialogTitle>
-          <DialogContent>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-              Select a mock user and your role to continue:
+          <DialogTitle sx={{ pb: 1 }}>
+            <Typography variant="h5" fontWeight="bold">
+              Complete Setup
             </Typography>
-            
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>User</InputLabel>
+            <Typography variant="body2" color="text.secondary">
+              Select your user profile and role
+            </Typography>
+          </DialogTitle>
+          <DialogContent sx={{ pt: 2 }}>
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <InputLabel>Select User</InputLabel>
               <Select
                 value={selectedMockUser}
-                label="User"
+                label="Select User"
                 onChange={(e) => setSelectedMockUser(e.target.value as number)}
               >
                 {MOCK_USERS.map((mockUser, index) => (
                   <MenuItem key={mockUser.uid} value={index}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 0.5 }}>
                       <Avatar 
                         src={mockUser.photoURL} 
-                        sx={{ width: 24, height: 24 }}
+                        sx={{ width: 32, height: 32 }}
                       />
                       <Box>
-                        <Typography variant="body2">{mockUser.displayName}</Typography>
-                        <Typography variant="caption" color="textSecondary">
+                        <Typography variant="body1" fontWeight="medium">
+                          {mockUser.displayName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
                           {mockUser.email}
                         </Typography>
                       </Box>
@@ -229,26 +265,41 @@ const Auth: React.FC = () => {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
-              <InputLabel>Role</InputLabel>
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>Select Role</InputLabel>
               <Select
                 value={selectedRole}
-                label="Role"
+                label="Select Role"
                 onChange={(e) => setSelectedRole(e.target.value as 'staff' | 'admin')}
               >
-                <MenuItem value="staff">Airline Staff</MenuItem>
-                <MenuItem value="admin">Administrator</MenuItem>
+                <MenuItem value="staff">
+                  <Box>
+                    <Typography variant="body1" fontWeight="medium">Airline Staff</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Access Check-In and In-Flight services
+                    </Typography>
+                  </Box>
+                </MenuItem>
+                <MenuItem value="admin">
+                  <Box>
+                    <Typography variant="body1" fontWeight="medium">Administrator</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Full access including passenger management
+                    </Typography>
+                  </Box>
+                </MenuItem>
               </Select>
             </FormControl>
-            <Typography variant="caption" display="block" sx={{ mt: 2 }}>
-              <strong>Staff:</strong> Access Check-In and In-Flight services
-              <br />
-              <strong>Admin:</strong> Full access including passenger management
-            </Typography>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleRoleSelection} variant="contained" size="large">
-              Continue
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button 
+              onClick={handleRoleSelection} 
+              variant="contained" 
+              size="large"
+              fullWidth
+              sx={{ py: 1.5 }}
+            >
+              Continue to Dashboard
             </Button>
           </DialogActions>
         </Dialog>
@@ -261,42 +312,57 @@ const Auth: React.FC = () => {
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: 2,
-        padding: 1,
+        gap: { xs: 0.5, sm: 1.5 },
+        padding: { xs: 0.5, sm: 1 },
       }}
     >
-      <Avatar src={user?.photoURL || undefined} alt={user?.displayName || undefined}>
-        <PersonIcon />
-      </Avatar>
-      <Box>
-        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-          {user?.displayName}
-        </Typography>
-        <Chip
-          label={role === 'admin' ? 'Administrator' : 'Staff'}
-          size="small"
-          color={role === 'admin' ? 'secondary' : 'primary'}
-          sx={{ fontSize: '0.7rem' }}
-        />
+      <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
+        <Avatar 
+          src={user?.photoURL || undefined} 
+          alt={user?.displayName || undefined}
+          sx={{ width: 32, height: 32 }}
+        >
+          <PersonIcon fontSize="small" />
+        </Avatar>
+        <Box>
+          <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.85rem', lineHeight: 1.2 }}>
+            {user?.displayName}
+          </Typography>
+          <Chip
+            label={role === 'admin' ? 'Admin' : 'Staff'}
+            size="small"
+            color={role === 'admin' ? 'secondary' : 'primary'}
+            sx={{ fontSize: '0.65rem', height: 18, mt: 0.25 }}
+          />
+        </Box>
       </Box>
-      <FormControl size="small" sx={{ minWidth: 100 }}>
+      
+      <FormControl size="small" sx={{ minWidth: { xs: 70, sm: 90 }, display: { xs: 'none', md: 'block' } }}>
         <Select
           value={role || 'staff'}
           onChange={(e) => handleRoleChange(e.target.value as 'staff' | 'admin')}
           displayEmpty
+          sx={{ fontSize: '0.8rem' }}
         >
           <MenuItem value="staff">Staff</MenuItem>
           <MenuItem value="admin">Admin</MenuItem>
         </Select>
       </FormControl>
+      
       <Button
-        variant="outlined"
+        variant="text"
         size="small"
-        startIcon={<LogoutIcon />}
+        startIcon={<LogoutIcon sx={{ display: { xs: 'none', sm: 'block' } }} />}
         onClick={handleLogout}
         aria-label="Logout"
+        color="inherit"
+        sx={{ 
+          fontSize: { xs: '0.7rem', sm: '0.8rem' },
+          px: { xs: 1, sm: 1.5 },
+          minWidth: 'auto'
+        }}
       >
-        Logout
+        {window.innerWidth < 600 ? 'Out' : 'Logout'}
       </Button>
     </Box>
   );

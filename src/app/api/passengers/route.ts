@@ -1,6 +1,7 @@
 // API Route for Passengers CRUD operations (TypeScript)
-import { NextResponse } from 'next/server';
 import { passengerDB } from '@/lib/db';
+import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
+import { CreatePassengerSchema, validateSchema } from '@/lib/validationSchemas';
 import type { Passenger } from '@/types';
 
 // GET all passengers or filter by flightId
@@ -16,27 +17,20 @@ export async function GET(request: Request) {
       passengers = passengerDB.getAll();
     }
     
-    return NextResponse.json({ success: true, data: passengers });
+    return successResponse(passengers);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 
 // POST create new passenger
 export async function POST(request: Request) {
   try {
-    const body: Partial<Passenger> = await request.json();
-    const newPassenger = passengerDB.create(body);
-    return NextResponse.json({ success: true, data: newPassenger }, { status: 201 });
+    const body = await request.json();
+    const validatedData = validateSchema(CreatePassengerSchema, body);
+    const newPassenger = passengerDB.create(validatedData as Partial<Passenger>);
+    return successResponse(newPassenger, HTTP_STATUS.CREATED);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

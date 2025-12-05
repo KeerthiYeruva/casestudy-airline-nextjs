@@ -1,33 +1,27 @@
 // API Route for Flights CRUD operations (TypeScript)
-import { NextResponse } from 'next/server';
 import { flightDB } from '@/lib/db';
+import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
+import { CreateFlightSchema, validateSchema } from '@/lib/validationSchemas';
 import type { Flight } from '@/types';
 
 // GET all flights
 export async function GET() {
   try {
     const flights = flightDB.getAll();
-    return NextResponse.json({ success: true, data: flights });
+    return successResponse(flights);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 
 // POST create new flight
 export async function POST(request: Request) {
   try {
-    const body: Partial<Flight> = await request.json();
-    const newFlight = flightDB.create(body);
-    return NextResponse.json({ success: true, data: newFlight }, { status: 201 });
+    const body = await request.json();
+    const validatedData = validateSchema(CreateFlightSchema, body);
+    const newFlight = flightDB.create(validatedData as Partial<Flight>);
+    return successResponse(newFlight, HTTP_STATUS.CREATED);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

@@ -1,36 +1,32 @@
 // API Route for passenger seat change (TypeScript)
-import { NextResponse } from 'next/server';
 import { passengerDB } from '@/lib/db';
+import { handleApiError, successResponse, notFoundResponse, badRequestResponse } from '@/lib/apiUtils';
+import { SeatChangeSchema, validateSchema } from '@/lib/validationSchemas';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
-}
-
-interface SeatChangeBody {
-  seat: string;
 }
 
 // PUT change passenger seat
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const { seat }: SeatChangeBody = await request.json();
+    const body = await request.json();
     
-    const result = passengerDB.changeSeat(id, seat);
+    const validatedData = validateSchema(SeatChangeSchema, body);
     
-    if (!result) {
-      return NextResponse.json(
-        { success: false, error: 'Passenger not found' },
-        { status: 404 }
-      );
+    if (!validatedData.seat || !validatedData.seat.trim()) {
+      return badRequestResponse('Seat number is required');
     }
     
-    return NextResponse.json({ success: true, data: result });
+    const result = passengerDB.changeSeat(id, validatedData.seat.trim());
+    
+    if (!result) {
+      return notFoundResponse('Passenger');
+    }
+    
+    return successResponse(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

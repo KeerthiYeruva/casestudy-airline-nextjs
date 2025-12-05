@@ -1,6 +1,6 @@
 // API Route for passenger check-in operations (TypeScript)
-import { NextResponse } from 'next/server';
 import { passengerDB } from '@/lib/db';
+import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtils';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -13,19 +13,12 @@ export async function POST(_request: Request, { params }: RouteParams) {
     const passenger = passengerDB.checkIn(id);
     
     if (!passenger) {
-      return NextResponse.json(
-        { success: false, error: 'Passenger not found' },
-        { status: 404 }
-      );
+      return notFoundResponse('Passenger');
     }
     
-    return NextResponse.json({ success: true, data: passenger });
+    return successResponse(passenger);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 
@@ -36,18 +29,11 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     const passenger = passengerDB.undoCheckIn(id);
     
     if (!passenger) {
-      return NextResponse.json(
-        { success: false, error: 'Passenger not found' },
-        { status: 404 }
-      );
+      return notFoundResponse('Passenger');
     }
     
-    return NextResponse.json({ success: true, data: passenger });
+    return successResponse(passenger);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

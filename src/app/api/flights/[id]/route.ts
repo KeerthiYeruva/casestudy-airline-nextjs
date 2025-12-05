@@ -1,6 +1,7 @@
 // API Route for single Flight operations (TypeScript)
-import { NextResponse } from 'next/server';
 import { flightDB } from '@/lib/db';
+import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtils';
+import { UpdateFlightSchema, validateSchema } from '@/lib/validationSchemas';
 import type { Flight } from '@/types';
 
 interface RouteParams {
@@ -14,19 +15,12 @@ export async function GET(_request: Request, { params }: RouteParams) {
     const flight = flightDB.getById(id);
     
     if (!flight) {
-      return NextResponse.json(
-        { success: false, error: 'Flight not found' },
-        { status: 404 }
-      );
+      return notFoundResponse('Flight');
     }
     
-    return NextResponse.json({ success: true, data: flight });
+    return successResponse(flight);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 
@@ -34,23 +28,17 @@ export async function GET(_request: Request, { params }: RouteParams) {
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const body: Partial<Flight> = await request.json();
-    const updatedFlight = flightDB.update(id, body);
+    const body = await request.json();
+    const validatedData = validateSchema(UpdateFlightSchema, body);
+    const updatedFlight = flightDB.update(id, validatedData as Partial<Flight>);
     
     if (!updatedFlight) {
-      return NextResponse.json(
-        { success: false, error: 'Flight not found' },
-        { status: 404 }
-      );
+      return notFoundResponse('Flight');
     }
     
-    return NextResponse.json({ success: true, data: updatedFlight });
+    return successResponse(updatedFlight);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 
@@ -61,18 +49,11 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     const deletedFlight = flightDB.delete(id);
     
     if (!deletedFlight) {
-      return NextResponse.json(
-        { success: false, error: 'Flight not found' },
-        { status: 404 }
-      );
+      return notFoundResponse('Flight');
     }
     
-    return NextResponse.json({ success: true, data: deletedFlight });
+    return successResponse(deletedFlight);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
