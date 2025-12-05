@@ -228,11 +228,9 @@ const Auth: React.FC = () => {
 
         {/* Role Selection Dialog */}
         <Dialog open={roleDialog} onClose={() => {}} disableEscapeKeyDown maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ pb: 1 }}>
-            <Typography variant="h5" fontWeight="bold">
-              Complete Setup
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
+          <DialogTitle sx={{ pb: 1, fontWeight: 'bold' }}>
+            Complete Setup
+            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'normal', mt: 0.5 }}>
               Select your user profile and role
             </Typography>
           </DialogTitle>

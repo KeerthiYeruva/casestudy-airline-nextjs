@@ -10,6 +10,9 @@ import "@/styles/Accessibility.scss";
 export const metadata: Metadata = {
   title: "Airline Management System",
   description: "Modern airline check-in and in-flight management system",
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

@@ -29,7 +29,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
           {passenger.checkedIn ? <CheckCircleIcon fontSize="large" /> : <PersonIcon fontSize="large" />}
         </Avatar>
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} noWrap>
+          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} noWrap>
             {passenger.name}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>

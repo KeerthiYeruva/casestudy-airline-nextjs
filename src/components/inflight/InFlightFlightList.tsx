@@ -37,6 +37,7 @@ const InFlightFlightList: React.FC<InFlightFlightListProps> = ({
             }}
           >
             <ListItemText
+              component="div"
               primary={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                   <Typography variant="subtitle1" fontWeight="bold">
@@ -50,13 +51,13 @@ const InFlightFlightList: React.FC<InFlightFlightListProps> = ({
                 </Box>
               }
               secondary={
-                <Box sx={{ mt: 0.5 }}>
-                  <Typography variant="body2" color="text.secondary">
+                <Box component="span" sx={{ mt: 0.5, display: 'block' }}>
+                  <Box component="span" sx={{ display: 'block', fontSize: '0.875rem', color: 'text.secondary' }}>
                     {flight.origin || flight.from} → {flight.destination || flight.to}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  </Box>
+                  <Box component="span" sx={{ display: 'block', fontSize: '0.875rem', color: 'text.secondary' }}>
                     {flight.time || flight.departureTime} • Gate {flight.gate}
-                  </Typography>
+                  </Box>
                 </Box>
               }
             />

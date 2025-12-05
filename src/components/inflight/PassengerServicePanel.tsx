@@ -53,7 +53,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
           <PersonIcon fontSize="large" />
         </Avatar>
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h5" fontWeight="bold">
+          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1.25rem' }}>
             {passenger.name}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, mt: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
