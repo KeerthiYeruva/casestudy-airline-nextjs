@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import useCheckInStore from "@/stores/useCheckInStore";
 import useDataStore from "@/stores/useDataStore";
 import useToastStore from "@/stores/useToastStore";
+import useRealtimeUpdates from "@/hooks/useRealtimeUpdates";
 import SeatMapVisual from "./SeatMapVisual";
 import InFlightFlightList from "./inflight/InFlightFlightList";
 import InFlightPassengerList from "./inflight/InFlightPassengerList";
@@ -19,6 +20,8 @@ import {
   mealOptions as mealOptionsData,
 } from "@/data/flightData";
 import { Container, Paper, Typography, Grid, Box, Chip } from "@mui/material";
+import WifiIcon from "@mui/icons-material/Wifi";
+import WifiOffIcon from "@mui/icons-material/WifiOff";
 import "../styles/InFlight.scss";
 
 const InFlight: React.FC = () => {
@@ -44,6 +47,7 @@ const InFlight: React.FC = () => {
   } = useDataStore();
   const { selectedFlight, selectFlight } = useCheckInStore();
   const { showToast } = useToastStore();
+  const { isConnected } = useRealtimeUpdates();
 
   useEffect(() => {
     fetchFlights();
@@ -196,10 +200,17 @@ const InFlight: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
-      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
         <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
           In-Flight Services
         </Typography>
+        <Chip 
+          icon={isConnected ? <WifiIcon /> : <WifiOffIcon />}
+          label={isConnected ? 'Live Updates' : 'Offline'}
+          color={isConnected ? 'success' : 'default'}
+          size="small"
+          sx={{ ml: 'auto' }}
+        />
         {selectedFlight && (
           <Chip 
             label={`${selectedFlight.flightNumber}`} 

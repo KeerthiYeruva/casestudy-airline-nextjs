@@ -2,6 +2,7 @@
 import { passengerDB } from '@/lib/db';
 import { handleApiError, successResponse, notFoundResponse, badRequestResponse } from '@/lib/apiUtils';
 import { SeatChangeSchema, validateSchema } from '@/lib/validationSchemas';
+import { eventBroadcaster } from '@/lib/eventBroadcaster';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -24,6 +25,12 @@ export async function PUT(request: Request, { params }: RouteParams) {
     if (!result) {
       return notFoundResponse('Passenger');
     }
+    
+    // Broadcast seat change to all connected clients
+    eventBroadcaster.broadcast({
+      type: 'seat_changed',
+      data: result,
+    });
     
     return successResponse(result);
   } catch (error) {

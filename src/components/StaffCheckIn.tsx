@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import useCheckInStore from '@/stores/useCheckInStore';
 import useDataStore from '@/stores/useDataStore';
 import useToastStore from '@/stores/useToastStore';
+import useRealtimeUpdates from '@/hooks/useRealtimeUpdates';
 import SeatMapVisual from './SeatMapVisual';
 import FlightSelectionPanel from './checkin/FlightSelectionPanel';
 import CheckInFilters from './checkin/CheckInFilters';
@@ -12,12 +13,15 @@ import PassengerDetailsPanel from './checkin/PassengerDetailsPanel';
 import ChangeSeatDialog from './checkin/ChangeSeatDialog';
 import { Passenger } from '@/types';
 import { Container, Paper, Typography, Grid, Box, Chip } from '@mui/material';
+import WifiIcon from '@mui/icons-material/Wifi';
+import WifiOffIcon from '@mui/icons-material/WifiOff';
 import '../styles/StaffCheckIn.scss';
 
 const StaffCheckIn: React.FC = () => {
   const { flights, passengers, fetchFlights, fetchPassengers, checkInPassenger, undoCheckIn, changeSeat } = useDataStore();
   const { selectedFlight, filterOptions, selectFlight, setFilter, clearFilters } = useCheckInStore();
   const { showToast } = useToastStore();
+  const { isConnected, isSeatLocked, lockSeat, unlockSeat } = useRealtimeUpdates();
 
   useEffect(() => {
     fetchFlights();
@@ -105,10 +109,17 @@ const StaffCheckIn: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
-      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
         <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
           Staff Check-In
         </Typography>
+        <Chip 
+          icon={isConnected ? <WifiIcon /> : <WifiOffIcon />}
+          label={isConnected ? 'Live Updates' : 'Offline'}
+          color={isConnected ? 'success' : 'default'}
+          size="small"
+          sx={{ ml: 'auto' }}
+        />
         {selectedFlight && (
           <Chip 
             label={`${selectedFlight.flightNumber}`} 
@@ -222,6 +233,9 @@ const StaffCheckIn: React.FC = () => {
           passengerName={selectedPassenger.name}
           onClose={() => setChangeSeatDialog(false)}
           onConfirm={handleChangeSeat}
+          lockSeat={lockSeat}
+          unlockSeat={unlockSeat}
+          isSeatLocked={isSeatLocked}
         />
       )}
     </Container>

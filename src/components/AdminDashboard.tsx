@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import useAdminStore from "@/stores/useAdminStore";
 import useDataStore from "@/stores/useDataStore";
 import useToastStore from "@/stores/useToastStore";
+import useRealtimeUpdates from "@/hooks/useRealtimeUpdates";
 import SimpleInputDialog from "./SimpleInputDialog";
 import ConfirmDialog from "./ConfirmDialog";
 import PassengerManagement from "./admin/PassengerManagement";
@@ -17,9 +18,12 @@ import {
   Tabs,
   Tab,
   Box,
+  Chip,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import WifiIcon from "@mui/icons-material/Wifi";
+import WifiOffIcon from "@mui/icons-material/WifiOff";
 
 interface ShopItemFormData {
   id: string;
@@ -63,6 +67,7 @@ const AdminDashboard: React.FC = () => {
     clearAdminFilters,
   } = useAdminStore();
   const { showToast } = useToastStore();
+  const { isConnected } = useRealtimeUpdates();
 
   useEffect(() => {
     fetchFlights();
@@ -240,11 +245,20 @@ const AdminDashboard: React.FC = () => {
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
       <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-          <SettingsIcon color="primary" />
-          <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-            Admin Dashboard
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <SettingsIcon color="primary" />
+            <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+              Admin Dashboard
+            </Typography>
+          </Box>
+          <Chip 
+            icon={isConnected ? <WifiIcon /> : <WifiOffIcon />}
+            label={isConnected ? 'Live Updates' : 'Offline'}
+            color={isConnected ? 'success' : 'default'}
+            size="small"
+            sx={{ ml: 'auto' }}
+          />
         </Box>
         <Typography variant="body2" color="text.secondary">
           Manage passengers, flights, and services

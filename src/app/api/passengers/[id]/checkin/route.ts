@@ -1,6 +1,7 @@
 // API Route for passenger check-in operations (TypeScript)
 import { passengerDB } from '@/lib/db';
 import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtils';
+import { eventBroadcaster } from '@/lib/eventBroadcaster';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -15,6 +16,12 @@ export async function POST(_request: Request, { params }: RouteParams) {
     if (!passenger) {
       return notFoundResponse('Passenger');
     }
+    
+    // Broadcast check-in to all connected clients
+    eventBroadcaster.broadcast({
+      type: 'passenger_checked_in',
+      data: passenger,
+    });
     
     return successResponse(passenger);
   } catch (error) {
@@ -31,6 +38,12 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     if (!passenger) {
       return notFoundResponse('Passenger');
     }
+    
+    // Broadcast undo check-in to all connected clients
+    eventBroadcaster.broadcast({
+      type: 'passenger_checked_in',
+      data: passenger,
+    });
     
     return successResponse(passenger);
   } catch (error) {

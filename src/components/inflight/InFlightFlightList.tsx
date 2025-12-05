@@ -37,7 +37,6 @@ const InFlightFlightList: React.FC<InFlightFlightListProps> = ({
             }}
           >
             <ListItemText
-              component="div"
               primary={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                   <Typography variant="subtitle1" fontWeight="bold">

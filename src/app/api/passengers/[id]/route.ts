@@ -2,6 +2,7 @@
 import { passengerDB } from '@/lib/db';
 import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtils';
 import { UpdatePassengerSchema, validateSchema } from '@/lib/validationSchemas';
+import { eventBroadcaster } from '@/lib/eventBroadcaster';
 import type { Passenger } from '@/types';
 
 interface RouteParams {
@@ -36,6 +37,12 @@ export async function PUT(request: Request, { params }: RouteParams) {
       return notFoundResponse('Passenger');
     }
     
+    // Broadcast update to all connected clients
+    eventBroadcaster.broadcast({
+      type: 'passenger_updated',
+      data: updatedPassenger,
+    });
+    
     return successResponse(updatedPassenger);
   } catch (error) {
     return handleApiError(error);
@@ -51,6 +58,12 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     if (!deletedPassenger) {
       return notFoundResponse('Passenger');
     }
+    
+    // Broadcast deletion to all connected clients
+    eventBroadcaster.broadcast({
+      type: 'passenger_deleted',
+      data: deletedPassenger,
+    });
     
     return successResponse(deletedPassenger);
   } catch (error) {
