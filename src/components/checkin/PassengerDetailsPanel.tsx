@@ -19,13 +19,17 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
   passenger,
 }) => {
   return (
-    <Paper elevation={3} sx={{ mt: 2, p: 3, bgcolor: passenger.checkedIn ? 'success.50' : 'background.paper' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-        <Avatar sx={{ width: 56, height: 56, bgcolor: passenger.checkedIn ? 'success.main' : 'primary.main' }}>
+    <Paper elevation={3} sx={{ mt: 2, p: { xs: 2, sm: 3 }, bgcolor: passenger.checkedIn ? 'success.50' : 'background.paper' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 }, mb: { xs: 2, sm: 3 } }}>
+        <Avatar sx={{ 
+          width: { xs: 48, sm: 56 }, 
+          height: { xs: 48, sm: 56 }, 
+          bgcolor: passenger.checkedIn ? 'success.main' : 'primary.main' 
+        }}>
           {passenger.checkedIn ? <CheckCircleIcon fontSize="large" /> : <PersonIcon fontSize="large" />}
         </Avatar>
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="h5" fontWeight="bold">
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="h5" fontWeight="bold" sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} noWrap>
             {passenger.name}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>
@@ -39,27 +43,27 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
         </Box>
       </Box>
 
-      <Divider sx={{ mb: 2 }} />
+      <Divider sx={{ mb: { xs: 1.5, sm: 2 } }} />
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         <Grid size={{ xs: 6, sm: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-            <AirlineSeatReclineExtraIcon fontSize="small" color="action" />
-            <Typography variant="caption" color="text.secondary" fontWeight="medium">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 }, mb: 0.5, flexWrap: 'wrap' }}>
+            <AirlineSeatReclineExtraIcon fontSize="small" color="action" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }} />
+            <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
               Seat
             </Typography>
           </Box>
-          <Typography variant="h6" fontWeight="bold">{passenger.seat}</Typography>
+          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>{passenger.seat}</Typography>
         </Grid>
         
         <Grid size={{ xs: 6, sm: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-            <ConfirmationNumberIcon fontSize="small" color="action" />
-            <Typography variant="caption" color="text.secondary" fontWeight="medium">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 }, mb: 0.5, flexWrap: 'wrap' }}>
+            <ConfirmationNumberIcon fontSize="small" color="action" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }} />
+            <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
               Booking Reference
             </Typography>
           </Box>
-          <Typography variant="body1" fontWeight="medium">{passenger.bookingReference}</Typography>
+          <Typography variant="body1" fontWeight="medium" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>{passenger.bookingReference}</Typography>
         </Grid>
 
         {passenger.specialMeal && (

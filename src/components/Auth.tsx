@@ -312,11 +312,12 @@ const Auth: React.FC = () => {
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: { xs: 0.5, sm: 1.5 },
-        padding: { xs: 0.5, sm: 1 },
+        gap: { xs: 0.5, sm: 1, md: 1.5 },
+        padding: { xs: 0.25, sm: 0.5, md: 1 },
       }}
     >
-      <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
+      {/* User Info - Hidden on mobile/tablet, shown on desktop */}
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
         <Avatar 
           src={user?.photoURL || undefined} 
           alt={user?.displayName || undefined}
@@ -337,32 +338,64 @@ const Auth: React.FC = () => {
         </Box>
       </Box>
       
-      <FormControl size="small" sx={{ minWidth: { xs: 70, sm: 90 }, display: { xs: 'none', md: 'block' } }}>
+      {/* Mobile/Tablet: Show compact avatar with role badge */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 0.5 }}>
+        <Avatar 
+          src={user?.photoURL || undefined} 
+          alt={user?.displayName || undefined}
+          sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 } }}
+        >
+          <PersonIcon sx={{ fontSize: { xs: 16, sm: 18 } }} />
+        </Avatar>
+      </Box>
+      
+      {/* Role Selector - Visible on tablet/desktop, hidden on mobile */}
+      <FormControl 
+        size="small" 
+        sx={{ 
+          display: { xs: 'none', sm: 'block' },
+          minWidth: { sm: 80, md: 90 },
+          '& .MuiOutlinedInput-root': {
+            fontSize: { sm: '0.75rem', md: '0.8rem' },
+          }
+        }}
+      >
         <Select
           value={role || 'staff'}
           onChange={(e) => handleRoleChange(e.target.value as 'staff' | 'admin')}
           displayEmpty
-          sx={{ fontSize: '0.8rem' }}
+          aria-label="Change role"
+          sx={{ 
+            fontSize: { sm: '0.75rem', md: '0.8rem' },
+            height: { sm: 36, md: 40 },
+          }}
         >
-          <MenuItem value="staff">Staff</MenuItem>
-          <MenuItem value="admin">Admin</MenuItem>
+          <MenuItem value="staff" sx={{ fontSize: { sm: '0.8rem', md: '0.875rem' } }}>
+            Staff
+          </MenuItem>
+          <MenuItem value="admin" sx={{ fontSize: { sm: '0.8rem', md: '0.875rem' } }}>
+            Admin
+          </MenuItem>
         </Select>
       </FormControl>
       
       <Button
         variant="text"
         size="small"
-        startIcon={<LogoutIcon sx={{ display: { xs: 'none', sm: 'block' } }} />}
+        startIcon={<LogoutIcon sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
         onClick={handleLogout}
         aria-label="Logout"
         color="inherit"
         sx={{ 
-          fontSize: { xs: '0.7rem', sm: '0.8rem' },
-          px: { xs: 1, sm: 1.5 },
-          minWidth: 'auto'
+          fontSize: { xs: '0.65rem', sm: '0.75rem', md: '0.8rem' },
+          px: { xs: 0.5, sm: 1, md: 1.5 },
+          py: { xs: 0.5, sm: 0.75 },
+          minWidth: { xs: 36, sm: 'auto' },
+          minHeight: { xs: 36, sm: 36 }
         }}
       >
-        {window.innerWidth < 600 ? 'Out' : 'Logout'}
+        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Logout</Box>
+        <LogoutIcon sx={{ display: { xs: 'inline-flex', sm: 'none' }, fontSize: 18 }} />
       </Button>
     </Box>
   );

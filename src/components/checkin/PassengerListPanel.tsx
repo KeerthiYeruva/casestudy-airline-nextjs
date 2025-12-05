@@ -43,15 +43,16 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
   const checkedInCount = passengers.filter(p => p.checkedIn).length;
   
   return (
-    <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">
+    <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+        <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
           Passengers
         </Typography>
         <Chip 
           label={`${checkedInCount}/${passengers.length} Checked In`}
           color={checkedInCount === passengers.length ? "success" : "default"}
           size="small"
+          sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
         />
       </Box>
       <List sx={{ pt: 0, overflow: 'auto', flex: 1 }}>
@@ -79,16 +80,20 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
                 <Box sx={{ width: "100%" }}>
                   {/* Header Row */}
                   <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
-                      <Avatar sx={{ width: 32, height: 32, bgcolor: passenger.checkedIn ? 'success.main' : 'grey.400' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.75, sm: 1 }, flex: 1 }}>
+                      <Avatar sx={{ 
+                        width: { xs: 36, sm: 40 }, 
+                        height: { xs: 36, sm: 40 }, 
+                        bgcolor: passenger.checkedIn ? 'success.main' : 'grey.400' 
+                      }}>
                         {passenger.checkedIn ? <CheckCircleIcon fontSize="small" /> : <PersonIcon fontSize="small" />}
                       </Avatar>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography variant="subtitle1" fontWeight="medium" noWrap>
+                        <Typography variant="subtitle1" fontWeight="medium" noWrap sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                           {passenger.name}
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
-                          <Chip label={passenger.seat} size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+                          <Chip label={passenger.seat} size="small" sx={{ height: { xs: 18, sm: 20 }, fontSize: { xs: '0.65rem', sm: '0.7rem' } }} />
                           {passenger.wheelchair && (
                             <Tooltip title="Wheelchair Assistance">
                               <AccessibleIcon fontSize="small" color="warning" />
@@ -113,17 +118,21 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
                   )}
 
                   {/* Action Buttons */}
-                  <Box sx={{ display: "flex", gap: 1, justifyContent: 'flex-end' }}>
+                  <Box sx={{ display: "flex", gap: { xs: 0.5, sm: 1 }, justifyContent: 'flex-end', mt: { xs: 1, sm: 0.5 } }}>
                     {!passenger.checkedIn ? (
                       <Button
                         variant="contained"
                         size="small"
-                        startIcon={<CheckCircleIcon />}
+                        startIcon={<CheckCircleIcon sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
                         onClick={(e) => {
                           e.stopPropagation();
                           onCheckIn(passenger.id);
                         }}
                         fullWidth
+                        sx={{ 
+                          minHeight: { xs: 36, sm: 32 },
+                          fontSize: { xs: '0.8rem', sm: '0.875rem' }
+                        }}
                       >
                         Check In
                       </Button>
@@ -137,6 +146,7 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
                               e.stopPropagation();
                               onUndoCheckIn(passenger.id);
                             }}
+                            sx={{ minWidth: { xs: 40, sm: 36 }, minHeight: { xs: 40, sm: 36 } }}
                           >
                             <UndoIcon fontSize="small" />
                           </IconButton>
@@ -149,6 +159,7 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
                               e.stopPropagation();
                               onChangeSeat(passenger);
                             }}
+                            sx={{ minWidth: { xs: 40, sm: 36 }, minHeight: { xs: 40, sm: 36 } }}
                           >
                             <AirlineSeatReclineExtraIcon fontSize="small" />
                           </IconButton>

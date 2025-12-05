@@ -277,4 +277,37 @@ For Firebase setup help:
 
 ---
 
-**Current Status:** ✅ Mock Authentication Active
+## 📱 Mobile Role Switching (NEW!)
+
+### Switching Roles on Any Device
+
+You can now **change your role** (Staff ↔ Admin) directly from the navigation bar on **all devices including mobile**!
+
+#### Desktop/Tablet
+- Look for the role dropdown next to your name in the top-right corner
+- Click the dropdown and select Staff or Admin
+
+#### Mobile
+- Find the **compact role dropdown** in the top navigation bar
+- It's positioned right after your avatar (showing S or A badge)
+- Tap the dropdown to switch between roles
+- Width: 60px (compact for mobile)
+- Height: 32px (touch-friendly)
+
+#### Visual Indicators
+- **Mobile:** Small badge showing "S" (Staff) or "A" (Admin)
+- **Desktop:** Full chip with "Staff" or "Admin" text
+- **Dropdown:** Always shows current active role
+
+#### No Logout Required!
+- Switch roles instantly
+- No need to sign out and sign back in
+- Changes take effect immediately
+- Navigation updates automatically
+
+**For detailed mobile role switching guide, see:** `MOBILE_ROLE_SWITCHING.md`
+
+---
+
+**Current Status:** ✅ Mock Authentication Active | ✅ Mobile Role Switching Enabled
+

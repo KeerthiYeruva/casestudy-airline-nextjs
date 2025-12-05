@@ -221,26 +221,26 @@ const InFlight: React.FC = () => {
         <Grid size={{ xs: 12, md: 9 }}>
           {selectedFlight ? (
             <>
-              <Paper elevation={3} className="flight-details" sx={{ mb: 2, p: 2 }}>
-                <Typography variant="h5" gutterBottom>
+              <Paper elevation={3} className="flight-details" sx={{ mb: 2, p: { xs: 1.5, sm: 2 } }}>
+                <Typography variant="h5" gutterBottom sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                   {selectedFlight.name}
                 </Typography>
-                <Grid container spacing={2}>
+                <Grid container spacing={{ xs: 1.5, sm: 2 }}>
                   <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary">Time</Typography>
-                    <Typography variant="body1">{selectedFlight.time}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Time</Typography>
+                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.time}</Typography>
                   </Grid>
                   <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary">Route</Typography>
-                    <Typography variant="body1">{selectedFlight.from} → {selectedFlight.to}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Route</Typography>
+                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.from} → {selectedFlight.to}</Typography>
                   </Grid>
                   <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary">Gate</Typography>
-                    <Typography variant="body1">{selectedFlight.gate}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Gate</Typography>
+                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.gate}</Typography>
                   </Grid>
                   <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary">Status</Typography>
-                    <Typography variant="body1">{selectedFlight.status}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Status</Typography>
+                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.status}</Typography>
                   </Grid>
                 </Grid>
               </Paper>

@@ -11,8 +11,18 @@ import {
   Button,
   Box,
   CircularProgress,
-  Alert
+  Alert,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -32,6 +42,7 @@ const LoadingFallback = () => (
 
 export default function Home() {
   const [currentView, setCurrentView] = useState("checkin");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, role } = useAuthStore();
 
   if (!isAuthenticated) {
@@ -47,14 +58,24 @@ export default function Home() {
           Skip to main content
         </a>
         <AppBar position="static" component="nav" role="navigation">
-          <Toolbar sx={{ flexWrap: 'wrap', gap: 1, py: { xs: 1, sm: 1.5 } }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: { xs: 1, sm: 0 } }}>
-              <FlightTakeoffIcon sx={{ display: { xs: 'block', sm: 'block' } }} aria-hidden="true" />
+          <Toolbar sx={{ gap: 1, py: { xs: 1, sm: 1.5 } }}>
+            {/* Mobile Hamburger Menu */}
+            <IconButton
+              color="inherit"
+              aria-label="Open navigation menu"
+              edge="start"
+              onClick={() => setMobileMenuOpen(true)}
+              sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1 }}>
+              <FlightTakeoffIcon aria-hidden="true" />
               <Typography 
                 variant="h6" 
                 component="h1" 
                 sx={{ 
-                  flexGrow: { xs: 1, md: 1 },
                   fontSize: { xs: '1rem', sm: '1.25rem' },
                   mr: { xs: 0, md: 2 }
                 }}
@@ -63,56 +84,192 @@ export default function Home() {
               </Typography>
             </Box>
             
+            {/* Desktop Navigation - Hidden on Mobile */}
             <Box sx={{ 
-              display: "flex", 
-              gap: { xs: 0.5, sm: 1 }, 
-              alignItems: "center", 
-              flexWrap: "wrap",
-              justifyContent: { xs: 'flex-start', sm: 'flex-end' },
-              width: { xs: '100%', sm: 'auto' }
+              display: { xs: 'none', md: 'flex' }, 
+              gap: 1.5, 
+              alignItems: "center"
             }}>
               <Button
                 color="inherit"
-                startIcon={<AirlineSeatReclineExtraIcon sx={{ display: { xs: 'none', sm: 'block' } }} />}
+                startIcon={<AirlineSeatReclineExtraIcon />}
                 onClick={() => setCurrentView("checkin")}
                 variant={currentView === "checkin" ? "outlined" : "text"}
                 aria-label="Navigate to Check-In"
                 aria-current={currentView === "checkin" ? "page" : undefined}
                 size="small"
-                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' }, px: { xs: 1, sm: 2 } }}
+                sx={{ fontSize: '0.875rem', px: 2 }}
               >
                 Check-In
               </Button>
               <Button
                 color="inherit"
-                startIcon={<FlightTakeoffIcon sx={{ display: { xs: 'none', sm: 'block' } }} />}
+                startIcon={<FlightTakeoffIcon />}
                 onClick={() => setCurrentView("inflight")}
                 variant={currentView === "inflight" ? "outlined" : "text"}
                 aria-label="Navigate to In-Flight"
                 aria-current={currentView === "inflight" ? "page" : undefined}
                 size="small"
-                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' }, px: { xs: 1, sm: 2 } }}
+                sx={{ fontSize: '0.875rem', px: 2 }}
               >
                 In-Flight
               </Button>
               {canAccessAdmin && (
                 <Button
                   color="inherit"
-                  startIcon={<SettingsIcon sx={{ display: { xs: 'none', sm: 'block' } }} />}
+                  startIcon={<SettingsIcon />}
                   onClick={() => setCurrentView("admin")}
                   variant={currentView === "admin" ? "outlined" : "text"}
                   aria-label="Navigate to Admin Dashboard"
                   aria-current={currentView === "admin" ? "page" : undefined}
                   size="small"
-                  sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' }, px: { xs: 1, sm: 2 } }}
+                  sx={{ fontSize: '0.875rem', px: 2 }}
                 >
                   Admin
                 </Button>
               )}
-              <Auth />
             </Box>
+            
+            {/* Auth Component - Always Visible */}
+            <Auth />
           </Toolbar>
         </AppBar>
+
+        {/* Mobile Drawer Menu */}
+        <Drawer
+          anchor="left"
+          open={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': { 
+              width: 280,
+              boxSizing: 'border-box',
+            },
+          }}
+        >
+          <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <FlightTakeoffIcon color="primary" />
+              <Typography variant="h6" color="primary" fontWeight="bold">
+                Menu
+              </Typography>
+            </Box>
+            <IconButton 
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close navigation menu"
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Divider />
+          
+          {/* User Info Section in Drawer */}
+          <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
+            <Typography variant="caption" color="text.secondary" gutterBottom display="block">
+              Logged in as
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+              <Typography variant="subtitle2" fontWeight="bold" sx={{ flex: 1 }}>
+                {useAuthStore.getState().user?.displayName}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ minWidth: 40 }}>
+                Role:
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
+                <Button
+                  variant={role === 'staff' ? 'contained' : 'outlined'}
+                  size="small"
+                  onClick={() => useAuthStore.getState().setRole('staff')}
+                  fullWidth
+                  sx={{ fontSize: '0.75rem', py: 0.5 }}
+                >
+                  Staff
+                </Button>
+                <Button
+                  variant={role === 'admin' ? 'contained' : 'outlined'}
+                  size="small"
+                  color="secondary"
+                  onClick={() => useAuthStore.getState().setRole('admin')}
+                  fullWidth
+                  sx={{ fontSize: '0.75rem', py: 0.5 }}
+                >
+                  Admin
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+          <Divider />
+          
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton 
+                selected={currentView === "checkin"}
+                onClick={() => {
+                  setCurrentView("checkin");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <ListItemIcon>
+                  <AirlineSeatReclineExtraIcon color={currentView === "checkin" ? "primary" : "inherit"} />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Check-In" 
+                  secondary="Passenger check-in and boarding"
+                  primaryTypographyProps={{ fontWeight: currentView === "checkin" ? 'bold' : 'normal' }}
+                />
+              </ListItemButton>
+            </ListItem>
+            
+            <ListItem disablePadding>
+              <ListItemButton 
+                selected={currentView === "inflight"}
+                onClick={() => {
+                  setCurrentView("inflight");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <ListItemIcon>
+                  <FlightTakeoffIcon color={currentView === "inflight" ? "primary" : "inherit"} />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="In-Flight Services" 
+                  secondary="Meals, shop, and services"
+                  primaryTypographyProps={{ fontWeight: currentView === "inflight" ? 'bold' : 'normal' }}
+                />
+              </ListItemButton>
+            </ListItem>
+            
+            {canAccessAdmin && (
+              <>
+                <Divider sx={{ my: 1 }} />
+                <ListItem disablePadding>
+                  <ListItemButton 
+                    selected={currentView === "admin"}
+                    onClick={() => {
+                      setCurrentView("admin");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <ListItemIcon>
+                      <SettingsIcon color={currentView === "admin" ? "secondary" : "inherit"} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Admin Dashboard" 
+                      secondary="Passenger and service management"
+                      primaryTypographyProps={{ 
+                        fontWeight: currentView === "admin" ? 'bold' : 'normal',
+                        color: currentView === "admin" ? 'secondary.main' : 'inherit'
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </>
+            )}
+          </List>
+        </Drawer>
 
         <Box component="main" id="main-content" sx={{ mt: 3, mb: 3 }} role="main">
           {!canAccessAdmin && currentView === "admin" && (
