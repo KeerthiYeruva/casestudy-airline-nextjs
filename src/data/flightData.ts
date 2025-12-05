@@ -175,7 +175,13 @@ export const passengers: Passenger[] = [
     shopRequests: [
       { itemId: 'SHOP017', itemName: 'Travel Pillow Set', category: 'Travel Essentials', quantity: 1, price: 29.99, currency: 'USD' },
       { itemId: 'SHOP013', itemName: 'Swiss Chocolate Box', category: 'Food & Beverages', quantity: 2, price: 19.99, currency: 'USD' }
-    ]
+    ],
+    seatPreferences: {
+      position: ['window', 'front'],
+      type: 'premium',
+      nearFamily: false
+    },
+    premiumUpgrade: true
   },
   { 
     id: 'P002', 
@@ -191,7 +197,13 @@ export const passengers: Passenger[] = [
     passport: { number: '', expiryDate: '', country: '' }, // Missing passport only
     address: '456 Oak Ave, Los Angeles, CA 90001',
     dateOfBirth: '1990-07-14',
-    shopRequests: [{ itemId: 'SHOP001', itemName: 'Perfume - Chanel No. 5', category: 'Perfumes & Cosmetics', quantity: 1, price: 89.99, currency: 'USD' }]
+    shopRequests: [{ itemId: 'SHOP001', itemName: 'Perfume - Chanel No. 5', category: 'Perfumes & Cosmetics', quantity: 1, price: 89.99, currency: 'USD' }],
+    groupSeating: {
+      groupId: 'GRP001',
+      size: 3,
+      keepTogether: true,
+      leadPassengerId: 'P002'
+    }
   },
   { 
     id: 'P003', 
@@ -209,7 +221,12 @@ export const passengers: Passenger[] = [
     dateOfBirth: '1988-09-10',
     shopRequests: [
       { itemId: 'SHOP005', itemName: 'Wireless Headphones - Sony', category: 'Electronics', quantity: 1, price: 199.99, currency: 'USD' }
-    ]
+    ],
+    seatPreferences: {
+      position: ['aisle', 'back'],
+      type: 'standard',
+      nearFamily: false
+    }
   },
   { 
     id: 'P004', 
@@ -228,7 +245,14 @@ export const passengers: Passenger[] = [
     shopRequests: [
       { itemId: 'SHOP009', itemName: 'Sunglasses - Ray-Ban', category: 'Fashion & Accessories', quantity: 1, price: 159.99, currency: 'USD' },
       { itemId: 'SHOP002', itemName: 'Perfume - Dior Sauvage', category: 'Perfumes & Cosmetics', quantity: 1, price: 79.99, currency: 'USD' }
-    ]
+    ],
+    familySeating: {
+      familyId: 'FAM001',
+      adults: 2,
+      children: 1,
+      infants: 0,
+      autoAllocate: true
+    }
   },
   { 
     id: 'P005', 
@@ -260,7 +284,13 @@ export const passengers: Passenger[] = [
     passport: { number: '', expiryDate: '', country: '' }, // Missing passport & DOB
     address: '222 Elm St, Boston, MA 02101',
     dateOfBirth: '',
-    shopRequests: []
+    shopRequests: [],
+    groupSeating: {
+      groupId: 'GRP001',
+      size: 3,
+      keepTogether: true,
+      leadPassengerId: 'P002'
+    }
   },
   { 
     id: 'P007', 
@@ -315,7 +345,13 @@ export const passengers: Passenger[] = [
     shopRequests: [
       { itemId: 'SHOP021', itemName: 'Teddy Bear - Premium', category: 'Toys & Gifts', quantity: 1, price: 34.99, currency: 'USD' },
       { itemId: 'SHOP018', itemName: 'Eye Mask & Ear Plugs', category: 'Travel Essentials', quantity: 2, price: 14.99, currency: 'USD' }
-    ]
+    ],
+    premiumUpgrade: true,
+    seatPreferences: {
+      position: ['window', 'front'],
+      type: 'premium',
+      nearFamily: true
+    }
   },
   { 
     id: 'P010', 
@@ -333,7 +369,14 @@ export const passengers: Passenger[] = [
     dateOfBirth: '1980-12-03',
     shopRequests: [
       { itemId: 'SHOP010', itemName: 'Silk Scarf - Hermès', category: 'Fashion & Accessories', quantity: 1, price: 395.00, currency: 'USD' }
-    ]
+    ],
+    familySeating: {
+      familyId: 'FAM002',
+      adults: 1,
+      children: 2,
+      infants: 1,
+      autoAllocate: true
+    }
   },
   { 
     id: 'P011', 
@@ -423,7 +466,13 @@ export const passengers: Passenger[] = [
     shopRequests: [
       { itemId: 'SHOP007', itemName: 'Smart Watch - Samsung', category: 'Electronics', quantity: 1, price: 299.99, currency: 'USD' },
       { itemId: 'SHOP011', itemName: 'Leather Wallet', category: 'Fashion & Accessories', quantity: 1, price: 89.99, currency: 'USD' }
-    ]
+    ],
+    groupSeating: {
+      groupId: 'GRP002',
+      size: 4,
+      keepTogether: true,
+      leadPassengerId: 'P015'
+    }
   },
   { 
     id: 'P016', 

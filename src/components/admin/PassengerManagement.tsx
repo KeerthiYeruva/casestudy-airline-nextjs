@@ -264,6 +264,38 @@ const PassengerManagement: React.FC<PassengerManagementProps> = ({
         flights={flights}
         onEdit={handleOpenPassengerDialog}
         onDelete={handleDeletePassenger}
+        onRemoveSeating={async (passengerId, type) => {
+          const passenger = passengers.find(p => p.id === passengerId);
+          if (!passenger) return;
+          
+          const typeLabels = {
+            premium: 'premium upgrade',
+            group: 'group seating',
+            family: 'family seating',
+            preferences: 'seat preferences'
+          };
+          
+          setConfirmDialog({
+            open: true,
+            title: `Remove ${typeLabels[type]}`,
+            message: `Remove ${typeLabels[type]} from ${passenger.name}?`,
+            severity: 'warning',
+            onConfirm: async () => {
+              const updates: Partial<Passenger> = {};
+              if (type === 'premium') updates.premiumUpgrade = false;
+              if (type === 'group') updates.groupSeating = undefined;
+              if (type === 'family') updates.familySeating = undefined;
+              if (type === 'preferences') updates.seatPreferences = undefined;
+              
+              const success = await onUpdatePassenger(passengerId, updates as PassengerFormData);
+              if (success) {
+                showToast(`${typeLabels[type]} removed from ${passenger.name}`, 'success');
+              } else {
+                showToast(`Failed to remove ${typeLabels[type]}`, 'error');
+              }
+            }
+          });
+        }}
       />
 
       <PassengerDialog

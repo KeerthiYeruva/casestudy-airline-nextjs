@@ -65,6 +65,29 @@ export const CreatePassengerSchema = z.object({
   checkedIn: z.boolean().default(false),
   
   shopRequests: z.array(ShopRequestSchema).default([]),
+  
+  seatPreferences: z.object({
+    position: z.array(z.enum(['window', 'aisle', 'middle', 'front', 'back', 'exitRow'])).optional(),
+    type: z.enum(['standard', 'premium', 'exit', 'bulkhead']).optional(),
+    nearFamily: z.boolean().optional(),
+  }).optional(),
+  
+  groupSeating: z.object({
+    groupId: z.string(),
+    size: z.number().int().positive(),
+    keepTogether: z.boolean(),
+    leadPassengerId: z.string(),
+  }).optional(),
+  
+  familySeating: z.object({
+    familyId: z.string(),
+    adults: z.number().int().positive(),
+    children: z.number().int().nonnegative(),
+    infants: z.number().int().nonnegative(),
+    autoAllocate: z.boolean(),
+  }).optional(),
+  
+  premiumUpgrade: z.boolean().optional(),
 });
 
 /**

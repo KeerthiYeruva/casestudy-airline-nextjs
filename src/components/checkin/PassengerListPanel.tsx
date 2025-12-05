@@ -21,6 +21,9 @@ import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineE
 import AccessibleIcon from '@mui/icons-material/Accessible';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import PersonIcon from '@mui/icons-material/Person';
+import StarIcon from '@mui/icons-material/Star';
+import GroupIcon from '@mui/icons-material/Group';
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import { Passenger } from "@/types";
 
 interface PassengerListPanelProps {
@@ -89,11 +92,46 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
                         {passenger.checkedIn ? <CheckCircleIcon fontSize="small" /> : <PersonIcon fontSize="small" />}
                       </Avatar>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography variant="subtitle1" fontWeight="medium" noWrap sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-                          {passenger.name}
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
-                          <Chip label={passenger.seat} size="small" sx={{ height: { xs: 18, sm: 20 }, fontSize: { xs: '0.65rem', sm: '0.7rem' } }} />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <Typography variant="subtitle1" fontWeight="medium" noWrap sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                            {passenger.name}
+                          </Typography>
+                          {passenger.premiumUpgrade && (
+                            <Tooltip title="Premium Seat">
+                              <StarIcon sx={{ fontSize: { xs: 14, sm: 16 }, color: 'warning.main' }} />
+                            </Tooltip>
+                          )}
+                        </Box>
+                        <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', flexWrap: 'wrap', mt: 0.5 }}>
+                          <Chip 
+                            label={passenger.seat} 
+                            size="small" 
+                            color={passenger.premiumUpgrade ? 'warning' : 'default'}
+                            variant={passenger.premiumUpgrade ? 'filled' : 'outlined'}
+                            sx={{ height: { xs: 18, sm: 20 }, fontSize: { xs: '0.65rem', sm: '0.7rem' }, fontWeight: passenger.premiumUpgrade ? 'bold' : 'normal' }} 
+                          />
+                          {passenger.groupSeating && (
+                            <Tooltip title={`Group: ${passenger.groupSeating.size} passengers`}>
+                              <Chip 
+                                icon={<GroupIcon sx={{ fontSize: 12 }} />}
+                                label={passenger.groupSeating.size}
+                                size="small"
+                                color="primary"
+                                sx={{ height: { xs: 18, sm: 20 }, fontSize: { xs: '0.65rem', sm: '0.7rem' } }}
+                              />
+                            </Tooltip>
+                          )}
+                          {passenger.familySeating && (
+                            <Tooltip title={`Family: ${passenger.familySeating.adults}A ${passenger.familySeating.children}C${passenger.familySeating.infants ? ` ${passenger.familySeating.infants}I` : ''}`}>
+                              <Chip 
+                                icon={<FamilyRestroomIcon sx={{ fontSize: 12 }} />}
+                                label={`${passenger.familySeating.adults}+${passenger.familySeating.children}`}
+                                size="small"
+                                color="secondary"
+                                sx={{ height: { xs: 18, sm: 20 }, fontSize: { xs: '0.65rem', sm: '0.7rem' } }}
+                              />
+                            </Tooltip>
+                          )}
                           {passenger.wheelchair && (
                             <Tooltip title="Wheelchair Assistance">
                               <AccessibleIcon fontSize="small" color="warning" />

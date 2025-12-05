@@ -26,6 +26,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import SettingsIcon from "@mui/icons-material/Settings";
+import LocaleSelector from "@/components/LocaleSelector";
 
 const StaffCheckIn = lazy(() => import("@/components/StaffCheckIn"));
 const InFlight = lazy(() => import("@/components/InFlight"));
@@ -137,6 +138,11 @@ export default function HomeClient() {
                   Admin
                 </Button>
               )}
+            </Box>
+            
+            {/* Locale Selector - Always visible */}
+            <Box sx={{ display: 'flex', mr: 1 }}>
+              <LocaleSelector />
             </Box>
             
             {/* Auth Component - Always Visible */}

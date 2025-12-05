@@ -16,6 +16,9 @@ import {
 import PersonIcon from '@mui/icons-material/Person';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
+import StarIcon from '@mui/icons-material/Star';
+import GroupIcon from '@mui/icons-material/Group';
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import { Passenger } from "@/types";
 
 interface InFlightPassengerListProps {
@@ -66,6 +69,15 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 0.5 }}>
+                      {passenger.premiumUpgrade && (
+                        <StarIcon fontSize="small" sx={{ color: 'warning.main' }} />
+                      )}
+                      {passenger.groupSeating && (
+                        <GroupIcon fontSize="small" color="action" />
+                      )}
+                      {passenger.familySeating && (
+                        <FamilyRestroomIcon fontSize="small" color="action" />
+                      )}
                       {passenger.specialMeal && (
                         <Badge badgeContent={1} color="info">
                           <RestaurantIcon fontSize="small" color="action" />

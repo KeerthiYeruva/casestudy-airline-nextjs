@@ -1,0 +1,238 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "clear": "Effacer",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "selectLanguage": "Sélectionner la langue",
+    "selectCurrency": "Sélectionner la devise"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "checkIn": "Enregistrement",
+    "inFlight": "Services à bord",
+    "admin": "Tableau de bord Admin",
+    "logout": "Se déconnecter",
+    "login": "Se connecter"
+  },
+  "auth": {
+    "title": "Authentification du personnel",
+    "subtitle": "Veuillez vous connecter pour continuer",
+    "emailLabel": "Adresse e-mail",
+    "passwordLabel": "Mot de passe",
+    "loginButton": "Se connecter",
+    "googleButton": "Se connecter avec Google",
+    "adminAccess": "Accès administrateur",
+    "staffAccess": "Accès personnel",
+    "loggingIn": "Connexion...",
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe invalide",
+      "networkError": "Erreur réseau. Veuillez réessayer.",
+      "unknownError": "Une erreur s'est produite. Veuillez réessayer."
+    }
+  },
+  "checkIn": {
+    "title": "Enregistrement du personnel",
+    "selectFlight": "Sélectionner un vol",
+    "passengerList": "Liste des passagers",
+    "passengerDetails": "Détails du passager",
+    "checkInButton": "Enregistrer",
+    "undoCheckIn": "Annuler l'enregistrement",
+    "changeSeat": "Changer de siège",
+    "noFlightSelected": "Aucun vol sélectionné",
+    "noPassengers": "Aucun passager trouvé",
+    "filters": {
+      "all": "Tous les passagers",
+      "checkedIn": "Enregistrés",
+      "notCheckedIn": "Non enregistrés",
+      "wheelchair": "Fauteuil roulant",
+      "infant": "Bébé",
+      "missingPassport": "Passeport manquant",
+      "missingAddress": "Adresse manquante",
+      "missingDOB": "Date de naissance manquante"
+    },
+    "passengerInfo": {
+      "name": "Nom",
+      "seat": "Siège",
+      "bookingRef": "Référence de réservation",
+      "passport": "Passeport",
+      "address": "Adresse",
+      "dateOfBirth": "Date de naissance",
+      "specialRequirements": "Besoins spéciaux",
+      "ancillaryServices": "Services auxiliaires",
+      "specialMeal": "Repas spécial",
+      "wheelchair": "Assistance fauteuil roulant",
+      "infant": "Voyage avec bébé"
+    },
+    "messages": {
+      "checkInSuccess": "Passager enregistré avec succès",
+      "checkInError": "Échec de l'enregistrement du passager",
+      "undoSuccess": "Enregistrement annulé avec succès",
+      "seatChanged": "Siège changé avec succès"
+    }
+  },
+  "inFlight": {
+    "title": "Services à bord",
+    "selectFlight": "Sélectionner un vol",
+    "passengerServices": "Services passagers",
+    "addService": "Ajouter un service",
+    "changeMeal": "Changer le repas",
+    "shopItems": "Articles de boutique",
+    "noServices": "Aucun service sélectionné",
+    "services": {
+      "ancillary": "Services auxiliaires",
+      "meal": "Préférence de repas",
+      "shop": "Demandes de boutique"
+    },
+    "messages": {
+      "serviceAdded": "Service ajouté avec succès",
+      "serviceRemoved": "Service supprimé avec succès",
+      "mealChanged": "Préférence de repas mise à jour",
+      "shopItemAdded": "Article ajouté à la demande"
+    }
+  },
+  "admin": {
+    "title": "Tableau de bord Admin",
+    "tabs": {
+      "passengers": "Gestion des passagers",
+      "services": "Menu des services"
+    },
+    "passengers": {
+      "addPassenger": "Ajouter un passager",
+      "editPassenger": "Modifier le passager",
+      "deletePassenger": "Supprimer le passager",
+      "selectSeat": "Sélectionner un siège",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce passager ?"
+    },
+    "services": {
+      "ancillaryServices": "Services auxiliaires",
+      "mealOptions": "Options de repas",
+      "shopItems": "Articles de boutique",
+      "addItem": "Ajouter un article",
+      "editItem": "Modifier l'article",
+      "deleteItem": "Supprimer l'article",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet article ?"
+    },
+    "messages": {
+      "passengerAdded": "Passager ajouté avec succès",
+      "passengerUpdated": "Passager mis à jour avec succès",
+      "passengerDeleted": "Passager supprimé avec succès",
+      "serviceAdded": "Service ajouté avec succès",
+      "serviceUpdated": "Service mis à jour avec succès",
+      "serviceDeleted": "Service supprimé avec succès"
+    }
+  },
+  "seats": {
+    "title": "Sélection de siège",
+    "available": "Disponible",
+    "occupied": "Occupé",
+    "selected": "Sélectionné",
+    "premium": "Premium",
+    "exit": "Rangée de sortie",
+    "preferences": {
+      "title": "Préférences de siège",
+      "window": "Fenêtre",
+      "aisle": "Couloir",
+      "middle": "Milieu",
+      "front": "Avant",
+      "back": "Arrière",
+      "exitRow": "Rangée de sortie"
+    },
+    "groupSeating": {
+      "title": "Sièges de groupe",
+      "allocate": "Attribuer un groupe",
+      "size": "Taille du groupe",
+      "keepTogether": "Garder le groupe ensemble"
+    },
+    "familySeating": {
+      "title": "Sièges familiaux",
+      "autoAllocate": "Attribuer automatiquement les sièges familiaux",
+      "adults": "Adultes",
+      "children": "Enfants",
+      "infants": "Bébés"
+    },
+    "premiumUpsell": {
+      "title": "Mise à niveau siège premium",
+      "description": "Passez aux sièges premium pour plus de confort et d'espace pour les jambes",
+      "price": "Prix de la mise à niveau",
+      "features": {
+        "extraLegroom": "Espace supplémentaire pour les jambes",
+        "priority": "Embarquement prioritaire",
+        "recline": "Inclinaison améliorée",
+        "power": "Prises électriques"
+      },
+      "upgrade": "Mettre à niveau maintenant"
+    }
+  },
+  "flight": {
+    "number": "Numéro de vol",
+    "origin": "Origine",
+    "destination": "Destination",
+    "departure": "Départ",
+    "arrival": "Arrivée",
+    "date": "Date",
+    "time": "Heure",
+    "status": "Statut",
+    "gate": "Porte",
+    "terminal": "Terminal",
+    "aircraft": "Avion",
+    "seats": {
+      "total": "Sièges totaux",
+      "available": "Sièges disponibles",
+      "occupied": "Sièges occupés"
+    },
+    "statuses": {
+      "onTime": "À l'heure",
+      "delayed": "Retardé",
+      "boarding": "Embarquement",
+      "departed": "Parti",
+      "arrived": "Arrivé",
+      "cancelled": "Annulé"
+    }
+  },
+  "passenger": {
+    "name": "Nom",
+    "seat": "Siège",
+    "bookingReference": "Référence de réservation",
+    "passport": {
+      "number": "Numéro de passeport",
+      "expiryDate": "Date d'expiration",
+      "country": "Pays"
+    },
+    "address": "Adresse",
+    "dateOfBirth": "Date de naissance",
+    "checkedIn": "Enregistré",
+    "notCheckedIn": "Non enregistré"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "invalidEmail": "Adresse e-mail invalide",
+    "invalidDate": "Date invalide",
+    "invalidPassport": "Numéro de passeport invalide",
+    "seatUnavailable": "Ce siège n'est pas disponible",
+    "seatAlreadyAssigned": "Ce siège est déjà attribué"
+  },
+  "errors": {
+    "general": "Une erreur s'est produite",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "notFound": "Ressource introuvable",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action",
+    "serverError": "Erreur du serveur. Veuillez réessayer plus tard."
+  }
+}

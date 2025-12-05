@@ -26,6 +26,10 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import PersonIcon from "@mui/icons-material/Person";
+import StarIcon from "@mui/icons-material/Star";
+import GroupIcon from "@mui/icons-material/Group";
+import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
+import ClearIcon from "@mui/icons-material/Clear";
 import { Passenger, Flight } from "@/types";
 
 interface PassengerTableProps {
@@ -33,6 +37,7 @@ interface PassengerTableProps {
   flights: Flight[];
   onEdit: (passenger: Passenger) => void;
   onDelete: (id: string) => void;
+  onRemoveSeating?: (passengerId: string, type: 'premium' | 'group' | 'family' | 'preferences') => void;
 }
 
 const PassengerTable: React.FC<PassengerTableProps> = ({
@@ -40,6 +45,7 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
   flights,
   onEdit,
   onDelete,
+  onRemoveSeating,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -79,12 +85,71 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                   {missingFields.length > 0 ? <ErrorIcon /> : <PersonIcon />}
                 </Avatar>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography variant="subtitle1" fontWeight="bold" noWrap>
-                    {passenger.name}
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Typography variant="subtitle1" fontWeight="bold" noWrap>
+                      {passenger.name}
+                    </Typography>
+                    {passenger.premiumUpgrade && (
+                      <Tooltip title="Premium Seat">
+                        <StarIcon sx={{ fontSize: 16, color: 'warning.main' }} />
+                      </Tooltip>
+                    )}
+                  </Box>
                   <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
-                    <Chip label={passenger.seat} size="small" />
+                    <Chip 
+                      label={passenger.seat} 
+                      size="small" 
+                      color={passenger.premiumUpgrade ? 'warning' : 'default'}
+                      variant={passenger.premiumUpgrade ? 'filled' : 'outlined'}
+                    />
                     <Chip label={flight?.flightNumber || 'N/A'} size="small" variant="outlined" />
+                    {passenger.groupSeating && (
+                      <Tooltip title={`Group: ${passenger.groupSeating.size} passengers`}>
+                        <Chip 
+                          icon={<GroupIcon sx={{ fontSize: 12 }} />}
+                          label={passenger.groupSeating.size}
+                          size="small"
+                          color="primary"
+                          onDelete={onRemoveSeating ? () => onRemoveSeating(passenger.id, 'group') : undefined}
+                          deleteIcon={<ClearIcon />}
+                        />
+                      </Tooltip>
+                    )}
+                    {passenger.familySeating && (
+                      <Tooltip title={`Family: ${passenger.familySeating.adults + passenger.familySeating.children + passenger.familySeating.infants} members`}>
+                        <Chip 
+                          icon={<FamilyRestroomIcon sx={{ fontSize: 12 }} />}
+                          label={`${passenger.familySeating.adults + passenger.familySeating.children + passenger.familySeating.infants}`}
+                          size="small"
+                          color="secondary"
+                          onDelete={onRemoveSeating ? () => onRemoveSeating(passenger.id, 'family') : undefined}
+                          deleteIcon={<ClearIcon />}
+                        />
+                      </Tooltip>
+                    )}
+                    {passenger.seatPreferences && (
+                      <Tooltip title={`Preferences: ${passenger.seatPreferences.position?.join(', ') || passenger.seatPreferences.type || 'Set'}`}>
+                        <Chip 
+                          label="Prefs"
+                          size="small"
+                          color="info"
+                          variant="outlined"
+                          onDelete={onRemoveSeating ? () => onRemoveSeating(passenger.id, 'preferences') : undefined}
+                          deleteIcon={<ClearIcon />}
+                        />
+                      </Tooltip>
+                    )}
+                    {passenger.premiumUpgrade && onRemoveSeating && (
+                      <Tooltip title="Remove Premium">
+                        <Chip 
+                          label="⭐"
+                          size="small"
+                          color="warning"
+                          onDelete={() => onRemoveSeating(passenger.id, 'premium')}
+                          deleteIcon={<ClearIcon />}
+                        />
+                      </Tooltip>
+                    )}
                     {missingFields.length > 0 && (
                       <Chip label={`${missingFields.length} missing`} size="small" color="warning" />
                     )}
@@ -129,6 +194,42 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                     </Box>
                   )}
 
+                  {(passenger.groupSeating || passenger.familySeating || passenger.seatPreferences) && (
+                    <Box sx={{ mt: 1 }}>
+                      <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                        Seating:
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                        {passenger.groupSeating && (
+                          <Chip 
+                            icon={<GroupIcon sx={{ fontSize: 12 }} />}
+                            label={`Group (${passenger.groupSeating.size})`}
+                            size="small"
+                            color="primary"
+                            variant="outlined"
+                          />
+                        )}
+                        {passenger.familySeating && (
+                          <Chip 
+                            icon={<FamilyRestroomIcon sx={{ fontSize: 12 }} />}
+                            label={`Family (${passenger.familySeating.adults}A/${passenger.familySeating.children}C/${passenger.familySeating.infants}I)`}
+                            size="small"
+                            color="secondary"
+                            variant="outlined"
+                          />
+                        )}
+                        {passenger.seatPreferences && (
+                          <Chip 
+                            label={passenger.seatPreferences.position?.join(', ') || passenger.seatPreferences.type || 'Preferences set'}
+                            size="small"
+                            color="info"
+                            variant="outlined"
+                          />
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+
                   <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
                     <IconButton size="small" color="error" onClick={() => onDelete(passenger.id)}>
                       <DeleteIcon fontSize="small" />
@@ -153,6 +254,7 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
             <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Passenger</TableCell>
             <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Flight</TableCell>
             <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Seat</TableCell>
+            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Seating Info</TableCell>
             <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Services</TableCell>
             <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Verification</TableCell>
             <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'right' }}>Actions</TableCell>
@@ -191,9 +293,16 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                     <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
                       <PersonIcon fontSize="small" />
                     </Avatar>
-                    <Typography variant="body2" fontWeight="medium">
-                      {passenger.name}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Typography variant="body2" fontWeight="medium">
+                        {passenger.name}
+                      </Typography>
+                      {passenger.premiumUpgrade && (
+                        <Tooltip title="Premium Seat">
+                          <StarIcon sx={{ fontSize: 16, color: 'warning.main' }} />
+                        </Tooltip>
+                      )}
+                    </Box>
                   </Box>
                 </TableCell>
                 
@@ -209,7 +318,71 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                 </TableCell>
                 
                 <TableCell>
-                  <Chip label={passenger.seat} size="small" color="primary" variant="outlined" />
+                  <Chip 
+                    label={passenger.seat} 
+                    size="small" 
+                    color={passenger.premiumUpgrade ? "warning" : "primary"} 
+                    variant={passenger.premiumUpgrade ? "filled" : "outlined"}
+                    sx={{ fontWeight: passenger.premiumUpgrade ? 'bold' : 'normal' }}
+                  />
+                </TableCell>
+                
+                <TableCell>
+                  <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center' }}>
+                    {passenger.groupSeating && (
+                      <Tooltip title={`Group: ${passenger.groupSeating.size} passengers, Lead: ${passenger.groupSeating.leadPassengerId === passenger.id ? 'Yes' : 'No'}`}>
+                        <Chip 
+                          icon={<GroupIcon sx={{ fontSize: 12 }} />}
+                          label={passenger.groupSeating.size}
+                          size="small"
+                          color="primary"
+                          variant="outlined"
+                          onDelete={onRemoveSeating ? () => onRemoveSeating(passenger.id, 'group') : undefined}
+                          deleteIcon={<ClearIcon />}
+                        />
+                      </Tooltip>
+                    )}
+                    {passenger.familySeating && (
+                      <Tooltip title={`Family: ${passenger.familySeating.adults} adults, ${passenger.familySeating.children} children, ${passenger.familySeating.infants} infants`}>
+                        <Chip 
+                          icon={<FamilyRestroomIcon sx={{ fontSize: 12 }} />}
+                          label={`${passenger.familySeating.adults}/${passenger.familySeating.children}/${passenger.familySeating.infants}`}
+                          size="small"
+                          color="secondary"
+                          variant="outlined"
+                          onDelete={onRemoveSeating ? () => onRemoveSeating(passenger.id, 'family') : undefined}
+                          deleteIcon={<ClearIcon />}
+                        />
+                      </Tooltip>
+                    )}
+                    {passenger.seatPreferences && (
+                      <Tooltip title={`Preferences: ${passenger.seatPreferences.position?.join(', ') || ''} ${passenger.seatPreferences.type || ''}`}>
+                        <Chip 
+                          label="Prefs"
+                          size="small"
+                          color="info"
+                          variant="outlined"
+                          onDelete={onRemoveSeating ? () => onRemoveSeating(passenger.id, 'preferences') : undefined}
+                          deleteIcon={<ClearIcon />}
+                        />
+                      </Tooltip>
+                    )}
+                    {passenger.premiumUpgrade && onRemoveSeating && (
+                      <Tooltip title="Remove Premium">
+                        <Chip 
+                          label="⭐ Premium"
+                          size="small"
+                          color="warning"
+                          variant="outlined"
+                          onDelete={() => onRemoveSeating(passenger.id, 'premium')}
+                          deleteIcon={<ClearIcon />}
+                        />
+                      </Tooltip>
+                    )}
+                    {!passenger.groupSeating && !passenger.familySeating && !passenger.seatPreferences && !passenger.premiumUpgrade && (
+                      <Typography variant="body2" color="text.secondary">-</Typography>
+                    )}
+                  </Box>
                 </TableCell>
                 
                 <TableCell>

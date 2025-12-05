@@ -1,0 +1,118 @@
+{
+  "common": {
+    "welcome": "Willkommen",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "clear": "Löschen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "submit": "Absenden",
+    "yes": "Ja",
+    "no": "Nein",
+    "ok": "OK",
+    "selectLanguage": "Sprache auswählen",
+    "selectCurrency": "Währung auswählen"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "checkIn": "Check-in",
+    "inFlight": "Bordservices",
+    "admin": "Admin-Dashboard",
+    "logout": "Abmelden",
+    "login": "Anmelden"
+  },
+  "auth": {
+    "title": "Personalauthentifizierung",
+    "subtitle": "Bitte melden Sie sich an, um fortzufahren",
+    "emailLabel": "E-Mail-Adresse",
+    "passwordLabel": "Passwort",
+    "loginButton": "Anmelden",
+    "googleButton": "Mit Google anmelden",
+    "adminAccess": "Admin-Zugang",
+    "staffAccess": "Personal-Zugang",
+    "loggingIn": "Anmeldung läuft...",
+    "errors": {
+      "invalidCredentials": "Ungültige E-Mail oder Passwort",
+      "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
+      "unknownError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    }
+  },
+  "seats": {
+    "title": "Sitzplatzauswahl",
+    "available": "Verfügbar",
+    "occupied": "Besetzt",
+    "selected": "Ausgewählt",
+    "premium": "Premium",
+    "exit": "Notausgangsreihe",
+    "preferences": {
+      "title": "Sitzplatzpräferenzen",
+      "window": "Fenster",
+      "aisle": "Gang",
+      "middle": "Mitte",
+      "front": "Vorne",
+      "back": "Hinten",
+      "exitRow": "Notausgangsreihe"
+    },
+    "groupSeating": {
+      "title": "Gruppensitzplätze",
+      "allocate": "Gruppe zuweisen",
+      "size": "Gruppengröße",
+      "keepTogether": "Gruppe zusammenhalten"
+    },
+    "familySeating": {
+      "title": "Familiensitzplätze",
+      "autoAllocate": "Familiensitzplätze automatisch zuweisen",
+      "adults": "Erwachsene",
+      "children": "Kinder",
+      "infants": "Säuglinge"
+    },
+    "premiumUpsell": {
+      "title": "Premium-Sitzplatz-Upgrade",
+      "description": "Upgraden Sie auf Premium-Sitze für extra Komfort und Beinfreiheit",
+      "price": "Upgrade-Preis",
+      "features": {
+        "extraLegroom": "Extra Beinfreiheit",
+        "priority": "Bevorzugtes Boarding",
+        "recline": "Verbesserte Neigung",
+        "power": "Steckdosen"
+      },
+      "upgrade": "Jetzt upgraden"
+    }
+  },
+  "flight": {
+    "number": "Flugnummer",
+    "origin": "Herkunft",
+    "destination": "Ziel",
+    "departure": "Abflug",
+    "arrival": "Ankunft",
+    "date": "Datum",
+    "time": "Zeit",
+    "status": "Status",
+    "gate": "Gate",
+    "terminal": "Terminal",
+    "aircraft": "Flugzeug",
+    "seats": {
+      "total": "Gesamtsitze",
+      "available": "Verfügbare Sitze",
+      "occupied": "Besetzte Sitze"
+    },
+    "statuses": {
+      "onTime": "Pünktlich",
+      "delayed": "Verspätet",
+      "boarding": "Boarding",
+      "departed": "Abgeflogen",
+      "arrived": "Angekommen",
+      "cancelled": "Storniert"
+    }
+  }
+}

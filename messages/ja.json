@@ -1,0 +1,118 @@
+{
+  "common": {
+    "welcome": "ようこそ",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "add": "追加",
+    "search": "検索",
+    "filter": "フィルター",
+    "clear": "クリア",
+    "close": "閉じる",
+    "back": "戻る",
+    "next": "次へ",
+    "submit": "送信",
+    "yes": "はい",
+    "no": "いいえ",
+    "ok": "OK",
+    "selectLanguage": "言語を選択",
+    "selectCurrency": "通貨を選択"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "checkIn": "チェックイン",
+    "inFlight": "機内サービス",
+    "admin": "管理ダッシュボード",
+    "logout": "ログアウト",
+    "login": "ログイン"
+  },
+  "auth": {
+    "title": "スタッフ認証",
+    "subtitle": "続行するにはサインインしてください",
+    "emailLabel": "メールアドレス",
+    "passwordLabel": "パスワード",
+    "loginButton": "サインイン",
+    "googleButton": "Googleでサインイン",
+    "adminAccess": "管理者アクセス",
+    "staffAccess": "スタッフアクセス",
+    "loggingIn": "ログイン中...",
+    "errors": {
+      "invalidCredentials": "メールアドレスまたはパスワードが無効です",
+      "networkError": "ネットワークエラー。もう一度お試しください。",
+      "unknownError": "エラーが発生しました。もう一度お試しください。"
+    }
+  },
+  "seats": {
+    "title": "座席選択",
+    "available": "利用可能",
+    "occupied": "占有中",
+    "selected": "選択済み",
+    "premium": "プレミアム",
+    "exit": "非常口列",
+    "preferences": {
+      "title": "座席の好み",
+      "window": "窓側",
+      "aisle": "通路側",
+      "middle": "中央",
+      "front": "前方",
+      "back": "後方",
+      "exitRow": "非常口列"
+    },
+    "groupSeating": {
+      "title": "グループ座席",
+      "allocate": "グループを割り当て",
+      "size": "グループサイズ",
+      "keepTogether": "グループをまとめて保つ"
+    },
+    "familySeating": {
+      "title": "ファミリー座席",
+      "autoAllocate": "ファミリー座席を自動割り当て",
+      "adults": "大人",
+      "children": "子供",
+      "infants": "乳児"
+    },
+    "premiumUpsell": {
+      "title": "プレミアム座席アップグレード",
+      "description": "より快適で足元の広いプレミアム座席にアップグレード",
+      "price": "アップグレード価格",
+      "features": {
+        "extraLegroom": "追加の足元スペース",
+        "priority": "優先搭乗",
+        "recline": "拡張リクライニング",
+        "power": "電源コンセント"
+      },
+      "upgrade": "今すぐアップグレード"
+    }
+  },
+  "flight": {
+    "number": "便名",
+    "origin": "出発地",
+    "destination": "目的地",
+    "departure": "出発",
+    "arrival": "到着",
+    "date": "日付",
+    "time": "時刻",
+    "status": "状態",
+    "gate": "ゲート",
+    "terminal": "ターミナル",
+    "aircraft": "航空機",
+    "seats": {
+      "total": "総座席数",
+      "available": "利用可能な座席",
+      "occupied": "占有座席"
+    },
+    "statuses": {
+      "onTime": "定刻",
+      "delayed": "遅延",
+      "boarding": "搭乗中",
+      "departed": "出発済み",
+      "arrived": "到着済み",
+      "cancelled": "キャンセル"
+    }
+  }
+}

@@ -16,6 +16,7 @@ interface ClientLayoutProps {
  * - Toast notifications for user feedback
  * - Firestore data initialization (seeds database on first load)
  * - Firestore real-time data synchronization
+ * - Internationalization locale selector
  * 
  * This is separated from the root layout to allow use of React hooks
  * and client-side state management while keeping the root layout as

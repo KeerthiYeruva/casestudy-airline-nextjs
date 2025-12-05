@@ -33,6 +33,40 @@ export interface ShopRequest {
   currency: string;
 }
 
+// ============ Seat Management ============
+export type SeatPreference = 'window' | 'aisle' | 'middle' | 'front' | 'back' | 'exitRow';
+export type SeatType = 'standard' | 'premium' | 'exit' | 'bulkhead';
+
+export interface SeatPreferences {
+  position?: SeatPreference[];
+  type?: SeatType;
+  nearFamily?: boolean;
+}
+
+export interface GroupSeating {
+  groupId: string;
+  size: number;
+  keepTogether: boolean;
+  leadPassengerId: string;
+}
+
+export interface FamilySeating {
+  familyId: string;
+  adults: number;
+  children: number;
+  infants: number;
+  autoAllocate: boolean;
+}
+
+export interface PremiumSeatUpsell {
+  seatNumber: string;
+  basePrice: number;
+  upgradePrice: number;
+  currency: string;
+  features: string[];
+  available: boolean;
+}
+
 export interface Passenger {
   id: string;
   name: string;
@@ -48,6 +82,18 @@ export interface Passenger {
   checkedIn: boolean;
   bookingReference: string;
   shopRequests: ShopRequest[];
+  seatPreferences?: SeatPreferences;
+  groupSeating?: GroupSeating;
+  familySeating?: FamilySeating;
+  premiumUpgrade?: boolean;
+}
+
+export interface SeatMap {
+  seatNumber: string;
+  type: SeatType;
+  available: boolean;
+  premium: boolean;
+  price?: number;
 }
 
 export interface Flight {
@@ -68,6 +114,8 @@ export interface Flight {
   terminal?: string;
   totalSeats: number;
   availableSeats: number;
+  seatMap?: SeatMap[];
+  premiumSeats?: string[];
 }
 
 // ============ Services & Shop ============
@@ -160,6 +208,11 @@ export interface DataActions {
   changeMealPreference: (passengerId: string, meal: string) => Promise<void>;
   addShopRequest: (passengerId: string, itemName: string, quantity: number, price: number) => Promise<void>;
   removeShopRequest: (passengerId: string, itemName: string) => Promise<void>;
+  updateSeatPreferences: (passengerId: string, preferences: SeatPreferences) => Promise<void>;
+  allocateGroupSeating: (groupSeating: GroupSeating, passengerIds: string[]) => Promise<void>;
+  allocateFamilySeating: (familySeating: FamilySeating, passengerIds: string[]) => Promise<void>;
+  upgradeToPremium: (passengerId: string, seatNumber: string) => Promise<void>;
+  getPremiumSeatUpsells: (flightId: string) => PremiumSeatUpsell[];
 }
 
 export interface CheckInActions {

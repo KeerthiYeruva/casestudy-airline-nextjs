@@ -37,8 +37,11 @@ export async function PUT(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
     const body = await request.json();
+    console.log('🔍 Updating passenger:', id, 'with data:', body);
     const validatedData = validateSchema(UpdatePassengerSchema, body);
+    console.log('✅ Validated data:', validatedData);
     const updatedPassenger = await passengerDB.update(id, validatedData as Partial<Passenger>);
+    console.log('💾 Updated passenger in DB:', updatedPassenger);
     
     if (!updatedPassenger) {
       return notFoundResponse('Passenger');

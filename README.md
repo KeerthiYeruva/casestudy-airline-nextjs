@@ -58,9 +58,15 @@ npm test
 - **Staff Check-In System**
   - Passenger check-in management with filtering (by status, special needs, passport verification)
   - Interactive seat map visualization
-  - Seat change functionality
+  - Seat change functionality with real-time seat locking
   - Undo check-in capability
   - Passport verification workflow
+  - **Advanced Seat Management** ⭐ NEW
+    - Set passenger seat preferences (window/aisle, front/back, exit row)
+    - Allocate group seating for travelers together
+    - Auto-allocate family seating with safety rules (adults, children, infants)
+    - Offer premium seat upgrades with pricing and features
+    - Visual indicators for seat preferences, groups, families, and upgrades
 
 - **In-Flight Services Management**
   - Meal service tracking (breakfast, lunch, dinner options)
@@ -68,31 +74,49 @@ npm test
   - In-flight shopping with multiple categories
   - Passenger service history
   - Shopping cart management
+  - Visual badges for premium seats, group/family seating
 
 - **Admin Dashboard**
   - Flight CRUD operations (Create, Read, Update, Delete)
-  - Passenger management
+  - Passenger management with advanced filtering
   - Meal options configuration
   - Ancillary services management
   - Shop items and categories management
   - Real-time data synchronization
+  - **Seat Management Tab** ⭐ NEW
+    - Centralized seat preference management
+    - Group seating allocation interface
+    - Family seating allocation with counters
+    - Premium seat upsell management
+
+- **Internationalization (i18n)** ⭐ NEW
+  - Multi-language support (English, Spanish, French, German, Japanese)
+  - Currency conversion (USD, EUR, GBP, JPY, CNY, INR)
+  - Timezone handling (11+ global timezones)
+  - Locale-specific date/time formatting
+  - LocaleSelector component in navigation
+  - Real-time language switching without page reload
+  - Persistent locale preferences in localStorage
 
 - **Authentication & Authorization**
   - Firebase Authentication integration (Google Sign-In)
   - Role-based access control (Admin/Staff roles)
   - Protected routes and component-level security
   - Persistent authentication state
+  - Mock authentication for development
 
 ### Technical Features
 - **State Management**: Zustand stores with persistence and devtools
 - **API Routes**: RESTful API endpoints with TypeScript
-- **Real-time Updates**: Automatic data synchronization across components
+- **Real-time Updates**: Automatic data synchronization across components with Server-Sent Events (SSE)
+- **Seat Locking**: Real-time seat locking during changes to prevent conflicts
 - **Error Handling**: Global error boundaries and toast notifications
 - **Accessibility**: WCAG 2.1 Level AA compliant with ARIA labels
-- **Responsive Design**: Mobile-first approach with Material-UI
-- **Type Safety**: Full TypeScript implementation
-- **Testing**: Unit and integration tests with Jest
-- **Performance**: Next.js optimizations (Server Components, code splitting, lazy loading)
+- **Responsive Design**: Mobile-first approach with Material-UI v7
+- **Type Safety**: Full TypeScript implementation with strict mode
+- **Internationalization**: next-intl integration for server-side translations
+- **Testing**: Unit and integration tests with Jest and React Testing Library
+- **Performance**: Next.js optimizations (Server Components, code splitting, lazy loading, Turbopack)
 
 ##  Testing
 
@@ -103,12 +127,24 @@ The project uses Jest and React Testing Library:
 
 ##  Documentation
 
-- [Quick Start Guide](./QUICKSTART.md)
-- [Implementation Details](./IMPLEMENTATION.md)
-- [Authentication Guide](./AUTHENTICATION_GUIDE.md)
-- [Accessibility Features](./ACCESSIBILITY.md)
-- [Testing Notes](./TESTING_NOTES.md)
-- [TypeScript Migration](./TYPESCRIPT_MIGRATION.md) ⭐ **NEW**
+### Getting Started
+- [Quick Start Guide](./QUICKSTART.md) - Fast setup and initial configuration
+- [Authentication Guide](./AUTHENTICATION_GUIDE.md) - Firebase auth setup
+
+### Feature Guides
+- [Check-In Guide](./CHECK_IN_GUIDE.md) - Staff check-in system walkthrough
+- [In-Flight Guide](./INFLIGHT_GUIDE.md) - In-flight services management
+- [Admin Dashboard Guide](./ADMIN_DASHBOARD_GUIDE.md) - Admin features
+- [Services Menu Guide](./SERVICES_MENU_GUIDE.md) - Meal and shop management
+- [Internationalization (i18n) Guide](./I18N_GUIDE.md) ⭐ NEW - Multi-language setup
+- [Seat Management Guide](./SEAT_MANAGEMENT_GUIDE.md) ⭐ NEW - Advanced seating features
+
+### Technical Documentation
+- [Accessibility Features](./ACCESSIBILITY.md) - WCAG compliance details
+- [Responsive Design](./RESPONSIVE_DESIGN.md) - Mobile-first approach
+- [Performance Guide](./PERFORMANCE_GUIDE.md) - Optimization strategies
+- [Testing Notes](./TESTING_NOTES.md) - Test coverage and strategies
+- [Features Implementation](./FEATURES_IMPLEMENTATION.md) ⭐ NEW - i18n & seat management
 
 ##  Technologies Stack
 
@@ -116,6 +152,7 @@ The project uses Jest and React Testing Library:
 - **Next.js 16.0.7**: React framework with App Router & Turbopack for optimal performance
 - **React 19.2.0**: Latest UI library with React Server Components
 - **TypeScript 5**: Full type-safe development with strict mode
+- **next-intl 4.5.8** ⭐ NEW: Internationalization framework for Next.js App Router
 
 ### State Management
 - **Zustand 5.0.2**: Lightweight, performant state management
@@ -156,6 +193,53 @@ The project uses Jest and React Testing Library:
 - **Code Splitting**: Automatic bundle optimization
 - **Hot Module Replacement**: Fast development experience
 - **Environment Variables**: Secure configuration management
+
+##  Complete Feature List
+
+### Passenger Management
+- ✅ Check-in/Undo check-in
+- ✅ Seat assignment and changes
+- ✅ Passport verification
+- ✅ Special requirements (wheelchair, infant)
+- ✅ Filtering and search
+- ✅ Seat preferences ⭐ NEW
+- ✅ Group seating allocation ⭐ NEW
+- ✅ Family seating allocation ⭐ NEW
+- ✅ Premium seat upgrades ⭐ NEW
+
+### In-Flight Services
+- ✅ Meal selection and changes
+- ✅ Ancillary services management
+- ✅ Duty-free shopping
+- ✅ Service history tracking
+- ✅ Real-time updates
+
+### Administration
+- ✅ Flight CRUD operations
+- ✅ Passenger management
+- ✅ Services configuration
+- ✅ Shop catalog management
+- ✅ Real-time monitoring
+- ✅ Seat management dashboard ⭐ NEW
+
+### Internationalization ⭐ NEW
+- ✅ 5 languages (EN, ES, FR, DE, JA)
+- ✅ 6 currencies (USD, EUR, GBP, JPY, CNY, INR)
+- ✅ 11+ timezones
+- ✅ Date/time formatting
+- ✅ Currency conversion
+- ✅ Persistent preferences
+
+### Technical Features
+- ✅ TypeScript strict mode
+- ✅ Server-Side Rendering (SSR)
+- ✅ Real-time updates (SSE)
+- ✅ State management (Zustand)
+- ✅ Responsive design (Mobile-first)
+- ✅ Accessibility (WCAG 2.1 AA)
+- ✅ Testing (Jest + RTL)
+- ✅ Error handling
+- ✅ Performance optimization
 
 ##  License
 

@@ -1,4 +1,8 @@
-﻿const nextConfig = {
+﻿import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
+
+const nextConfig = {
   reactStrictMode: true,
   sassOptions: {
     silenceDeprecations: ["legacy-js-api"],
@@ -56,4 +60,4 @@
   },
 };
 
-module.exports = nextConfig;
+export default withNextIntl(nextConfig);

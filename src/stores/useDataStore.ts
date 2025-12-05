@@ -392,6 +392,63 @@ const useDataStore = create<DataStore>()(
           await state.updatePassenger(passengerId, { shopRequests: updatedRequests });
         }
       },
+
+      // Advanced Seat Management Actions
+      updateSeatPreferences: async (passengerId: string, preferences: any) => {
+        const state = _get();
+        await state.updatePassenger(passengerId, { seatPreferences: preferences });
+      },
+
+      allocateGroupSeating: async (groupSeating: any, passengerIds: string[]) => {
+        const state = _get();
+        // Update all passengers in the group
+        for (const passengerId of passengerIds) {
+          await state.updatePassenger(passengerId, { groupSeating });
+        }
+      },
+
+      allocateFamilySeating: async (familySeating: any, passengerIds: string[]) => {
+        const state = _get();
+        // Update all passengers in the family
+        for (const passengerId of passengerIds) {
+          await state.updatePassenger(passengerId, { familySeating });
+        }
+      },
+
+      upgradeToPremium: async (passengerId: string, seatNumber: string) => {
+        const state = _get();
+        await state.updatePassenger(passengerId, { 
+          seat: seatNumber,
+          premiumUpgrade: true 
+        });
+      },
+
+      getPremiumSeatUpsells: (flightId: string) => {
+        const state = _get();
+        const flight = state.flights.find(f => f.id === flightId);
+        const passengers = state.passengers.filter(p => p.flightId === flightId);
+        
+        if (!flight || !flight.premiumSeats) return [];
+
+        // Generate premium seat upsell offers
+        return flight.premiumSeats.map(seatNumber => {
+          const isOccupied = passengers.some(p => p.seat === seatNumber);
+          
+          return {
+            seatNumber,
+            basePrice: 150,
+            upgradePrice: 75,
+            currency: 'USD',
+            features: [
+              'Extra Legroom',
+              'Priority Boarding',
+              'Enhanced Recline',
+              'Power Outlets'
+            ],
+            available: !isOccupied
+          };
+        });
+      },
       }),
       {
         name: 'airline-data-storage',
