@@ -50,6 +50,10 @@ const useDataStore = create<DataStore>()(
         loading: false,
         error: null,
 
+      // Direct setters for Firestore real-time sync
+      setFlights: (flights: Flight[]) => set({ flights }),
+      setPassengers: (passengers: Passenger[]) => set({ passengers }),
+
       // Fetch all data from API
       fetchFlights: async () => {
         set({ loading: true, error: null });

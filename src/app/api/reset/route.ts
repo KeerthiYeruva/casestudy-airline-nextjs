@@ -6,7 +6,7 @@ import { handleApiError, successResponse } from '@/lib/apiUtils';
 export async function POST() {
   try {
     // Reset server-side data
-    resetDatabase();
+    await resetDatabase();
     
     // Return success - frontend will handle its own localStorage via Zustand
     return successResponse({ 

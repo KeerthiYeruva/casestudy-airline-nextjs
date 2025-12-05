@@ -139,6 +139,8 @@ export interface AuthActions {
 export interface DataActions {
   fetchFlights: () => Promise<void>;
   fetchPassengers: (flightId?: string | null) => Promise<void>;
+  setFlights: (flights: Flight[]) => void;
+  setPassengers: (passengers: Passenger[]) => void;
   addFlight: (flight: Partial<Flight>) => Promise<Flight | null>;
   updateFlight: (id: string, updates: Partial<Flight>) => Promise<Flight | null>;
   deleteFlight: (id: string) => Promise<Flight | null>;

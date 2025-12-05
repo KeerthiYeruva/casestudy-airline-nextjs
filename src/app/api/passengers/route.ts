@@ -12,9 +12,9 @@ export async function GET(request: Request) {
     
     let passengers: Passenger[];
     if (flightId) {
-      passengers = passengerDB.getByFlightId(flightId);
+      passengers = await passengerDB.getByFlightId(flightId);
     } else {
-      passengers = passengerDB.getAll();
+      passengers = await passengerDB.getAll();
     }
     
     return successResponse(passengers);
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const validatedData = validateSchema(CreatePassengerSchema, body);
-    const newPassenger = passengerDB.create(validatedData as Partial<Passenger>);
+    const newPassenger = await passengerDB.create(validatedData as Partial<Passenger>);
     return successResponse(newPassenger, HTTP_STATUS.CREATED);
   } catch (error) {
     return handleApiError(error);

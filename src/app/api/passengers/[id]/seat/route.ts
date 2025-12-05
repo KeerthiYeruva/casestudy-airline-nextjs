@@ -20,7 +20,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       return badRequestResponse('Seat number is required');
     }
     
-    const result = passengerDB.changeSeat(id, validatedData.seat.trim());
+    const result = await passengerDB.changeSeat(id, validatedData.seat.trim());
     
     if (!result) {
       return notFoundResponse('Passenger');

@@ -13,7 +13,7 @@ interface RouteParams {
 export async function GET(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const passenger = passengerDB.getById(id);
+    const passenger = await passengerDB.getById(id);
     
     if (!passenger) {
       return notFoundResponse('Passenger');
@@ -31,7 +31,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     const { id } = await params;
     const body = await request.json();
     const validatedData = validateSchema(UpdatePassengerSchema, body);
-    const updatedPassenger = passengerDB.update(id, validatedData as Partial<Passenger>);
+    const updatedPassenger = await passengerDB.update(id, validatedData as Partial<Passenger>);
     
     if (!updatedPassenger) {
       return notFoundResponse('Passenger');
@@ -53,7 +53,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
 export async function DELETE(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const deletedPassenger = passengerDB.delete(id);
+    const deletedPassenger = await passengerDB.delete(id);
     
     if (!deletedPassenger) {
       return notFoundResponse('Passenger');

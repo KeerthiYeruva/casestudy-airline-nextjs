@@ -7,7 +7,7 @@ import type { Flight } from '@/types';
 // GET all flights
 export async function GET() {
   try {
-    const flights = flightDB.getAll();
+    const flights = await flightDB.getAll();
     return successResponse(flights);
   } catch (error) {
     return handleApiError(error);
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const validatedData = validateSchema(CreateFlightSchema, body);
-    const newFlight = flightDB.create(validatedData as Partial<Flight>);
+    const newFlight = await flightDB.create(validatedData as Partial<Flight>);
     return successResponse(newFlight, HTTP_STATUS.CREATED);
   } catch (error) {
     return handleApiError(error);

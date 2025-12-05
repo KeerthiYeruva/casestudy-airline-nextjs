@@ -12,7 +12,7 @@ interface RouteParams {
 export async function GET(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const flight = flightDB.getById(id);
+    const flight = await flightDB.getById(id);
     
     if (!flight) {
       return notFoundResponse('Flight');
@@ -30,7 +30,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     const { id } = await params;
     const body = await request.json();
     const validatedData = validateSchema(UpdateFlightSchema, body);
-    const updatedFlight = flightDB.update(id, validatedData as Partial<Flight>);
+    const updatedFlight = await flightDB.update(id, validatedData as Partial<Flight>);
     
     if (!updatedFlight) {
       return notFoundResponse('Flight');
@@ -46,7 +46,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
 export async function DELETE(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const deletedFlight = flightDB.delete(id);
+    const deletedFlight = await flightDB.delete(id);
     
     if (!deletedFlight) {
       return notFoundResponse('Flight');

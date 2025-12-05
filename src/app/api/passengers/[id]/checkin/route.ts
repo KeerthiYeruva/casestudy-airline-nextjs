@@ -11,7 +11,7 @@ interface RouteParams {
 export async function POST(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const passenger = passengerDB.checkIn(id);
+    const passenger = await passengerDB.checkIn(id);
     
     if (!passenger) {
       return notFoundResponse('Passenger');
@@ -33,7 +33,7 @@ export async function POST(_request: Request, { params }: RouteParams) {
 export async function DELETE(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const passenger = passengerDB.undoCheckIn(id);
+    const passenger = await passengerDB.undoCheckIn(id);
     
     if (!passenger) {
       return notFoundResponse('Passenger');
