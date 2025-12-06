@@ -24,7 +24,6 @@ import {
 import {
   Language as LanguageIcon,
   AttachMoney as CurrencyIcon,
-  Schedule as TimezoneIcon,
   Check as CheckIcon
 } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
@@ -46,14 +45,19 @@ const LocaleSelector: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsAnchor, setSettingsAnchor] = useState<null | HTMLElement>(null);
   
-  const [currency, setCurrency] = useState<SupportedCurrency>('USD');
-  const [timezone, setTimezone] = useState<SupportedTimezone>('America/New_York');
+  const [currency, setCurrency] = useState<SupportedCurrency>(() => {
+    if (typeof window === 'undefined') return 'USD';
+    return getLocalePreferences().currency;
+  });
+  const [timezone, setTimezone] = useState<SupportedTimezone>(() => {
+    if (typeof window === 'undefined') return 'America/New_York';
+    return getLocalePreferences().timezone;
+  });
 
+  // Suppress the React hooks linter for this specific case of hydration check
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
-    const preferences = getLocalePreferences();
-    setCurrency(preferences.currency);
-    setTimezone(preferences.timezone);
   }, []);
 
   const languages: { code: Locale; name: string; flag: string }[] = [

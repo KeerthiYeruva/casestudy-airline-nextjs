@@ -394,12 +394,12 @@ const useDataStore = create<DataStore>()(
       },
 
       // Advanced Seat Management Actions
-      updateSeatPreferences: async (passengerId: string, preferences: any) => {
+      updateSeatPreferences: async (passengerId: string, preferences: SeatPreferences) => {
         const state = _get();
         await state.updatePassenger(passengerId, { seatPreferences: preferences });
       },
 
-      allocateGroupSeating: async (groupSeating: any, passengerIds: string[]) => {
+      allocateGroupSeating: async (groupSeating: GroupSeating, passengerIds: string[]) => {
         const state = _get();
         // Update all passengers in the group
         for (const passengerId of passengerIds) {
@@ -407,7 +407,7 @@ const useDataStore = create<DataStore>()(
         }
       },
 
-      allocateFamilySeating: async (familySeating: any, passengerIds: string[]) => {
+      allocateFamilySeating: async (familySeating: FamilySeating, passengerIds: string[]) => {
         const state = _get();
         // Update all passengers in the family
         for (const passengerId of passengerIds) {

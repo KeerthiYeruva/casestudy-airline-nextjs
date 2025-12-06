@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Paper, Typography, List, ListItemButton, ListItemText, Box, Chip, LinearProgress, Stack } from "@mui/material";
+import { Paper, Typography, List, ListItemButton, Box, Chip, LinearProgress, Stack } from "@mui/material";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import StarIcon from "@mui/icons-material/Star";
 import GroupIcon from "@mui/icons-material/Group";
