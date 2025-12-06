@@ -5,7 +5,7 @@
  * Automatically allocates seats for families with children and infants
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -16,8 +16,6 @@ import {
   Typography,
   Box,
   Alert,
-  FormControlLabel,
-  Switch,
   Grid,
   Paper,
   Checkbox,
@@ -25,6 +23,7 @@ import {
 } from '@mui/material';
 import { FamilyRestroom as FamilyIcon } from '@mui/icons-material';
 import type { FamilySeating, Passenger } from '@/types';
+import useToastStore from '@/stores/useToastStore';
 
 interface FamilySeatingDialogProps {
   open: boolean;
@@ -44,8 +43,8 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
-  const [autoAllocate, setAutoAllocate] = useState(false);
   const [selectedPassengers, setSelectedPassengers] = useState<string[]>([]);
+  const { showToast } = useToastStore();
 
   React.useEffect(() => {
     if (!open) return;
@@ -58,14 +57,18 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
       p => !p.infant && p.flightId === flightId && !p.familySeating && !p.checkedIn
     );
 
-    setInfants(infantPassengers.length);
-    setAdults(Math.min(nonInfantPassengers.length, 2));
-    setChildren(Math.max(0, nonInfantPassengers.length - 2));
-    setAutoAllocate(false);
+    const detectedInfants = infantPassengers.length;
+    const detectedAdults = Math.min(nonInfantPassengers.length, 2);
+    const detectedChildren = Math.max(0, nonInfantPassengers.length - 2);
+    
+    setInfants(detectedInfants);
+    setAdults(detectedAdults);
+    setChildren(detectedChildren);
+    
     // Auto-select all available passengers by default
     const autoSelected = [
       ...infantPassengers.map(p => p.id),
-      ...nonInfantPassengers.slice(0, adults + children).map(p => p.id)
+      ...nonInfantPassengers.slice(0, detectedAdults + detectedChildren).map(p => p.id)
     ];
     setSelectedPassengers(autoSelected);
   }, [open, passengers, flightId]);
@@ -100,21 +103,21 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
     const infantPassengers = selectedPassengerObjects.filter(p => p.infant);
     
     if (infantPassengers.length !== infants) {
-      alert(`You specified ${infants} infant(s) but selected ${infantPassengers.length} infant passenger(s). Please adjust your selection.`);
+      showToast(`You specified ${infants} infant(s) but selected ${infantPassengers.length} infant passenger(s). Please adjust your selection.`, 'warning');
       return;
     }
     
     if (nonInfantPassengers.length !== seatsNeeded) {
-      alert(`You specified ${adults} adult(s) + ${children} child(ren) = ${seatsNeeded} seats needed, but selected ${nonInfantPassengers.length} non-infant passengers. Please adjust your selection.`);
+      showToast(`You specified ${adults} adult(s) + ${children} child(ren) = ${seatsNeeded} seats needed, but selected ${nonInfantPassengers.length} non-infant passengers. Please adjust your selection.`, 'warning');
       return;
     }
     
     if (infants > adults) {
-      alert(`You cannot have more infants (${infants}) than adults (${adults}). Each infant must sit on an adult's lap.`);
+      showToast(`You cannot have more infants (${infants}) than adults (${adults}). Each infant must sit on an adult&apos;s lap.`, 'error');
       return;
     }
 
-    // Find consecutive seats in the same row
+    // Find consecutive seats in the same row (e.g., 5A, 5B, 5C)
     const occupiedSeats = new Set(
       passengers
         .filter(p => p.seat && !selectedPassengers.includes(p.id))
@@ -127,16 +130,28 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
 
     // Try to find a row with enough consecutive available seats (only for adults + children)
     for (let row = 1; row <= 10 && !foundRow; row++) {
-      const seatsInRow = seatLetters.map(letter => `${row}${letter}`);
-      const availableInRow = seatsInRow.filter(seat => !occupiedSeats.has(seat));
-      
-      if (availableInRow.length >= seatsNeeded) {
-        allocatedSeats = availableInRow.slice(0, seatsNeeded);
-        foundRow = true;
+      // Check for consecutive seats starting from each position
+      for (let startIdx = 0; startIdx <= seatLetters.length - seatsNeeded && !foundRow; startIdx++) {
+        const consecutiveSeats = [];
+        let allAvailable = true;
+        
+        for (let i = 0; i < seatsNeeded; i++) {
+          const seat = `${row}${seatLetters[startIdx + i]}`;
+          if (occupiedSeats.has(seat)) {
+            allAvailable = false;
+            break;
+          }
+          consecutiveSeats.push(seat);
+        }
+        
+        if (allAvailable && consecutiveSeats.length === seatsNeeded) {
+          allocatedSeats = consecutiveSeats;
+          foundRow = true;
+        }
       }
     }
 
-    // If can't fit in one row, try to find consecutive rows
+    // If can't fit in one row, try to find consecutive rows as fallback
     if (!foundRow) {
       for (let startRow = 1; startRow <= 9 && !foundRow; startRow++) {
         const row1Seats = seatLetters.map(letter => `${startRow}${letter}`);
@@ -153,7 +168,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
     }
 
     if (allocatedSeats.length !== seatsNeeded) {
-      alert(`Unable to find ${seatsNeeded} consecutive seats for family seating. Please try manual seat selection.`);
+      showToast(`Unable to find ${seatsNeeded} consecutive seats for family seating. Please try manual seat selection.`, 'error');
       return;
     }
 
@@ -258,7 +273,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                 {adults} adult(s), {children} child(ren), {infants} infant(s)
               </Typography>
               <Typography variant="caption" color="primary.dark" fontWeight="bold" display="block" sx={{ mt: 0.5 }}>
-                Seats needed: {seatsNeeded} (infants sit on adult's lap)
+                Seats needed: {seatsNeeded} (infants sit on adult&apos;s lap)
               </Typography>
             </Box>
           </Paper>
@@ -335,7 +350,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
 
           {selectedPassengers.length === totalMembers && !compositionValid && (
             <Alert severity="error">
-              Selected passengers don't match family composition:
+              Selected passengers don&apos;t match family composition:
               <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
                 <li>Expected: {infants} infant(s), {expectedNonInfants} adult(s)/child(ren)</li>
                 <li>Selected: {selectedInfants} infant(s), {selectedNonInfants} adult(s)/child(ren)</li>
@@ -347,7 +362,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
           {infants > adults && (
             <Alert severity="error">
               Invalid: You cannot have more infants ({infants}) than adults ({adults}). 
-              Each infant needs an adult's lap!
+              Each infant needs an adult&apos;s lap!
             </Alert>
           )}
 
@@ -363,7 +378,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                 👶 Lap Infant Policy
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Infants under 2 years travel on an adult's lap and don't require their own seat. 
+                Infants under 2 years travel on an adult&apos;s lap and don&apos;t require their own seat. 
                 The system will allocate {seatsNeeded} consecutive seats for your family of {totalMembers}.
               </Typography>
             </Alert>

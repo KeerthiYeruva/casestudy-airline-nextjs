@@ -728,7 +728,7 @@ const AdminDashboard: React.FC = () => {
           const passengerId = selectedPassengerForSeat;
           if (passengerId) {
             const passenger = passengers.find(p => p.id === passengerId);
-            let updateData: any = { seatPreferences: preferences };
+            const updateData: Partial<Passenger> = { seatPreferences: preferences };
             
             // If passenger has premium upgrade and selected window/aisle, auto-reallocate to matching premium seat
             if (passenger?.premiumUpgrade && preferences.position) {

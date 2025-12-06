@@ -136,12 +136,14 @@ const InFlight: React.FC = () => {
     showToast(`${selectedService} added for ${selectedPassenger.name}`, "success");
     setAddServiceDialog(false);
     setSelectedService("");
+    await fetchPassengers();
   };
 
   const handleRemoveService = async (service: string) => {
     if (selectedPassenger) {
       await removeAncillaryServiceFromPassenger(selectedPassenger.id, service);
       showToast(`${service} removed`, "info");
+      await fetchPassengers();
     }
   };
 
@@ -154,6 +156,7 @@ const InFlight: React.FC = () => {
     showToast(`Meal changed to ${selectedMeal} for ${selectedPassenger.name}`, "success");
     setChangeMealDialog(false);
     setSelectedMeal("");
+    await fetchPassengers();
   };
 
   const handleAddShopItem = async () => {
@@ -173,6 +176,7 @@ const InFlight: React.FC = () => {
     );
     showToast(`${selectedShopItem.name} (x${shopQuantity}) added to cart`, "success");
     handleCloseShopDialog();
+    await fetchPassengers();
   };
 
   const handleCloseShopDialog = () => {
@@ -186,6 +190,7 @@ const InFlight: React.FC = () => {
     if (selectedPassenger) {
       await removeShopRequest(selectedPassenger.id, item);
       showToast(`${item} removed from cart`, "info");
+      await fetchPassengers();
     }
   };
 
@@ -199,6 +204,7 @@ const InFlight: React.FC = () => {
         await updatePassenger(selectedPassenger.id, {
           shopRequests: updatedRequests,
         });
+        await fetchPassengers();
       }
     }
   };

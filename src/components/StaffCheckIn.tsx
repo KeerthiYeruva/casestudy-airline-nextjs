@@ -299,7 +299,7 @@ const StaffCheckIn: React.FC = () => {
           onClose={() => setSeatPreferencesDialog(false)}
           onSave={async (preferences) => {
             // If passenger has premium upgrade and selected window/aisle, auto-reallocate to matching premium seat
-            let updateData: any = { seatPreferences: preferences };
+            const updateData: Partial<Passenger> = { seatPreferences: preferences };
             
             if (selectedPassenger.premiumUpgrade && preferences.position) {
               const occupiedSeats = new Set(flightPassengers.filter(p => p.id !== selectedPassenger.id).map(p => p.seat));
