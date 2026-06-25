@@ -120,8 +120,10 @@ const ChangeSeatDialog: React.FC<ChangeSeatDialogProps> = ({
           placeholder="e.g., 5A"
           helperText="Format: Row number + Letter (e.g., 5A, 10F)"
           error={!!lockError}
-          InputProps={{
-            endAdornment: isLocking ? <CircularProgress size={20} /> : null,
+          slotProps={{
+            input: {
+              endAdornment: isLocking ? <CircularProgress size={20} /> : null,
+            },
           }}
         />
       </DialogContent>

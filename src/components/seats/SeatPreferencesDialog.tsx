@@ -85,12 +85,12 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
   const hasSelections = (preferences.position && preferences.position.length > 0) || preferences.nearFamily;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 2 } }}>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth slotProps={{ paper: { sx: { borderRadius: 2 } } }}>
       <DialogTitle sx={{ bgcolor: 'primary.50', pb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <AirlineSeatReclineExtraIcon color="primary" />
           <Box>
-            <Typography variant="h6" fontWeight="bold">
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               Seat Preferences
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -109,7 +109,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
 
           {/* Position Preferences */}
           <Box>
-            <Typography variant="subtitle1" gutterBottom fontWeight="bold" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 'bold' }}>
               Position Preferences
               {preferences.position && preferences.position.length > 0 && (
                 <Chip 
@@ -149,7 +149,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
 
           {/* Seat Type */}
           <Box>
-            <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
               Seat Type
             </Typography>
             <RadioGroup
@@ -174,7 +174,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                     control={<Radio />}
                     label={
                       <Box>
-                        <Typography variant="body1" fontWeight={preferences.type === 'standard' ? 'bold' : 'normal'}>
+                        <Typography variant="body1" sx={{ fontWeight: preferences.type === 'standard' ? 'bold' : 'normal' }}>
                           Standard
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -201,7 +201,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                     control={<Radio />}
                     label={
                       <Box>
-                        <Typography variant="body1" fontWeight={preferences.type === 'premium' ? 'bold' : 'normal'}>
+                        <Typography variant="body1" sx={{ fontWeight: preferences.type === 'premium' ? 'bold' : 'normal' }}>
                           Premium 💎
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -228,7 +228,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                     control={<Radio />}
                     label={
                       <Box>
-                        <Typography variant="body1" fontWeight={preferences.type === 'exit' ? 'bold' : 'normal'}>
+                        <Typography variant="body1" sx={{ fontWeight: preferences.type === 'exit' ? 'bold' : 'normal' }}>
                           Exit Row 🚪
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -255,7 +255,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                     control={<Radio />}
                     label={
                       <Box>
-                        <Typography variant="body1" fontWeight={preferences.type === 'bulkhead' ? 'bold' : 'normal'}>
+                        <Typography variant="body1" sx={{ fontWeight: preferences.type === 'bulkhead' ? 'bold' : 'normal' }}>
                           Bulkhead
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -293,7 +293,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                 }
                 label={
                   <Box>
-                    <Typography variant="body1" fontWeight={preferences.nearFamily ? 'bold' : 'normal'}>
+                    <Typography variant="body1" sx={{ fontWeight: preferences.nearFamily ? 'bold' : 'normal' }}>
                       Seat near family members
                     </Typography>
                     <Typography variant="caption" color="text.secondary">

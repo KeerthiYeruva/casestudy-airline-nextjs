@@ -286,7 +286,7 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
                   alignItems: 'center',
                   height: '56px'
                 }}>
-                  <Typography variant="body2" fontWeight="bold">
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                     {passengerForm.seat ? `Seat: ${passengerForm.seat}` : 'No seat'}
                   </Typography>
                   <Button
@@ -339,7 +339,7 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
               fullWidth
               label="Expiry Date"
               type="date"
-              InputLabelProps={{ shrink: true }}
+              slotProps={{ inputLabel: { shrink: true } }}
               value={passengerForm.passport?.expiryDate || ""}
               onChange={(e) =>
                 onFormChange({
@@ -401,8 +401,10 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
               required
               label="Date of Birth"
               type="date"
-              InputLabelProps={{ shrink: true }}
-              inputProps={{ max: new Date().toISOString().split('T')[0] }}
+              slotProps={{
+                inputLabel: { shrink: true },
+                htmlInput: { max: new Date().toISOString().split('T')[0] },
+              }}
               value={passengerForm.dateOfBirth}
               onChange={(e) => {
                 onFormChange({
@@ -462,7 +464,7 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
                 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box>
-                      <Typography variant="body2" fontWeight="bold">
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                         {passengerForm.seat ? `Selected Seat: ${passengerForm.seat}` : 'No seat selected'}
                       </Typography>
                       {!isRequiredFieldsFilled && (

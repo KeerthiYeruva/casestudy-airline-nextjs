@@ -36,7 +36,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
           {passenger.checkedIn ? <CheckCircleIcon fontSize="large" /> : <PersonIcon fontSize="large" />}
         </Avatar>
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} noWrap>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.5rem' } }} noWrap>
             {passenger.name}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>
@@ -56,32 +56,32 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
         <Grid size={{ xs: 6, sm: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 }, mb: 0.5, flexWrap: 'wrap' }}>
             <AirlineSeatReclineExtraIcon fontSize="small" color="action" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }} />
-            <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 'medium', fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
               Seat
             </Typography>
           </Box>
-          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>{passenger.seat}</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>{passenger.seat}</Typography>
         </Grid>
         
         <Grid size={{ xs: 6, sm: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 }, mb: 0.5, flexWrap: 'wrap' }}>
             <ConfirmationNumberIcon fontSize="small" color="action" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }} />
-            <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 'medium', fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
               Booking Reference
             </Typography>
           </Box>
-          <Typography variant="body1" fontWeight="medium" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>{passenger.bookingReference}</Typography>
+          <Typography variant="body1" sx={{ fontWeight: 'medium', fontSize: { xs: '0.9rem', sm: '1rem' } }}>{passenger.bookingReference}</Typography>
         </Grid>
 
         {passenger.specialMeal && (
           <Grid size={{ xs: 12, sm: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
               <RestaurantIcon fontSize="small" color="action" />
-              <Typography variant="caption" color="text.secondary" fontWeight="medium">
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 'medium' }}>
                 Special Meal
               </Typography>
             </Box>
-            <Typography variant="body1" fontWeight="medium">{passenger.specialMeal}</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{passenger.specialMeal}</Typography>
           </Grid>
         )}
       </Grid>
@@ -136,7 +136,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
         <>
           <Divider sx={{ my: 2 }} />
           <Box>
-            <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
               <AirlineSeatReclineExtraIcon color="primary" />
               Seat Management
             </Typography>
@@ -154,7 +154,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <StarIcon color="warning" />
-                  <Typography variant="subtitle2" fontWeight="bold" color="warning.dark">
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }} color="warning.dark">
                     Premium Seat Upgrade
                   </Typography>
                 </Box>
@@ -174,7 +174,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
                 border: '1px solid',
                 borderColor: 'primary.light'
               }}>
-                <Typography variant="caption" fontWeight="bold" color="primary.dark" display="block" mb={0.5}>
+                <Typography variant="caption" color="primary.dark" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
                   SEAT PREFERENCES
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
@@ -214,7 +214,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
                 border: '1px solid',
                 borderColor: 'secondary.light'
               }}>
-                <Typography variant="caption" fontWeight="bold" color="secondary.dark" display="block" mb={0.5}>
+                <Typography variant="caption" color="secondary.dark" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
                   GROUP SEATING
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
@@ -249,7 +249,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
                 border: '1px solid',
                 borderColor: 'info.light'
               }}>
-                <Typography variant="caption" fontWeight="bold" color="info.dark" display="block" mb={0.5}>
+                <Typography variant="caption" color="info.dark" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
                   FAMILY SEATING
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -280,7 +280,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
                     />
                   )}
                 </Box>
-                <Typography variant="caption" color="text.secondary" display="block" mt={0.5}>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
                   Family ID: {passenger.familySeating.familyId}
                 </Typography>
               </Box>

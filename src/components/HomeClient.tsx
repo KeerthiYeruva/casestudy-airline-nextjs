@@ -166,7 +166,7 @@ export default function HomeClient() {
           <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <FlightTakeoffIcon color="primary" />
-              <Typography variant="h6" color="primary" fontWeight="bold">
+              <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
                 Menu
               </Typography>
             </Box>
@@ -181,11 +181,11 @@ export default function HomeClient() {
           
           {/* User Info Section in Drawer */}
           <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
-            <Typography variant="caption" color="text.secondary" gutterBottom display="block">
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
               Logged in as
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-              <Typography variant="subtitle2" fontWeight="bold" sx={{ flex: 1 }}>
+              <Typography variant="subtitle2" noWrap sx={{ fontWeight: 'bold', flex: 1 }}>
                 {useAuthStore.getState().user?.displayName}
               </Typography>
             </Box>
@@ -233,7 +233,11 @@ export default function HomeClient() {
                 <ListItemText 
                   primary="Check-In" 
                   secondary="Passenger check-in and boarding"
-                  primaryTypographyProps={{ fontWeight: currentView === "checkin" ? 'bold' : 'normal' }}
+                  slotProps={{
+                    primary: {
+                      sx: { fontWeight: currentView === 'checkin' ? 'bold' : 'normal' }
+                    }
+                  }}
                 />
               </ListItemButton>
             </ListItem>
@@ -252,7 +256,11 @@ export default function HomeClient() {
                 <ListItemText 
                   primary="In-Flight Services" 
                   secondary="Meals, shop, and services"
-                  primaryTypographyProps={{ fontWeight: currentView === "inflight" ? 'bold' : 'normal' }}
+                  slotProps={{
+                    primary: {
+                      sx: { fontWeight: currentView === 'inflight' ? 'bold' : 'normal' }
+                    }
+                  }}
                 />
               </ListItemButton>
             </ListItem>
@@ -274,9 +282,13 @@ export default function HomeClient() {
                     <ListItemText 
                       primary="Admin Dashboard" 
                       secondary="Passenger and service management"
-                      primaryTypographyProps={{ 
-                        fontWeight: currentView === "admin" ? 'bold' : 'normal',
-                        color: currentView === "admin" ? 'secondary.main' : 'inherit'
+                      slotProps={{
+                        primary: {
+                          sx: { 
+                            fontWeight: currentView === 'admin' ? 'bold' : 'normal',
+                            color: currentView === 'admin' ? 'secondary.main' : 'inherit'
+                          }
+                        }
                       }}
                     />
                   </ListItemButton>

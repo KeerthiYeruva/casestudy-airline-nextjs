@@ -47,7 +47,7 @@ const CheckInFilters: React.FC<CheckInFiltersProps> = ({
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <FilterListIcon color="action" />
-          <Typography variant="h6" fontWeight="medium">
+          <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
             Filters
           </Typography>
           {activeFilters > 0 && (
@@ -63,7 +63,7 @@ const CheckInFilters: React.FC<CheckInFiltersProps> = ({
           Clear All
         </Button>
       </Box>
-      <Grid container spacing={2} alignItems="center">
+      <Grid container spacing={2} sx={{ alignItems: 'center' }}>
         <Grid size={{ xs: 12, sm: 5 }}>
           <FormControl fullWidth size="small">
             <InputLabel>Check-In Status</InputLabel>

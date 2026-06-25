@@ -25,17 +25,12 @@ const COLLECTIONS = {
   SHOP_CATEGORIES: 'shopCategories',
 } as const;
 
-// Flag to track if using Firebase or fallback
-let useFirebase = false;
-
 // Check if Firebase is configured
 export function isFirebaseConfigured(): boolean {
   try {
     const config = db.app.options;
-    useFirebase = config.apiKey !== 'YOUR_API_KEY' && config.projectId !== 'YOUR_PROJECT_ID';
-    return useFirebase;
+    return config.apiKey !== 'YOUR_API_KEY' && config.projectId !== 'YOUR_PROJECT_ID';
   } catch {
-    useFirebase = false;
     return false;
   }
 }
@@ -77,14 +72,13 @@ export async function initializeFirestoreData(): Promise<void> {
     }
   } catch (error) {
     console.error('[Firestore] Initialization error:', error);
-    useFirebase = false;
   }
 }
 
 // ============ Flights ============
 
 export async function getAllFlights(): Promise<Flight[]> {
-  if (!useFirebase) return initialFlights;
+  if (!isFirebaseConfigured()) return initialFlights;
 
   try {
     const snapshot = await getDocs(collection(db, COLLECTIONS.FLIGHTS));
@@ -96,7 +90,7 @@ export async function getAllFlights(): Promise<Flight[]> {
 }
 
 export async function getFlightById(id: string): Promise<Flight | null> {
-  if (!useFirebase) return initialFlights.find(f => f.id === id) || null;
+  if (!isFirebaseConfigured()) return initialFlights.find(f => f.id === id) || null;
 
   try {
     const docRef = doc(db, COLLECTIONS.FLIGHTS, id);
@@ -109,7 +103,7 @@ export async function getFlightById(id: string): Promise<Flight | null> {
 }
 
 export async function createFlight(flight: Omit<Flight, 'id'>): Promise<Flight> {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     const newFlight = { ...flight, id: `FL${Date.now()}` };
     initialFlights.push(newFlight);
     return newFlight;
@@ -125,7 +119,7 @@ export async function createFlight(flight: Omit<Flight, 'id'>): Promise<Flight> 
 }
 
 export async function updateFlight(id: string, updates: Partial<Flight>): Promise<Flight | null> {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     const index = initialFlights.findIndex(f => f.id === id);
     if (index === -1) return null;
     initialFlights[index] = { ...initialFlights[index], ...updates };
@@ -144,7 +138,7 @@ export async function updateFlight(id: string, updates: Partial<Flight>): Promis
 }
 
 export async function deleteFlight(id: string): Promise<boolean> {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     const index = initialFlights.findIndex(f => f.id === id);
     if (index === -1) return false;
     initialFlights.splice(index, 1);
@@ -163,7 +157,7 @@ export async function deleteFlight(id: string): Promise<boolean> {
 // ============ Passengers ============
 
 export async function getAllPassengers(flightId?: string | null): Promise<Passenger[]> {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     return flightId 
       ? initialPassengers.filter(p => p.flightId === flightId)
       : initialPassengers;
@@ -186,7 +180,7 @@ export async function getAllPassengers(flightId?: string | null): Promise<Passen
 }
 
 export async function getPassengerById(id: string): Promise<Passenger | null> {
-  if (!useFirebase) return initialPassengers.find(p => p.id === id) || null;
+  if (!isFirebaseConfigured()) return initialPassengers.find(p => p.id === id) || null;
 
   try {
     const docRef = doc(db, COLLECTIONS.PASSENGERS, id);
@@ -199,7 +193,7 @@ export async function getPassengerById(id: string): Promise<Passenger | null> {
 }
 
 export async function createPassenger(passenger: Omit<Passenger, 'id'>): Promise<Passenger> {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     const newPassenger = { ...passenger, id: `P${Date.now()}` };
     initialPassengers.push(newPassenger);
     return newPassenger;
@@ -215,7 +209,7 @@ export async function createPassenger(passenger: Omit<Passenger, 'id'>): Promise
 }
 
 export async function updatePassenger(id: string, updates: Partial<Passenger>): Promise<Passenger | null> {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     const index = initialPassengers.findIndex(p => p.id === id);
     if (index === -1) return null;
     initialPassengers[index] = { ...initialPassengers[index], ...updates };
@@ -234,7 +228,7 @@ export async function updatePassenger(id: string, updates: Partial<Passenger>): 
 }
 
 export async function deletePassenger(id: string): Promise<boolean> {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     const index = initialPassengers.findIndex(p => p.id === id);
     if (index === -1) return false;
     initialPassengers.splice(index, 1);
@@ -255,7 +249,7 @@ export async function deletePassenger(id: string): Promise<boolean> {
 export type UnsubscribeFunction = () => void;
 
 export function subscribeToFlights(callback: (flights: Flight[]) => void): UnsubscribeFunction {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     // Fallback: just call once
     callback(initialFlights);
     return () => {};
@@ -287,7 +281,7 @@ export function subscribeToPassengers(
   callback: (passengers: Passenger[]) => void,
   flightId?: string | null
 ): UnsubscribeFunction {
-  if (!useFirebase) {
+  if (!isFirebaseConfigured()) {
     // Fallback: just call once
     const filtered = flightId 
       ? initialPassengers.filter(p => p.flightId === flightId)

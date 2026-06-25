@@ -76,7 +76,7 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <StarIcon color="warning" />
           <Typography variant="h6">Upgrade to Premium Seating</Typography>
         </Box>
@@ -94,7 +94,7 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
             </Alert>
           ) : (
             <>
-              <Typography variant="subtitle1" fontWeight="bold">
+              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                 Available Premium Seats
               </Typography>
 
@@ -118,8 +118,8 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
                       onClick={() => upgrade.available && setSelectedSeat(upgrade.seatNumber)}
                     >
                       <CardContent>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                          <Typography variant="h6" fontWeight="bold">
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Seat {upgrade.seatNumber}
                           </Typography>
                           {selectedSeat === upgrade.seatNumber && (
@@ -135,11 +135,11 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
                           sx={{ mb: 2 }}
                         />
 
-                        <Typography variant="h5" color="primary" fontWeight="bold" mb={1}>
+                        <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold', mb: 1 }}>
                           {formatCurrency(upgrade.upgradePrice, currency as 'USD' | 'EUR' | 'GBP' | 'JPY' | 'CNY' | 'INR', locale as 'en' | 'es' | 'fr' | 'de' | 'ja')}
                         </Typography>
 
-                        <Typography variant="caption" color="text.secondary" display="block" mb={2}>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
                           Base: {formatCurrency(upgrade.basePrice, currency as 'USD' | 'EUR' | 'GBP' | 'JPY' | 'CNY' | 'INR', locale as 'en' | 'es' | 'fr' | 'de' | 'ja')}
                         </Typography>
 
@@ -147,7 +147,7 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
 
                         <Box sx={{ mt: 2 }}>
                           {upgrade.features.slice(0, 3).map((feature, idx) => (
-                            <Box key={idx} display="flex" alignItems="center" gap={1} mb={0.5}>
+                            <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                               <CheckIcon fontSize="small" color="success" />
                               <Typography variant="caption">{feature}</Typography>
                             </Box>
@@ -171,7 +171,7 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
               {selectedUpgrade && (
                 <Card sx={{ bgcolor: 'primary.50', border: 1, borderColor: 'primary.main' }}>
                   <CardContent>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
                       Premium Features for Seat {selectedUpgrade.seatNumber}
                     </Typography>
                     <List dense>
@@ -181,8 +181,8 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
                             {featureIcons[feature] || <CheckIcon color="success" />}
                           </ListItemIcon>
                           <ListItemText
-                            primary={feature}
-                            primaryTypographyProps={{ variant: 'body2' }}
+                            disableTypography
+                            primary={<Typography variant="body2">{feature}</Typography>}
                           />
                         </ListItem>
                       ))}

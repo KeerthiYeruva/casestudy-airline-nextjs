@@ -64,7 +64,7 @@ const FlightSelectionPanel: React.FC<FlightSelectionPanelProps> = ({
               <Box sx={{ width: '100%' }}>
                 {/* Header */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                  <Typography variant="subtitle1" fontWeight="bold">
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                     {flight.flightNumber}
                   </Typography>
                   <Chip 
@@ -88,7 +88,7 @@ const FlightSelectionPanel: React.FC<FlightSelectionPanelProps> = ({
                     <Typography variant="caption" color="text.secondary">
                       Capacity
                     </Typography>
-                    <Typography variant="caption" fontWeight="bold">
+                    <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
                       {stats.occupiedSeats}/{stats.totalSeats}
                     </Typography>
                   </Box>

@@ -22,6 +22,9 @@ import type {
   MealOption, 
   ShopItem, 
   ShopCategory,
+  SeatPreferences,
+  GroupSeating,
+  FamilySeating,
   APIResponse 
 } from '@/types';
 import { 

@@ -363,6 +363,7 @@ const StaffCheckIn: React.FC = () => {
       {/* Group Seating Dialog */}
       {selectedFlight && (
         <GroupSeatingDialog
+          key={groupSeatingDialog ? 'group-open' : 'group-closed'}
           open={groupSeatingDialog}
           onClose={() => setGroupSeatingDialog(false)}
           flightId={selectedFlight.id}
@@ -388,6 +389,7 @@ const StaffCheckIn: React.FC = () => {
       {/* Family Seating Dialog */}
       {selectedFlight && (
         <FamilySeatingDialog
+          key={familySeatingDialog ? 'family-open' : 'family-closed'}
           open={familySeatingDialog}
           onClose={() => setFamilySeatingDialog(false)}
           flightId={selectedFlight.id}

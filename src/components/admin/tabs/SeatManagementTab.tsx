@@ -286,12 +286,12 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
       <Typography variant="h6" gutterBottom>
         Advanced Seat Management
       </Typography>
-      <Typography variant="body2" color="text.secondary" paragraph>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         Manage seat preferences, group seating, family allocations, and premium upgrades
       </Typography>
 
       <Paper elevation={1} sx={{ p: 2, mb: 3, bgcolor: 'info.50', borderLeft: 4, borderColor: 'info.main' }}>
-        <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+        <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
           Quick Actions
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -320,7 +320,7 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 3 }}>
         <Box sx={{ minWidth: 250, flex: 1 }}>
-          <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
             Seat Preferences
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -342,7 +342,7 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
         </Box>
 
         <Box sx={{ minWidth: 250 }}>
-          <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
             Group Seating
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -370,7 +370,7 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
         </Box>
 
         <Box sx={{ minWidth: 250 }}>
-          <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
             Family Seating
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -398,7 +398,7 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
         </Box>
 
         <Box sx={{ minWidth: 250, flex: 1 }}>
-          <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
             Premium Seat Upsell
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -456,6 +456,7 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
       />
 
       <GroupSeatingDialog
+        key={groupSeatingDialog ? 'group-open' : 'group-closed'}
         open={groupSeatingDialog}
         onClose={() => setGroupSeatingDialog(false)}
         flightId={selectedFlight?.id || flights[0]?.id || ''}

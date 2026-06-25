@@ -46,14 +46,6 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
   const [keepTogether, setKeepTogether] = useState(true);
   const [groupName, setGroupName] = useState('');
 
-  // Reset state when dialog opens
-  React.useEffect(() => {
-    if (!open) return;
-    setSelectedPassengers([]);
-    setKeepTogether(true);
-    setGroupName('');
-  }, [open]);
-
   const availablePassengers = passengers.filter(
     p => !p.groupSeating && p.flightId === flightId && !p.checkedIn
   );
@@ -88,7 +80,7 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <GroupIcon />
           Allocate Group Seating
         </Box>
@@ -121,7 +113,7 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
           />
 
           <Box>
-            <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
               Select Passengers for Group
             </Typography>
             <Typography variant="body2" color="text.secondary" gutterBottom>

@@ -40,16 +40,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
   passengers,
   flightId
 }) => {
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(0);
-  const [infants, setInfants] = useState(0);
-  const [selectedPassengers, setSelectedPassengers] = useState<string[]>([]);
-  const { showToast } = useToastStore();
-
-  React.useEffect(() => {
-    if (!open) return;
-    
-    // Auto-detect family members from passengers with infant flag
+  const { adults: defaultAdults, children: defaultChildren, infants: defaultInfants, selectedPassengers: defaultSelectedPassengers } = (() => {
     const infantPassengers = passengers.filter(
       p => p.infant && p.flightId === flightId && !p.familySeating
     );
@@ -60,18 +51,23 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
     const detectedInfants = infantPassengers.length;
     const detectedAdults = Math.min(nonInfantPassengers.length, 2);
     const detectedChildren = Math.max(0, nonInfantPassengers.length - 2);
-    
-    setInfants(detectedInfants);
-    setAdults(detectedAdults);
-    setChildren(detectedChildren);
-    
-    // Auto-select all available passengers by default
-    const autoSelected = [
-      ...infantPassengers.map(p => p.id),
-      ...nonInfantPassengers.slice(0, detectedAdults + detectedChildren).map(p => p.id)
-    ];
-    setSelectedPassengers(autoSelected);
-  }, [open, passengers, flightId]);
+
+    return {
+      adults: detectedAdults,
+      children: detectedChildren,
+      infants: detectedInfants,
+      selectedPassengers: [
+        ...infantPassengers.map(p => p.id),
+        ...nonInfantPassengers.slice(0, detectedAdults + detectedChildren).map(p => p.id)
+      ]
+    };
+  })();
+
+  const [adults, setAdults] = useState<number>(defaultAdults);
+  const [children, setChildren] = useState<number>(defaultChildren);
+  const [infants, setInfants] = useState<number>(defaultInfants);
+  const [selectedPassengers, setSelectedPassengers] = useState<string[]>(defaultSelectedPassengers);
+  const { showToast } = useToastStore();
 
   const totalMembers = adults + children + infants;
   // Infants sit on adult's lap, so they don't need their own seat
@@ -213,7 +209,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <FamilyIcon />
           Family Seating Allocation
         </Box>
@@ -226,7 +222,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
           </Alert>
 
           <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default' }}>
-            <Typography variant="subtitle2" gutterBottom fontWeight="bold">
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
               Family Composition
             </Typography>
             <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -236,7 +232,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                   type="number"
                   value={adults}
                   onChange={(e) => setAdults(Math.max(1, parseInt(e.target.value) || 1))}
-                  inputProps={{ min: 1, max: 10 }}
+                  slotProps={{ htmlInput: { min: 1, max: 10 } }}
                   fullWidth
                   size="small"
                 />
@@ -247,7 +243,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                   type="number"
                   value={children}
                   onChange={(e) => setChildren(Math.max(0, parseInt(e.target.value) || 0))}
-                  inputProps={{ min: 0, max: 10 }}
+                  slotProps={{ htmlInput: { min: 0, max: 10 } }}
                   fullWidth
                   size="small"
                 />
@@ -258,7 +254,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                   type="number"
                   value={infants}
                   onChange={(e) => setInfants(Math.max(0, parseInt(e.target.value) || 0))}
-                  inputProps={{ min: 0, max: 5 }}
+                  slotProps={{ htmlInput: { min: 0, max: 5 } }}
                   fullWidth
                   size="small"
                 />
@@ -266,23 +262,23 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
             </Grid>
 
             <Box sx={{ mt: 2, p: 2, bgcolor: 'primary.50', borderRadius: 1 }}>
-              <Typography variant="body2" fontWeight="bold">
+              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                 Total Family Members: {totalMembers}
               </Typography>
-              <Typography variant="caption" color="text.secondary" display="block">
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
                 {adults} adult(s), {children} child(ren), {infants} infant(s)
               </Typography>
-              <Typography variant="caption" color="primary.dark" fontWeight="bold" display="block" sx={{ mt: 0.5 }}>
+              <Typography variant="caption" color="primary.dark" sx={{ display: 'block', fontWeight: 'bold', mt: 0.5 }}>
                 Seats needed: {seatsNeeded} (infants sit on adult&apos;s lap)
               </Typography>
             </Box>
           </Paper>
 
           <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default' }}>
-            <Typography variant="subtitle2" gutterBottom fontWeight="bold">
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
               Select Family Members ({selectedPassengers.length}/{totalMembers})
             </Typography>
-            <Typography variant="caption" color="text.secondary" gutterBottom display="block">
+            <Typography variant="caption" color="text.secondary" gutterBottom sx={{ display: 'block' }}>
               Select passengers to include in this family seating
             </Typography>
             
@@ -321,7 +317,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                           size="small"
                         />
                         <Box sx={{ flex: 1 }}>
-                          <Typography variant="body2" fontWeight="medium">
+                          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                             {passenger.name}
                           </Typography>
                           <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }}>
@@ -374,7 +370,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
 
           {infants > 0 && (
             <Alert severity="info" icon={false}>
-              <Typography variant="body2" fontWeight="bold" gutterBottom>
+              <Typography variant="body2" sx={{ fontWeight: 'bold' }} gutterBottom>
                 👶 Lap Infant Policy
               </Typography>
               <Typography variant="caption" color="text.secondary">

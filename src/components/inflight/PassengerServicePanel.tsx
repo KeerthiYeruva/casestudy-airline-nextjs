@@ -53,7 +53,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
           <PersonIcon fontSize="large" />
         </Avatar>
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1.25rem' }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
             {passenger.name}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, mt: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -78,7 +78,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
           <Grid size={12}>
             <Card variant="outlined" sx={{ bgcolor: 'warning.50', borderColor: 'warning.main' }}>
               <CardContent sx={{ py: 1.5 }}>
-                <Typography variant="subtitle2" color="warning.dark" gutterBottom fontWeight="medium">
+                <Typography variant="subtitle2" color="warning.dark" gutterBottom sx={{ fontWeight: 'medium' }}>
                   Special Requirements
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1 }}>
@@ -111,7 +111,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <RestaurantIcon color="action" />
-                  <Typography variant="h6" fontWeight="medium">Meal Preference</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 'medium' }}>Meal Preference</Typography>
                 </Box>
                 <Button variant="outlined" size="small" onClick={onChangeMeal}>
                   Change
@@ -131,7 +131,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
           <Card variant="outlined" sx={{ height: '100%' }}>
             <CardContent>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                <Typography variant="h6" fontWeight="medium">
+                <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
                   Ancillary Services
                 </Typography>
                 <Badge badgeContent={passenger.ancillaryServices?.length || 0} color="primary">
@@ -174,7 +174,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <LocalMallIcon color="secondary" />
-                  <Typography variant="h6" fontWeight="medium">
+                  <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
                     In-Flight Shop
                   </Typography>
                   {passenger.shopRequests && passenger.shopRequests.length > 0 && (
@@ -220,7 +220,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
                           <Typography variant="body1">
                             {request.itemName}
                           </Typography>
-                          <Typography variant="body2" color="textSecondary">
+                          <Typography variant="body2" color="text.secondary">
                             ${request.price.toFixed(2)} each
                           </Typography>
                         </Box>
@@ -298,7 +298,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
                   </Box>
                 </>
               ) : (
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" color="text.secondary">
                   No shop items requested
                 </Typography>
               )}

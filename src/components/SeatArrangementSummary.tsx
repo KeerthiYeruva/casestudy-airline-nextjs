@@ -80,7 +80,7 @@ const SeatArrangementSummary: React.FC<SeatArrangementSummaryProps> = ({
     <Paper elevation={3} sx={{ p: { xs: 2, sm: 2.5 }, bgcolor: 'grey.50' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <EventSeatIcon color="primary" fontSize="large" />
-        <Typography variant="h6" fontWeight="bold">
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
           Seat Arrangement Summary
         </Typography>
       </Box>
@@ -162,7 +162,7 @@ const SeatArrangementSummary: React.FC<SeatArrangementSummaryProps> = ({
             <CardContent sx={{ p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <StarIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: 'warning.main', mb: 1 }} />
-                <Typography variant="h4" fontWeight="bold" color="warning.dark">
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }} color="warning.dark">
                   {premiumSeats}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
@@ -179,7 +179,7 @@ const SeatArrangementSummary: React.FC<SeatArrangementSummaryProps> = ({
             <CardContent sx={{ p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <GroupIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: 'primary.main', mb: 1 }} />
-                <Typography variant="h4" fontWeight="bold" color="primary.dark">
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }} color="primary.dark">
                   {totalGroups}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
@@ -196,7 +196,7 @@ const SeatArrangementSummary: React.FC<SeatArrangementSummaryProps> = ({
             <CardContent sx={{ p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <FamilyRestroomIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: 'secondary.main', mb: 1 }} />
-                <Typography variant="h4" fontWeight="bold" color="secondary.dark">
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }} color="secondary.dark">
                   {totalFamilies}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
@@ -213,7 +213,7 @@ const SeatArrangementSummary: React.FC<SeatArrangementSummaryProps> = ({
             <CardContent sx={{ p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <CheckCircleIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: 'info.main', mb: 1 }} />
-                <Typography variant="h4" fontWeight="bold" color="info.dark">
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }} color="info.dark">
                   {specialRequirements}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">

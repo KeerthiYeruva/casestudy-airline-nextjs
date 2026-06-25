@@ -41,10 +41,12 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
         groupId: null,
       };
 
-    const isPremium = passenger.premiumUpgrade || passenger.seatPreferences?.type === 'premium';
+    const isPremium =
+      passenger.premiumUpgrade || passenger.seatPreferences?.type === "premium";
     const isGroup = !!passenger.groupSeating;
     const isFamily = !!passenger.familySeating;
-    const groupId = passenger.groupSeating?.groupId || passenger.familySeating?.familyId;
+    const groupId =
+      passenger.groupSeating?.groupId || passenger.familySeating?.familyId;
 
     if (mode === "checkin") {
       if (passenger.wheelchair) {
@@ -132,26 +134,42 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
 
   // Get group color based on groupId hash
   const getGroupColor = (groupId: string | null) => {
-    if (!groupId) return '';
-    const colors = ['#FFE0B2', '#C8E6C9', '#BBDEFB', '#F8BBD0', '#E1BEE7', '#FFE0F0'];
-    const hash = groupId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    if (!groupId) return "";
+    const colors = [
+      "#FFE0B2",
+      "#C8E6C9",
+      "#BBDEFB",
+      "#F8BBD0",
+      "#E1BEE7",
+      "#FFE0F0",
+    ];
+    const hash = groupId
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[hash % colors.length];
   };
 
   const renderLegend = () => {
     if (mode === "checkin") {
       return (
-        <Box sx={{ display: "flex", gap: { xs: 0.5, sm: 1 }, flexWrap: "wrap", mb: { xs: 1.5, sm: 2 } }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: { xs: 0.5, sm: 1 },
+            flexWrap: "wrap",
+            mb: { xs: 1.5, sm: 2 },
+          }}
+        >
           <Chip
             icon={<EventSeatIcon sx={{ fontSize: { xs: 14, sm: 18 } }} />}
             label="Available"
             size="small"
             variant="outlined"
-            sx={{ 
-              borderColor: "grey.300", 
+            sx={{
+              borderColor: "grey.300",
               color: "grey.600",
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
           <Chip
@@ -160,9 +178,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="success"
             variant="outlined"
-            sx={{ 
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
           <Chip
@@ -171,9 +189,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="warning"
             variant="outlined"
-            sx={{ 
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
           <Chip
@@ -182,9 +200,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="warning"
             variant="filled"
-            sx={{ 
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
           <Chip
@@ -193,9 +211,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="primary"
             variant="outlined"
-            sx={{ 
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
           <Chip
@@ -204,26 +222,33 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="secondary"
             variant="outlined"
-            sx={{ 
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
         </Box>
       );
     } else if (mode === "inflight") {
       return (
-        <Box sx={{ display: "flex", gap: { xs: 0.5, sm: 1 }, flexWrap: "wrap", mb: { xs: 1.5, sm: 2 } }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: { xs: 0.5, sm: 1 },
+            flexWrap: "wrap",
+            mb: { xs: 1.5, sm: 2 },
+          }}
+        >
           <Chip
             icon={<EventSeatIcon sx={{ fontSize: { xs: 14, sm: 18 } }} />}
             label="Available"
             size="small"
             variant="outlined"
-            sx={{ 
-              borderColor: "grey.300", 
+            sx={{
+              borderColor: "grey.300",
               color: "grey.600",
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
           <Chip
@@ -232,9 +257,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="primary"
             variant="outlined"
-            sx={{ 
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
           <Chip
@@ -243,9 +268,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="secondary"
             variant="outlined"
-            sx={{ 
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
           <Chip
@@ -254,9 +279,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="warning"
             variant="filled"
-            sx={{ 
-              fontSize: { xs: '0.7rem', sm: '0.8125rem' },
-              height: { xs: 24, sm: 28 }
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
             }}
           />
         </Box>
@@ -266,10 +291,29 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
   };
 
   return (
-    <Paper elevation={3} sx={{ p: { xs: 2, sm: 2.5, md: 3 }, bgcolor: "grey.50" }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: { xs: 1.5, sm: 2 } }}>
-        <AirlineSeatReclineExtraIcon color="primary" sx={{ fontSize: { xs: 20, sm: 24 } }} />
-        <Typography variant="h6" fontWeight="medium" sx={{ fontSize: { xs: '1rem', sm: '1.15rem', md: '1.25rem' } }}>
+    <Paper
+      elevation={3}
+      sx={{ p: { xs: 2, sm: 2.5, md: 3 }, bgcolor: "grey.50" }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          mb: { xs: 1.5, sm: 2 },
+        }}
+      >
+        <AirlineSeatReclineExtraIcon
+          color="primary"
+          sx={{ fontSize: { xs: 20, sm: 24 } }}
+        />
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "medium",
+            fontSize: { xs: "1rem", sm: "1.15rem", md: "1.25rem" },
+          }}
+        >
           Seat Map
         </Typography>
       </Box>
@@ -330,7 +374,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             <Typography
               sx={{
                 minWidth: { xs: 24, sm: 28 },
-                fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                fontSize: { xs: "0.75rem", sm: "0.8rem", md: "0.875rem" },
                 fontWeight: "bold",
                 color: "primary.main",
                 textAlign: "center",
@@ -358,16 +402,37 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                       key={seatNumber}
                       title={
                         <Box>
-                          <Typography variant="body2" fontWeight="bold">{seatNumber}</Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            {seatNumber}
+                          </Typography>
                           {seatInfo.passenger && (
                             <>
-                              <Typography variant="body2">{seatInfo.passenger.name}</Typography>
-                              {seatInfo.isPremium && <Typography variant="caption">⭐ Premium Seat</Typography>}
-                              {seatInfo.isGroup && <Typography variant="caption">👥 Group Seating</Typography>}
-                              {seatInfo.isFamily && <Typography variant="caption">👨‍👩‍👧 Family Seating</Typography>}
+                              <Typography variant="body2">
+                                {seatInfo.passenger.name}
+                              </Typography>
+                              {seatInfo.isPremium && (
+                                <Typography variant="caption">
+                                  ⭐ Premium Seat
+                                </Typography>
+                              )}
+                              {seatInfo.isGroup && (
+                                <Typography variant="caption">
+                                  👥 Group Seating
+                                </Typography>
+                              )}
+                              {seatInfo.isFamily && (
+                                <Typography variant="caption">
+                                  👨‍👩‍👧 Family Seating
+                                </Typography>
+                              )}
                             </>
                           )}
-                          {!seatInfo.passenger && <Typography variant="body2">Available</Typography>}
+                          {!seatInfo.passenger && (
+                            <Typography variant="body2">Available</Typography>
+                          )}
                         </Box>
                       }
                       arrow
@@ -382,17 +447,20 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                           alignItems: "center",
                           justifyContent: "center",
                           flexDirection: "column",
-                          position: 'relative',
-                          borderRadius: { xs: "6px 6px 3px 3px", sm: "8px 8px 4px 4px" },
+                          position: "relative",
+                          borderRadius: {
+                            xs: "6px 6px 3px 3px",
+                            sm: "8px 8px 4px 4px",
+                          },
                           border: { xs: "1.5px solid", sm: "2px solid" },
                           borderColor: seatInfo.passenger
                             ? `${seatInfo.color}.main`
                             : "grey.300",
-                          bgcolor: seatInfo.groupId 
+                          bgcolor: seatInfo.groupId
                             ? getGroupColor(seatInfo.groupId)
                             : seatInfo.passenger
-                            ? `${seatInfo.color}.50`
-                            : "white",
+                              ? `${seatInfo.color}.50`
+                              : "white",
                           cursor:
                             mode === "inflight" && !seatInfo.passenger
                               ? "not-allowed"
@@ -411,7 +479,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                             boxShadow:
                               mode === "inflight" && !seatInfo.passenger
                                 ? "none"
-                                : seatInfo.isPremium ? 3 : 2,
+                                : seatInfo.isPremium
+                                  ? 3
+                                  : 2,
                             borderColor: seatInfo.passenger
                               ? `${seatInfo.color}.dark`
                               : "primary.main",
@@ -420,50 +490,78 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                       >
                         {/* Premium badge */}
                         {seatInfo.isPremium && (
-                          <Box sx={{
-                            position: 'absolute',
-                            top: { xs: -4, sm: -6 },
-                            right: { xs: -4, sm: -6 },
-                            bgcolor: 'warning.main',
-                            borderRadius: '50%',
-                            width: { xs: 14, sm: 16 },
-                            height: { xs: 14, sm: 16 },
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: 1,
-                          }}>
-                            <StarIcon sx={{ fontSize: { xs: 10, sm: 12 }, color: 'white' }} />
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: { xs: -4, sm: -6 },
+                              right: { xs: -4, sm: -6 },
+                              bgcolor: "warning.main",
+                              borderRadius: "50%",
+                              width: { xs: 14, sm: 16 },
+                              height: { xs: 14, sm: 16 },
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              boxShadow: 1,
+                            }}
+                          >
+                            <StarIcon
+                              sx={{
+                                fontSize: { xs: 10, sm: 12 },
+                                color: "white",
+                              }}
+                            />
                           </Box>
                         )}
                         {/* Group/Family indicator */}
-                        {(seatInfo.isGroup || seatInfo.isFamily) && !seatInfo.isPremium && (
-                          <Box sx={{
-                            position: 'absolute',
-                            top: { xs: -4, sm: -6 },
-                            right: { xs: -4, sm: -6 },
-                            bgcolor: seatInfo.isFamily ? 'secondary.main' : 'primary.main',
-                            borderRadius: '50%',
-                            width: { xs: 14, sm: 16 },
-                            height: { xs: 14, sm: 16 },
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: 1,
-                          }}>
-                            {seatInfo.isFamily ? (
-                              <FamilyRestroomIcon sx={{ fontSize: { xs: 10, sm: 12 }, color: 'white' }} />
-                            ) : (
-                              <GroupIcon sx={{ fontSize: { xs: 10, sm: 12 }, color: 'white' }} />
-                            )}
-                          </Box>
-                        )}
+                        {(seatInfo.isGroup || seatInfo.isFamily) &&
+                          !seatInfo.isPremium && (
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                top: { xs: -4, sm: -6 },
+                                right: { xs: -4, sm: -6 },
+                                bgcolor: seatInfo.isFamily
+                                  ? "secondary.main"
+                                  : "primary.main",
+                                borderRadius: "50%",
+                                width: { xs: 14, sm: 16 },
+                                height: { xs: 14, sm: 16 },
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                boxShadow: 1,
+                              }}
+                            >
+                              {seatInfo.isFamily ? (
+                                <FamilyRestroomIcon
+                                  sx={{
+                                    fontSize: { xs: 10, sm: 12 },
+                                    color: "white",
+                                  }}
+                                />
+                              ) : (
+                                <GroupIcon
+                                  sx={{
+                                    fontSize: { xs: 10, sm: 12 },
+                                    color: "white",
+                                  }}
+                                />
+                              )}
+                            </Box>
+                          )}
                         {seatInfo.icon && (
-                          <Box sx={{ mb: { xs: -0.3, sm: -0.5 } }}>{seatInfo.icon}</Box>
+                          <Box sx={{ mb: { xs: -0.3, sm: -0.5 } }}>
+                            {seatInfo.icon}
+                          </Box>
                         )}
                         <Typography
                           sx={{
-                            fontSize: { xs: "0.6rem", sm: "0.625rem", md: "0.65rem" },
+                            fontSize: {
+                              xs: "0.6rem",
+                              sm: "0.625rem",
+                              md: "0.65rem",
+                            },
                             fontWeight: "bold",
                             color: seatInfo.passenger
                               ? `${seatInfo.color}.dark`
@@ -504,16 +602,37 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                       key={seatNumber}
                       title={
                         <Box>
-                          <Typography variant="body2" fontWeight="bold">{seatNumber}</Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            {seatNumber}
+                          </Typography>
                           {seatInfo.passenger && (
                             <>
-                              <Typography variant="body2">{seatInfo.passenger.name}</Typography>
-                              {seatInfo.isPremium && <Typography variant="caption">⭐ Premium Seat</Typography>}
-                              {seatInfo.isGroup && <Typography variant="caption">👥 Group Seating</Typography>}
-                              {seatInfo.isFamily && <Typography variant="caption">👨‍👩‍👧 Family Seating</Typography>}
+                              <Typography variant="body2">
+                                {seatInfo.passenger.name}
+                              </Typography>
+                              {seatInfo.isPremium && (
+                                <Typography variant="caption">
+                                  ⭐ Premium Seat
+                                </Typography>
+                              )}
+                              {seatInfo.isGroup && (
+                                <Typography variant="caption">
+                                  👥 Group Seating
+                                </Typography>
+                              )}
+                              {seatInfo.isFamily && (
+                                <Typography variant="caption">
+                                  👨‍👩‍👧 Family Seating
+                                </Typography>
+                              )}
                             </>
                           )}
-                          {!seatInfo.passenger && <Typography variant="body2">Available</Typography>}
+                          {!seatInfo.passenger && (
+                            <Typography variant="body2">Available</Typography>
+                          )}
                         </Box>
                       }
                       arrow
@@ -528,17 +647,20 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                           alignItems: "center",
                           justifyContent: "center",
                           flexDirection: "column",
-                          position: 'relative',
-                          borderRadius: { xs: "6px 6px 3px 3px", sm: "8px 8px 4px 4px" },
+                          position: "relative",
+                          borderRadius: {
+                            xs: "6px 6px 3px 3px",
+                            sm: "8px 8px 4px 4px",
+                          },
                           border: { xs: "1.5px solid", sm: "2px solid" },
                           borderColor: seatInfo.passenger
                             ? `${seatInfo.color}.main`
                             : "grey.300",
-                          bgcolor: seatInfo.groupId 
+                          bgcolor: seatInfo.groupId
                             ? getGroupColor(seatInfo.groupId)
                             : seatInfo.passenger
-                            ? `${seatInfo.color}.50`
-                            : "white",
+                              ? `${seatInfo.color}.50`
+                              : "white",
                           cursor:
                             mode === "inflight" && !seatInfo.passenger
                               ? "not-allowed"
@@ -557,7 +679,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                             boxShadow:
                               mode === "inflight" && !seatInfo.passenger
                                 ? "none"
-                                : seatInfo.isPremium ? 3 : 2,
+                                : seatInfo.isPremium
+                                  ? 3
+                                  : 2,
                             borderColor: seatInfo.passenger
                               ? `${seatInfo.color}.dark`
                               : "primary.main",
@@ -566,50 +690,78 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                       >
                         {/* Premium badge */}
                         {seatInfo.isPremium && (
-                          <Box sx={{
-                            position: 'absolute',
-                            top: { xs: -4, sm: -6 },
-                            right: { xs: -4, sm: -6 },
-                            bgcolor: 'warning.main',
-                            borderRadius: '50%',
-                            width: { xs: 14, sm: 16 },
-                            height: { xs: 14, sm: 16 },
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: 1,
-                          }}>
-                            <StarIcon sx={{ fontSize: { xs: 10, sm: 12 }, color: 'white' }} />
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: { xs: -4, sm: -6 },
+                              right: { xs: -4, sm: -6 },
+                              bgcolor: "warning.main",
+                              borderRadius: "50%",
+                              width: { xs: 14, sm: 16 },
+                              height: { xs: 14, sm: 16 },
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              boxShadow: 1,
+                            }}
+                          >
+                            <StarIcon
+                              sx={{
+                                fontSize: { xs: 10, sm: 12 },
+                                color: "white",
+                              }}
+                            />
                           </Box>
                         )}
                         {/* Group/Family indicator */}
-                        {(seatInfo.isGroup || seatInfo.isFamily) && !seatInfo.isPremium && (
-                          <Box sx={{
-                            position: 'absolute',
-                            top: { xs: -4, sm: -6 },
-                            right: { xs: -4, sm: -6 },
-                            bgcolor: seatInfo.isFamily ? 'secondary.main' : 'primary.main',
-                            borderRadius: '50%',
-                            width: { xs: 14, sm: 16 },
-                            height: { xs: 14, sm: 16 },
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: 1,
-                          }}>
-                            {seatInfo.isFamily ? (
-                              <FamilyRestroomIcon sx={{ fontSize: { xs: 10, sm: 12 }, color: 'white' }} />
-                            ) : (
-                              <GroupIcon sx={{ fontSize: { xs: 10, sm: 12 }, color: 'white' }} />
-                            )}
-                          </Box>
-                        )}
+                        {(seatInfo.isGroup || seatInfo.isFamily) &&
+                          !seatInfo.isPremium && (
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                top: { xs: -4, sm: -6 },
+                                right: { xs: -4, sm: -6 },
+                                bgcolor: seatInfo.isFamily
+                                  ? "secondary.main"
+                                  : "primary.main",
+                                borderRadius: "50%",
+                                width: { xs: 14, sm: 16 },
+                                height: { xs: 14, sm: 16 },
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                boxShadow: 1,
+                              }}
+                            >
+                              {seatInfo.isFamily ? (
+                                <FamilyRestroomIcon
+                                  sx={{
+                                    fontSize: { xs: 10, sm: 12 },
+                                    color: "white",
+                                  }}
+                                />
+                              ) : (
+                                <GroupIcon
+                                  sx={{
+                                    fontSize: { xs: 10, sm: 12 },
+                                    color: "white",
+                                  }}
+                                />
+                              )}
+                            </Box>
+                          )}
                         {seatInfo.icon && (
-                          <Box sx={{ mb: { xs: -0.3, sm: -0.5 } }}>{seatInfo.icon}</Box>
+                          <Box sx={{ mb: { xs: -0.3, sm: -0.5 } }}>
+                            {seatInfo.icon}
+                          </Box>
                         )}
                         <Typography
                           sx={{
-                            fontSize: { xs: "0.6rem", sm: "0.625rem", md: "0.65rem" },
+                            fontSize: {
+                              xs: "0.6rem",
+                              sm: "0.625rem",
+                              md: "0.65rem",
+                            },
                             fontWeight: "bold",
                             color: seatInfo.passenger
                               ? `${seatInfo.color}.dark`
@@ -629,7 +781,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             <Typography
               sx={{
                 minWidth: { xs: 24, sm: 28 },
-                fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                fontSize: { xs: "0.75rem", sm: "0.8rem", md: "0.875rem" },
                 fontWeight: "bold",
                 color: "primary.main",
                 textAlign: "center",
@@ -645,14 +797,15 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
       <Typography
         variant="caption"
         color="text.secondary"
-        sx={{ 
-          display: "block", 
-          mt: { xs: 1.5, sm: 2 }, 
+        sx={{
+          display: "block",
+          mt: { xs: 1.5, sm: 2 },
           textAlign: "center",
-          fontSize: { xs: '0.7rem', sm: '0.75rem' }
+          fontSize: { xs: "0.7rem", sm: "0.75rem" },
         }}
       >
-        {mode === "checkin" ? "Tap" : "Click"} on a seat to view passenger details
+        {mode === "checkin" ? "Tap" : "Click"} on a seat to view passenger
+        details
       </Typography>
     </Paper>
   );

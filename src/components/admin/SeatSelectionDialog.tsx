@@ -98,11 +98,11 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
               alignItems: "center",
             }}
           >
-            <Typography variant="body1" fontWeight="bold">
+            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
               Available Seats: {availableSeats.length} of {SEAT_ROWS * SEAT_LETTERS.length}
             </Typography>
             {selectedSeat && (
-              <Typography variant="body1" color="primary" fontWeight="bold">
+              <Typography variant="body1" color="primary" sx={{ fontWeight: 'bold' }}>
                 Selected: {selectedSeat}
               </Typography>
             )}

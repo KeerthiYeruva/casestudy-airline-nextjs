@@ -93,7 +93,7 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
                       </Avatar>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <Typography variant="subtitle1" fontWeight="medium" noWrap sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                          <Typography variant="subtitle1" noWrap sx={{ fontWeight: 'medium', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                             {passenger.name}
                           </Typography>
                           {passenger.premiumUpgrade && (

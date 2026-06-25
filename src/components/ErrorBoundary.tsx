@@ -2,7 +2,7 @@
 
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { Box, Typography, Button, Paper, Alert } from '@mui/material';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 interface ErrorBoundaryProps {
@@ -71,7 +71,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               textAlign: 'center',
             }}
           >
-            <ErrorOutlineIcon
+            <ErrorOutlineOutlinedIcon
               sx={{
                 fontSize: 80,
                 color: 'error.main',
@@ -81,7 +81,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             <Typography variant="h4" gutterBottom color="error">
               Oops! Something went wrong
             </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
               We&apos;re sorry, but something unexpected happened. Please try refreshing the page.
             </Typography>
 

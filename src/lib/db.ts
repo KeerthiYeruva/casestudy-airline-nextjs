@@ -21,7 +21,7 @@ let shop: ShopItem[] = JSON.parse(JSON.stringify(shopItems));
 let categories: string[] = [...shopCategories];
 
 // Check if Firestore is available
-const useFirestore = firestoreService.isFirebaseConfigured();
+const isFirestoreConfigured = firestoreService.isFirebaseConfigured();
 
 // Helper function to check if seat is available
 function validateSeatAvailability(
@@ -43,14 +43,14 @@ function validateSeatAvailability(
 // Database operations for Flights
 export const flightDB = {
   getAll: async (): Promise<Flight[]> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       return await firestoreService.getAllFlights();
     }
     return [...flights];
   },
   
   getById: async (id: string): Promise<Flight | undefined> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       const flight = await firestoreService.getFlightById(id);
       return flight || undefined;
     }
@@ -58,7 +58,7 @@ export const flightDB = {
   },
   
   create: async (flight: Partial<Flight>): Promise<Flight> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       return await firestoreService.createFlight(flight as Omit<Flight, 'id'>);
     }
     
@@ -71,7 +71,7 @@ export const flightDB = {
   },
   
   update: async (id: string, updates: Partial<Flight>): Promise<Flight | null> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       return await firestoreService.updateFlight(id, updates);
     }
     
@@ -84,7 +84,7 @@ export const flightDB = {
   },
   
   delete: async (id: string): Promise<Flight | null> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       const flight = await firestoreService.getFlightById(id);
       if (flight) {
         await firestoreService.deleteFlight(id);
@@ -112,14 +112,14 @@ export const flightDB = {
 // Database operations for Passengers
 export const passengerDB = {
   getAll: async (flightId?: string | null): Promise<Passenger[]> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       return await firestoreService.getAllPassengers(flightId);
     }
     return flightId ? passengers.filter(p => p.flightId === flightId) : [...passengers];
   },
   
   getById: async (id: string): Promise<Passenger | undefined> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       const passenger = await firestoreService.getPassengerById(id);
       return passenger || undefined;
     }
@@ -127,7 +127,7 @@ export const passengerDB = {
   },
   
   getByFlightId: async (flightId: string): Promise<Passenger[]> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       return await firestoreService.getAllPassengers(flightId);
     }
     return passengers.filter(p => p.flightId === flightId);
@@ -136,7 +136,7 @@ export const passengerDB = {
   create: async (passenger: Partial<Passenger>): Promise<Passenger> => {
     // Check if seat is already occupied on this flight
     if (passenger.seat && passenger.flightId) {
-      const allPassengers = useFirestore 
+      const allPassengers = isFirestoreConfigured 
         ? await firestoreService.getAllPassengers(passenger.flightId)
         : passengers.filter(p => p.flightId === passenger.flightId);
       
@@ -162,7 +162,7 @@ export const passengerDB = {
       dateOfBirth: passenger.dateOfBirth || '',
     };
     
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       return await firestoreService.createPassenger(newPassenger);
     }
     
@@ -172,7 +172,7 @@ export const passengerDB = {
   },
   
   update: async (id: string, updates: Partial<Passenger>): Promise<Passenger | null> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       // Check seat availability if updating seat
       if (updates.seat) {
         const currentPassenger = await firestoreService.getPassengerById(id);
@@ -202,7 +202,7 @@ export const passengerDB = {
   },
   
   delete: async (id: string): Promise<Passenger | null> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       const passenger = await firestoreService.getPassengerById(id);
       if (passenger) {
         await firestoreService.deletePassenger(id);
@@ -221,7 +221,7 @@ export const passengerDB = {
   },
   
   checkIn: async (id: string): Promise<Passenger | null> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       return await firestoreService.updatePassenger(id, { checkedIn: true });
     }
     
@@ -234,7 +234,7 @@ export const passengerDB = {
   },
   
   undoCheckIn: async (id: string): Promise<Passenger | null> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       return await firestoreService.updatePassenger(id, { checkedIn: false });
     }
     
@@ -247,7 +247,7 @@ export const passengerDB = {
   },
   
   changeSeat: async (id: string, newSeat: string): Promise<Passenger | null> => {
-    if (useFirestore) {
+    if (isFirestoreConfigured) {
       const passenger = await firestoreService.getPassengerById(id);
       if (!passenger) return null;
       
@@ -355,7 +355,7 @@ export const resetDatabase = async (): Promise<void> => {
   categories = [...shopCategories];
 
   // If Firestore is configured, also reset Firestore data
-  if (useFirestore) {
+  if (isFirestoreConfigured) {
     try {
       await firestoreService.resetFirestoreData();
       console.log('[DB] Firestore data reset successfully');

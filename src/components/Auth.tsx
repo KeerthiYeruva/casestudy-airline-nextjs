@@ -185,7 +185,7 @@ const Auth: React.FC = () => {
             >
               <PersonIcon sx={{ fontSize: 40 }} />
             </Avatar>
-            <Typography variant="h4" gutterBottom fontWeight="bold" color="primary">
+            <Typography variant="h4" gutterBottom color="primary" sx={{ fontWeight: 'bold' }}>
               Airline Management
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
@@ -227,7 +227,7 @@ const Auth: React.FC = () => {
         </Paper>
 
         {/* Role Selection Dialog */}
-        <Dialog open={roleDialog} onClose={() => {}} disableEscapeKeyDown maxWidth="sm" fullWidth>
+        <Dialog open={roleDialog} onClose={() => {}} maxWidth="sm" fullWidth>
           <DialogTitle sx={{ pb: 1, fontWeight: 'bold' }}>
             Complete Setup
             <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'normal', mt: 0.5 }}>
@@ -250,7 +250,7 @@ const Auth: React.FC = () => {
                         sx={{ width: 32, height: 32 }}
                       />
                       <Box>
-                        <Typography variant="body1" fontWeight="medium">
+                        <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
                           {mockUser.displayName}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -272,7 +272,7 @@ const Auth: React.FC = () => {
               >
                 <MenuItem value="staff">
                   <Box>
-                    <Typography variant="body1" fontWeight="medium">Airline Staff</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 'medium' }}>Airline Staff</Typography>
                     <Typography variant="caption" color="text.secondary">
                       Access Check-In and In-Flight services
                     </Typography>
@@ -280,7 +280,7 @@ const Auth: React.FC = () => {
                 </MenuItem>
                 <MenuItem value="admin">
                   <Box>
-                    <Typography variant="body1" fontWeight="medium">Administrator</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 'medium' }}>Administrator</Typography>
                     <Typography variant="caption" color="text.secondary">
                       Full access including passenger management
                     </Typography>

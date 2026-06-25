@@ -62,7 +62,7 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                         <PersonIcon fontSize="small" />
                       </Avatar>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography variant="subtitle1" fontWeight="medium" noWrap>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }} noWrap>
                           {passenger.name}
                         </Typography>
                         <Chip label={passenger.seat} size="small" sx={{ height: 20, fontSize: '0.7rem', mt: 0.5 }} />

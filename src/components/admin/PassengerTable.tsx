@@ -86,7 +86,7 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                 </Avatar>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Typography variant="subtitle1" fontWeight="bold" noWrap>
+                    <Typography variant="subtitle1" noWrap sx={{ fontWeight: 'bold' }}>
                       {passenger.name}
                     </Typography>
                     {passenger.premiumUpgrade && (
@@ -171,7 +171,7 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                 <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
                   {missingFields.length > 0 && (
                     <Box sx={{ mb: 1, p: 1, bgcolor: 'warning.50', borderRadius: 1 }}>
-                      <Typography variant="caption" color="warning.dark" fontWeight="medium">
+                      <Typography variant="caption" color="warning.dark" sx={{ fontWeight: 'medium' }}>
                         Missing: {missingFields.join(', ')}
                       </Typography>
                     </Box>
@@ -183,7 +183,7 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                   
                   {passenger.ancillaryServices.length > 0 && (
                     <Box sx={{ mt: 1 }}>
-                      <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }} gutterBottom>
                         Services:
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
@@ -196,7 +196,7 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
 
                   {(passenger.groupSeating || passenger.familySeating || passenger.seatPreferences) && (
                     <Box sx={{ mt: 1 }}>
-                      <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }} gutterBottom>
                         Seating:
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
@@ -294,7 +294,7 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                       <PersonIcon fontSize="small" />
                     </Avatar>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Typography variant="body2" fontWeight="medium">
+                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                         {passenger.name}
                       </Typography>
                       {passenger.premiumUpgrade && (
@@ -308,7 +308,7 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
                 
                 <TableCell>
                   <Box>
-                    <Typography variant="body2" fontWeight="medium">
+                    <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                       {flight?.flightNumber || "N/A"}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
