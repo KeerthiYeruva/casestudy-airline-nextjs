@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useAuthStore from '@/stores/useAuthStore';
+import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/lib/firebaseConfig';
+import { isFirebaseConfigured } from '@/lib/firestoreService';
 import {
   Dialog,
   DialogTitle,
@@ -50,56 +52,63 @@ const MOCK_USERS = [
 ];
 
 const Auth: React.FC = () => {
-  const { user, role, loading, error, isAuthenticated, loginStart, loginSuccess, logout, setRole } = useAuthStore();
+  const { user, role, loading, error, isAuthenticated, loginStart, loginSuccess, loginFailure, logout, setRole } = useAuthStore();
   const [roleDialog, setRoleDialog] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'staff' | 'admin'>('staff');
   const [selectedMockUser, setSelectedMockUser] = useState(0);
+  const firebaseEnabled = isFirebaseConfigured();
 
-  // ========================================
-  // FIREBASE: Uncomment this useEffect when using Firebase
-  // ========================================
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-  //     if (currentUser && !isAuthenticated) {
-  //       setRoleDialog(true);
-  //     }
-  //   });
-  //   return () => unsubscribe();
-  // }, [isAuthenticated]);
+  useEffect(() => {
+    if (!firebaseEnabled) return;
 
-  // ========================================
-  // MOCK LOGIN: Comment out when using Firebase
-  // ========================================
-  const handleLogin = () => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser && !isAuthenticated) {
+        setRoleDialog(true);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [firebaseEnabled, isAuthenticated]);
+
+  const handleLogin = async () => {
     loginStart();
-    try {
-      // Simulate async login
+
+    if (!firebaseEnabled) {
+      // Fallback for local/demo mode
       setTimeout(() => {
         setRoleDialog(true);
       }, 500);
-    } catch (error) {
-      console.error('Login error:', error);
+      return;
+    }
+
+    try {
+      await signInWithPopup(auth, googleProvider);
+      setRoleDialog(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Login failed';
+      loginFailure(message);
+      console.error('Login error:', err);
     }
   };
 
-  // ========================================
-  // FIREBASE LOGIN: Uncomment when using Firebase
-  // ========================================
-  // const handleLogin = async () => {
-  //   dispatch(loginStart());
-  //   try {
-  //     await signInWithPopup(auth, googleProvider);
-  //     setRoleDialog(true);
-  //   } catch (error) {
-  //     dispatch(loginFailure(error.message));
-  //     console.error('Login error:', error);
-  //   }
-  // };
-
-  // ========================================
-  // MOCK ROLE SELECTION: Comment out when using Firebase
-  // ========================================
   const handleRoleSelection = () => {
+    if (firebaseEnabled) {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        loginSuccess({
+          user: {
+            uid: currentUser.uid,
+            displayName: currentUser.displayName,
+            email: currentUser.email,
+            photoURL: currentUser.photoURL,
+          },
+          role: selectedRole,
+        });
+        setRoleDialog(false);
+      }
+      return;
+    }
+
     const mockUser = MOCK_USERS[selectedMockUser];
     loginSuccess({
       user: mockUser,
@@ -108,43 +117,17 @@ const Auth: React.FC = () => {
     setRoleDialog(false);
   };
 
-  // ========================================
-  // FIREBASE ROLE SELECTION: Uncomment when using Firebase
-  // ========================================
-  // const handleRoleSelection = () => {
-  //   const currentUser = auth.currentUser;
-  //   if (currentUser) {
-  //     dispatch(loginSuccess({
-  //       user: {
-  //         uid: currentUser.uid,
-  //         displayName: currentUser.displayName,
-  //         email: currentUser.email,
-  //         photoURL: currentUser.photoURL,
-  //       },
-  //       role: selectedRole,
-  //     }));
-  //     setRoleDialog(false);
-  //   }
-  // };
-
-  // ========================================
-  // MOCK LOGOUT: Comment out when using Firebase
-  // ========================================
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    try {
+      if (firebaseEnabled) {
+        await signOut(auth);
+      }
+      logout();
+    } catch (err) {
+      console.error('Logout error:', err);
+      logout();
+    }
   };
-
-  // ========================================
-  // FIREBASE LOGOUT: Uncomment when using Firebase
-  // ========================================
-  // const handleLogout = async () => {
-  //   try {
-  //     await signOut(auth);
-  //     dispatch(logout());
-  //   } catch (error) {
-  //     console.error('Logout error:', error);
-  //   }
-  // };
 
   const handleRoleChange = (newRole: 'staff' | 'admin') => {
     setRole(newRole);
@@ -235,33 +218,43 @@ const Auth: React.FC = () => {
             </Typography>
           </DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
-            <FormControl fullWidth sx={{ mb: 3 }}>
-              <InputLabel>Select User</InputLabel>
-              <Select
-                value={selectedMockUser}
-                label="Select User"
-                onChange={(e) => setSelectedMockUser(e.target.value as number)}
-              >
-                {MOCK_USERS.map((mockUser, index) => (
-                  <MenuItem key={mockUser.uid} value={index}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 0.5 }}>
-                      <Avatar 
-                        src={mockUser.photoURL} 
-                        sx={{ width: 32, height: 32 }}
-                      />
-                      <Box>
-                        <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
-                          {mockUser.displayName}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {mockUser.email}
-                        </Typography>
+            {!firebaseEnabled && (
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <InputLabel>Select User</InputLabel>
+                <Select
+                  value={selectedMockUser}
+                  label="Select User"
+                  onChange={(e) => setSelectedMockUser(e.target.value as number)}
+                >
+                  {MOCK_USERS.map((mockUser, index) => (
+                    <MenuItem key={mockUser.uid} value={index}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 0.5 }}>
+                        <Avatar
+                          src={mockUser.photoURL}
+                          sx={{ width: 32, height: 32 }}
+                        />
+                        <Box>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                            {mockUser.displayName}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {mockUser.email}
+                          </Typography>
+                        </Box>
                       </Box>
-                    </Box>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+
+            {firebaseEnabled && (
+              <Box sx={{ mb: 3, p: 1.5, borderRadius: 1, bgcolor: 'action.hover' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Signed in as: {auth.currentUser?.displayName || auth.currentUser?.email || 'Google user'}
+                </Typography>
+              </Box>
+            )}
 
             <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel>Select Role</InputLabel>

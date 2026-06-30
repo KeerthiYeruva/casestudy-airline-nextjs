@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Require login for all application data.
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Core application collections
+    match /flights/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /passengers/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /shopItems/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /ancillaryServices/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /mealOptions/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /shopCategories/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Deny access to anything not explicitly matched above.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
