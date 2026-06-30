@@ -17,7 +17,7 @@ import FamilySeatingDialog from './seats/FamilySeatingDialog';
 import PremiumSeatUpsellDialog from './seats/PremiumSeatUpsellDialog';
 import SeatArrangementSummary from './SeatArrangementSummary';
 import { Passenger } from '@/types';
-import { Container, Paper, Typography, Grid, Box, Chip, Button, Stack } from '@mui/material';
+import { Container, Paper, Typography, Grid, Box, Chip, Button, Stack, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import WifiIcon from '@mui/icons-material/Wifi';
 import WifiOffIcon from '@mui/icons-material/WifiOff';
 import GroupIcon from '@mui/icons-material/Group';
@@ -45,6 +45,7 @@ const StaffCheckIn: React.FC = () => {
   }, [flights.length, passengers.length, fetchFlights, fetchPassengers]);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
+  const [passengerDetailsDialog, setPassengerDetailsDialog] = useState(false);
   const [changeSeatDialog, setChangeSeatDialog] = useState(false);
   const [seatPreferencesDialog, setSeatPreferencesDialog] = useState(false);
   const [groupSeatingDialog, setGroupSeatingDialog] = useState(false);
@@ -101,7 +102,13 @@ const StaffCheckIn: React.FC = () => {
     const passenger = flightPassengers.find((p) => p.seat === seat);
     if (passenger) {
       setSelectedPassenger(passenger);
+      setPassengerDetailsDialog(true);
     }
+  };
+
+  const handlePassengerSelect = (passenger: Passenger) => {
+    setSelectedPassenger(passenger);
+    setPassengerDetailsDialog(true);
   };
 
   const handleChangeSeat = async (newSeat: string) => {
@@ -251,7 +258,7 @@ const StaffCheckIn: React.FC = () => {
                   <PassengerListPanel
                     passengers={filteredPassengers}
                     selectedPassengerId={selectedPassenger?.id}
-                    onPassengerSelect={setSelectedPassenger}
+                    onPassengerSelect={handlePassengerSelect}
                     onCheckIn={handleCheckIn}
                     onUndoCheckIn={handleUndoCheckIn}
                     onChangeSeat={handleChangeSeatClick}
@@ -259,14 +266,6 @@ const StaffCheckIn: React.FC = () => {
                 </Grid>
               </Grid>
 
-              {/* Passenger Details */}
-              {selectedPassenger && (
-                <PassengerDetailsPanel 
-                  passenger={selectedPassenger}
-                  onSetPreferences={() => setSeatPreferencesDialog(true)}
-                  onOfferPremiumUpgrade={() => setPremiumSeatDialog(true)}
-                />
-              )}
             </>
           ) : (
             <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 }, textAlign: 'center' }}>
@@ -359,6 +358,29 @@ const StaffCheckIn: React.FC = () => {
           currentPreferences={selectedPassenger.seatPreferences}
         />
       )}
+
+      <Dialog open={passengerDetailsDialog} onClose={() => setPassengerDetailsDialog(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Passenger Details</DialogTitle>
+        <DialogContent dividers>
+          {selectedPassenger ? (
+            <PassengerDetailsPanel
+              passenger={selectedPassenger}
+              onSetPreferences={() => {
+                setPassengerDetailsDialog(false);
+                setSeatPreferencesDialog(true);
+              }}
+              onOfferPremiumUpgrade={() => {
+                setPassengerDetailsDialog(false);
+                setPremiumSeatDialog(true);
+              }}
+            />
+          ) : (
+            <Typography variant="body1" color="text.secondary">
+              Select a passenger to view details.
+            </Typography>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Group Seating Dialog */}
       {selectedFlight && (
