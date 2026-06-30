@@ -19,7 +19,7 @@ import {
   ancillaryServices as ancillaryServicesData,
   mealOptions as mealOptionsData,
 } from "@/data/flightData";
-import { Container, Paper, Typography, Grid, Box, Chip } from "@mui/material";
+import { Container, Paper, Typography, Grid, Box, Chip, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import WifiIcon from "@mui/icons-material/Wifi";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
 import "../styles/InFlight.scss";
@@ -92,6 +92,7 @@ const InFlight: React.FC = () => {
   ]);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
+  const [passengerDetailsDialog, setPassengerDetailsDialog] = useState(false);
   const [addServiceDialog, setAddServiceDialog] = useState(false);
   const [changeMealDialog, setChangeMealDialog] = useState(false);
   const [shopDialog, setShopDialog] = useState(false);
@@ -114,7 +115,13 @@ const InFlight: React.FC = () => {
     const passenger = flightPassengers.find((p) => p.seat === seat);
     if (passenger) {
       setSelectedPassenger(passenger);
+      setPassengerDetailsDialog(true);
     }
+  };
+
+  const handlePassengerSelect = (passenger: Passenger) => {
+    setSelectedPassenger(passenger);
+    setPassengerDetailsDialog(true);
   };
 
   // Derive the current passenger data from the passengers array
@@ -294,26 +301,11 @@ const InFlight: React.FC = () => {
                   <InFlightPassengerList
                     passengers={flightPassengers}
                     selectedPassengerId={selectedPassenger?.id}
-                    onPassengerSelect={setSelectedPassenger}
+                    onPassengerSelect={handlePassengerSelect}
                   />
                 </Grid>
               </Grid>
 
-              {currentPassengerData && (
-                <PassengerServicePanel
-                  passenger={currentPassengerData}
-                  onAddService={() => setAddServiceDialog(true)}
-                  onRemoveService={handleRemoveService}
-                  onChangeMeal={() => {
-                    setSelectedMeal(currentPassengerData.specialMeal);
-                    setChangeMealDialog(true);
-                  }}
-                  onAddShopItem={() => setShopDialog(true)}
-                  onRemoveShopItem={handleRemoveShopItem}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  calculateShopTotal={calculateShopTotal}
-                />
-              )}
             </>
           ) : (
             <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
@@ -359,6 +351,25 @@ const InFlight: React.FC = () => {
             onClose={handleCloseShopDialog}
             onConfirm={handleAddShopItem}
           />
+
+          <Dialog open={passengerDetailsDialog} onClose={() => setPassengerDetailsDialog(false)} fullWidth maxWidth="md">
+            <DialogTitle>Passenger Details</DialogTitle>
+            <DialogContent dividers>
+              <PassengerServicePanel
+                passenger={currentPassengerData}
+                onAddService={() => setAddServiceDialog(true)}
+                onRemoveService={handleRemoveService}
+                onChangeMeal={() => {
+                  setSelectedMeal(currentPassengerData.specialMeal);
+                  setChangeMealDialog(true);
+                }}
+                onAddShopItem={() => setShopDialog(true)}
+                onRemoveShopItem={handleRemoveShopItem}
+                onUpdateQuantity={handleUpdateQuantity}
+                calculateShopTotal={calculateShopTotal}
+              />
+            </DialogContent>
+          </Dialog>
         </>
       )}
     </Container>
