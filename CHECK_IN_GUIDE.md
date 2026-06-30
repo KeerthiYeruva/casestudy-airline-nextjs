@@ -171,6 +171,183 @@ Select from dropdown:
 
 ---
 
+## 6. Advanced Seat Management Features ⭐
+
+The Check-In tab includes advanced seat arrangement tools to optimize passenger seating and accommodations:
+
+### Seat Preferences Dialog
+
+**Purpose**: Set individual passenger seat preferences (window/aisle, front/back, exit row)
+
+**Access**:
+1. Select a passenger from the list
+2. Click **"Seat Preferences"** button in passenger details
+3. Dialog opens with preference options
+
+**Available Preferences**:
+- **Position**: Window, Aisle, Middle
+- **Location**: Front (rows 1-3), Back (rows 8-10)
+- **Special Seats**: Exit row preference
+- **Family Seating**: Keep near family option
+
+**How to Use**:
+1. Check desired preferences for the passenger
+2. Select seat type (Standard, Premium, Exit Row)
+3. Click **"Save"** to apply preferences
+4. Visual indicators appear on seat map for this passenger
+
+**Visual Indicators** 🎨:
+- 💙 Blue border = Window preference
+- 🟪 Purple mark = Aisle preference
+- ⭐ Star icon = Exit row eligible
+- ❤️ Heart = Family seating preferred
+
+---
+
+### Group Seating Dialog
+
+**Purpose**: Keep multiple passengers seated together
+
+**Access**:
+1. Select a passenger who is part of a group
+2. Click **"Group Seating"** button
+3. Enter group size and group members
+
+**How to Use**:
+1. **Enter Group Size**: Number of passengers to keep together (2-6)
+2. **Select Group Members**: Choose passengers from dropdown list
+3. **Mark Group Leader**: Designate primary passenger
+4. **Enable Keep Together**: Checkbox to enforce consecutive seating
+5. Click **"Save"** to apply group seating rules
+
+**Features**:
+- 🔗 Visual link indicators showing group members
+- 📍 Highlighted seats on map for group
+- ⚠️ Warning if insufficient consecutive seats
+- 🔄 Auto-adjust if seats modified
+
+**Example**:
+- Family of 4 traveling together (seats 5A, 5B, 5C, 5D)
+- Create group of 4, mark as keep together
+- System highlights these 4 seats as linked
+
+---
+
+### Family Seating Dialog
+
+**Purpose**: Allocate seating for families with automatic safety compliance
+
+**Access**:
+1. Select a passenger (family member)
+2. Click **"Family Seating"** button
+3. Configure family composition
+
+**How to Use**:
+1. **Enter Family Composition**:
+   - Number of adults (required)
+   - Number of children (optional, under 12)
+   - Number of infants (optional, under 2)
+
+2. **Configure Auto-Allocation**:
+   - ☑️ Enable "Auto-Allocate": System finds optimal seats
+   - ☑️ Safety Rules: Ensures adult supervision of children
+
+3. **Review Allocation**:
+   - System highlights assigned family seats on map
+   - Shows infant seating rules (safety seat locations)
+   - Displays child safety requirements
+
+4. Click **"Allocate"** to confirm and apply seating
+
+**Auto-Allocation Rules** 📋:
+- ✅ Adults positioned strategically to supervise children
+- ✅ Infants in safe locations away from exits
+- ✅ Children between adults when possible
+- ✅ Family kept in adjacent rows if needed
+- ✅ Extra legroom consideration for families with multiple children
+
+**Safety Indicators** 🛡️:
+- 👨‍👩‍👧 Family group linked visual
+- 👶 Infant safety zone (green background)
+- 👧 Child supervision zone (yellow border)
+- 👨 Adult position priority (blue highlight)
+
+**Example**:
+- Family: 2 adults + 2 children + 1 infant
+- System allocates: 5A (adult), 5B (child), 5C (child), 5D (adult), 6A (infant safe zone)
+- Visual links connect all seats with family icons
+
+---
+
+### Premium Seat Upsell Dialog
+
+**Purpose**: Offer premium seat upgrades with pricing and features
+
+**Access**:
+1. Select a passenger
+2. Click **"Premium Seat"** button in details panel
+3. Upsell dialog displays available premium seats
+
+**How to Use**:
+1. **Review Premium Options**:
+   - Seat number and location
+   - Base price vs. upgrade price
+   - Premium features (extra legroom, priority, etc.)
+   - Availability status
+
+2. **Select Premium Seat**:
+   - Click desired premium seat
+   - Review price difference (currency shown)
+   - Check included features
+
+3. **Confirm Upgrade**:
+   - Click **"Upgrade to Premium"** button
+   - System updates passenger seat to premium
+   - Pricing applied to passenger record
+
+4. **Visual Confirmation**:
+   - Seat marked with 👑 Premium badge
+   - Seat highlights with gold/premium color on map
+   - Passenger details show premium upgrade status
+
+**Premium Features** ✨:
+- Extra legroom (5-8 inches additional space)
+- Priority boarding
+- Preferred location (front cabin)
+- Enhanced comfort amenities
+- Complimentary services
+
+**Pricing Display**:
+```
+Standard Seat: $0 (included)
+Premium Seat (5A): $89 → $45 upgrade cost
+Features: Extra legroom + Priority boarding
+```
+
+**Currency Support** 💱:
+- Prices display in passenger's preferred currency
+- Exchange rates applied automatically
+- Multi-currency support (USD, EUR, GBP, JPY, etc.)
+
+---
+
+## Seat Arrangement Visual Summary
+
+**Seat Map Color Codes** with Arrangement Features:
+
+| Color | Status | Feature |
+|-------|--------|---------|
+| 🟢 **Green** | Checked in | Standard passenger |
+| 🔵 **Blue** | Assigned | Waiting to check in |
+| ⚪ **Gray** | Empty | Available seat |
+| 👑 **Gold** | Premium | Premium upgrade applied |
+| 💙 **Blue Border** | Preference | Window preference set |
+| 🔗 **Linked** | Group | Part of group seating |
+| ❤️ **Heart** | Family | Family group member |
+| ⭐ **Star** | Exit Row | Exit row eligible |
+
+---
+
 ## Tips and Best Practices
 
 ### Efficiency Tips

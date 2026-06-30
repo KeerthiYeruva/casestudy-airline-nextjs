@@ -601,6 +601,544 @@ For additional information, see:
 
 ---
 
+# Admin Dashboard - Seat Management Tab ⭐ NEW
+
+## Overview
+
+The **Seat Management Tab** in the Admin Dashboard is the centralized interface for managing seat preferences, group seating, family allocations, and premium seat upsells across all flights.
+
+---
+
+## Accessing the Seat Management Tab
+
+### Prerequisites
+- **User Role**: Admin access required
+- **Authentication**: Must be logged in with admin credentials
+
+### Navigation
+1. Log in to the Airline Management System
+2. Click the **"Admin"** button in the top navigation bar
+3. Click the **"Seat Management"** tab (third tab, after Services & Menu)
+
+---
+
+## Tab Overview
+
+The Seat Management tab provides centralized controls for:
+1. **Seat Preferences** - Set window/aisle, front/back preferences
+2. **Group Seating** - Keep multiple passengers together
+3. **Family Seating** - Auto-allocate family groups with safety rules
+4. **Premium Seats** - Configure and manage premium seat upsells
+
+---
+
+## Section 1: Seat Preferences Management
+
+### Purpose
+Configure individual passenger seat location and position preferences.
+
+### How to Use
+
+#### 1. Select Passenger
+- Click **"Set Seat Preferences"** button
+- **Passenger Selection Dialog** opens
+- Choose passenger from list by name or flight
+- Selected passenger displays in header
+
+#### 2. Configure Preferences
+Dialog shows preference options:
+
+**Position Preferences** (Check one or more):
+- ☑️ **Window**: Passenger prefers window seats
+- ☑️ **Aisle**: Passenger prefers aisle seats
+- ☑️ **Middle**: Passenger willing for middle seats
+
+**Location Preferences** (Select one):
+- ⭕ **Front** (rows 1-3): Closer to cockpit, first to exit
+- ⭕ **Back** (rows 8-10): Rear of cabin
+- ⭕ **Any**: No preference on location
+
+**Special Features** (Check as needed):
+- ☑️ **Exit Row Eligible**: Passenger can sit at exit rows (must be verified for safety)
+- ☑️ **Extra Legroom**: Preference for seats with additional space
+- ☑️ **Near Family**: Keep close to other family members
+
+**Seat Type** (Select one):
+- Standard seats
+- Premium seats (extra legroom + features)
+- Exit row seats
+- Bulkhead seats
+
+#### 3. Review Visual Indicators
+Preferences display with icons on seat map:
+- 💙 Window preference shown with blue border
+- 🟪 Aisle preference shown with purple mark
+- ⭐ Exit row eligibility shown with star
+- 👑 Premium preference shown with crown
+
+#### 4. Save Preferences
+- Click **"Save Preferences"** button
+- Success message: "Seat preferences updated for [Passenger Name]"
+- Preferences applied immediately
+- Seat map updates with visual indicators
+
+### Best Practices
+- ✅ Set preferences early before check-in
+- ✅ Update based on passenger requests
+- ✅ Verify exit row eligibility (safety requirement)
+- ✅ Use premium preferences for special accommodations
+
+---
+
+## Section 2: Group Seating Management
+
+### Purpose
+Manage group bookings to keep multiple passengers seated together.
+
+### How to Use
+
+#### 1. Create New Group
+- Click **"Create Group Seating"** button
+- **Group Seating Dialog** opens
+
+#### 2. Configure Group
+**Group Details**:
+- **Group Size**: 2-6 passengers
+- **Group ID**: Auto-generated (e.g., GRP-001, GRP-002)
+- **Flight**: Select flight for this group
+
+**Select Members**:
+- Checkboxes list all passengers on selected flight
+- Select passengers who should sit together
+- Number shows: "3 of 6 selected"
+
+**Group Options**:
+- ☑️ **Keep Together**: Force consecutive seating (rows/seats adjacent)
+- ☑️ **Priority Seating**: Allocate premium seats if available
+- ☑️ **Special Needs Priority**: Consider wheelchair/infant needs
+
+**Designate Group Leader**:
+- Radio button to select primary contact
+- Used for group notifications and preferences
+
+#### 3. Review Allocation
+Before saving, system shows:
+- **Proposed Seats**: Visual display on seat map
+- **Allocation Status**: 
+  - ✅ Optimal consecutive seating available
+  - ⚠️ Non-consecutive seating required (not enough consecutive seats)
+  - ❌ Unable to allocate (not enough seats for group)
+- **Conflicts**: Warning if members have conflicting preferences
+
+#### 4. Alternative Actions
+If optimal seating unavailable:
+- **Adjust Group**: Remove/add members to fit
+- **Split Group**: Create two smaller groups
+- **Change Flight**: Allocate group to different flight
+- **Manual Allocation**: Manually select specific seats
+
+#### 5. Save Group Seating
+- Click **"Save Group"** button
+- Success message: "Group [GRP-001] created successfully"
+- Group visually linked on seat map with connecting lines
+- Member seats highlighted with group color
+
+### Group Visual Indicators 🔗
+- **Connecting Lines**: Visual lines between group member seats
+- **Group Badge**: 🔗 Badge on each group member's seat
+- **Group Color**: Consistent color highlighting across group
+- **Group Number**: GRP-001, GRP-002, etc. displayed
+
+### Example: Family Travel Group
+**Scenario**: Four family members on AA101
+1. Click "Create Group Seating"
+2. Select flight AA101
+3. Check 4 family member names
+4. Enable "Keep Together"
+5. Designate parent as group leader
+6. Click "Save Group"
+7. System displays: 5A-5B-5C-5D (consecutive family seating)
+
+---
+
+## Section 3: Family Seating Allocation
+
+### Purpose
+Automatically allocate optimal seating for family groups with built-in safety compliance.
+
+### How to Use
+
+#### 1. Create Family Group
+- Click **"Auto-Allocate Family Seating"** button
+- **Family Seating Dialog** opens
+
+#### 2. Enter Family Composition
+**Family Details**:
+- **Family ID**: Auto-generated (e.g., FAM-001)
+- **Flight**: Select flight for family
+- **Primary Contact**: Select lead passenger
+
+**Passenger Count** (Required):
+- **Adults**: Number of adult passengers (minimum 1)
+- **Children**: Number under age 12 (optional)
+- **Infants**: Number under age 2 (optional)
+
+**Example Composition**:
+- 2 Adults + 2 Children + 1 Infant
+- Or: 1 Adult + 3 Children (single parent with kids)
+- Or: 2 Adults only (no children)
+
+#### 3. Configure Allocation Rules
+**Safety Options**:
+- ☑️ **Auto-Allocate**: System finds optimal seats automatically
+- ☑️ **Enforce Safety Rules**: Ensures adult supervision requirements
+- ☑️ **Priority Features**: Prioritize exit rows, extra legroom
+
+**Allocation Strategy**:
+- **Keep All Together**: All family in same row/adjacent rows
+- **Flexible Adjacent**: Rows can be non-consecutive if needed
+- **Manual Override**: User selects specific seats
+
+#### 4. Review Allocation Preview
+System displays allocation plan:
+
+**Example Allocation** (2A + 2C + 1I):
+```
+Row 5:  5A (Adult)    5B (Child)   5C (Child)   5D (Adult)
+Row 6:  6A (Infant, Safety Zone)
+```
+
+**Safety Compliance Check** ✅:
+- ✅ Infants in safe zones (away from emergency exits)
+- ✅ Adults positioned to supervise children
+- ✅ Child safety rules followed
+- ✅ Infant restraint requirements met
+- ✅ Extra legroom for family comfort
+
+**Visual Safety Indicators**:
+- 👨 Adult supervision zone highlighted
+- 👧 Child seats marked and linked
+- 👶 Infant safe zone (green background, away from exits)
+- ⚠️ Special needs flagged (wheelchair, mobility)
+
+#### 5. Confirm and Apply Allocation
+- Click **"Apply Allocation"** button
+- System shows success: "Family seating allocated for [Family ID]"
+- Seats automatically assigned to family members
+- Passenger records updated with family grouping
+- Seat map shows family grouping with visual connections
+
+### Family Seating Rules 📋
+
+**Adult Supervision**:
+- Minimum 1 adult per 2 children
+- Adults positioned to see children
+- Cannot be more than 2 seats away from any child
+
+**Infant Safety**:
+- Infants NOT in emergency exit rows
+- Infants NOT in bulkhead rows
+- Infants in rows 4-7 (safest zones)
+- Infant seats have safety ratings
+
+**Child Accommodations**:
+- Children get seat preference (window or aisle)
+- Children NOT isolated from adults
+- Children paired logically (siblings together when possible)
+- Special meal and service considerations applied
+
+**Additional Services**:
+- Infant bassinets provisioned (if row suitable)
+- Child meals ordered automatically
+- Special assistance noted (stroller storage, etc.)
+- Accessibility features checked
+
+### Visual Family Indicators ❤️
+- **Family Badge**: ❤️ Displayed on each family member seat
+- **Family ID**: FAM-001, FAM-002, etc.
+- **Adult Seats**: Blue highlight (supervision)
+- **Child Seats**: Green highlight
+- **Infant Safe Zone**: Purple background, circled
+- **Connecting Lines**: Links all family members visually
+
+### Example: Multi-Generational Family
+**Scenario**: Grandparents + parents + 3 kids traveling together
+
+1. Click "Auto-Allocate Family Seating"
+2. Enter composition: 2 Adults (parents) + 2 Adults (grandparents) + 3 Children
+3. Enable auto-allocate and safety rules
+4. System allocates:
+   - Row 7: 7A (Grandparent), 7B (Child), 7C (Child), 7D (Parent)
+   - Row 8: 8A (Grandparent), 8B (Child), 8C (Parent)
+5. Click "Apply" and allocation completes
+6. All family linked visually with ❤️ icons
+
+---
+
+## Section 4: Premium Seat Upsell Management
+
+### Purpose
+Configure and manage premium seat offers with pricing and features.
+
+### How to Use
+
+#### 1. Configure Premium Seats
+- Click **"Manage Premium Seats"** button
+- **Premium Seat Configuration Dialog** opens
+
+#### 2. Select Premium Seats
+**Available Premium Seat Types**:
+- **Extra Legroom**: 5-8 inches additional space (typical: rows 1-3, 9-10)
+- **Preferred Seats**: Prime locations (window, near front)
+- **Bulkhead Seats**: Front of cabin sections
+- **Exit Row**: Enhanced space, special restrictions
+
+**Select for Pricing**:
+- Checkboxes for each seat on aircraft
+- Choose which seats should be premium upsells
+- Indicate seat type for each premium seat
+
+#### 3. Set Premium Pricing
+**Price Configuration**:
+- **Base Fare Included**: $0 (standard seat included in booking)
+- **Premium Upgrade Price**: Set additional charge
+- **Currency**: Select currency (USD, EUR, GBP, JPY, etc.)
+
+**Example Pricing**:
+```
+Seat 1A (Extra Legroom, Preferred):
+  Base: $0 (included)
+  Premium Price: $99
+  
+Seat 5A (Extra Legroom):
+  Base: $0 (included)
+  Premium Price: $45
+
+Seat 10A (Exit Row):
+  Base: $0 (included)
+  Premium Price: $35
+```
+
+#### 4. Add Premium Features
+Each premium seat can include:
+- ✅ Extra legroom (specify inches)
+- ✅ Priority boarding
+- ✅ Preferred location badge
+- ✅ Complimentary services (beverage, snack, etc.)
+- ✅ Seat selection priority (sold first)
+- ✅ Seat change flexibility
+- ✅ Priority customer service
+
+**Feature Display**:
+```
+Premium Seat 5A
+Extra Legroom | Priority Boarding | Preferred Location
+→ Upgrade for $45 (40% of base fare)
+```
+
+#### 5. Configure Availability
+**Availability Options**:
+- ☑️ **Available**: Seat offered for upsell
+- ☑️ **Limited**: Show availability count
+- ☑️ **Sold Out**: Seat not available (disabled)
+- ☑️ **Flight-Specific**: Different pricing per flight
+
+**Set Availability Count**:
+- System shows: "5 of 8 Premium Seats Available"
+- Resets per flight
+- Updated automatically when passengers upgrade
+
+#### 6. Target Passengers for Upsells
+**Passenger Selection**:
+- Click **"Select Passengers for Upsell"** button
+- Choose specific passengers to offer upgrades
+- Or: **Auto-Target** based on criteria:
+  - Long-haul flights (>6 hours)
+  - Specific booking classes
+  - Frequent flyer members
+  - Premium loyalty status
+
+#### 7. Save Premium Configuration
+- Click **"Save Configuration"** button
+- Success message: "Premium seat configuration updated"
+- Pricing and features applied
+- Visual indicators appear on seat map
+
+### Premium Seat Visual Indicators 👑
+- **Premium Badge**: 👑 Crown icon on premium seats
+- **Gold Highlight**: Gold/premium color on seat map
+- **Price Tag**: Upgrade price displayed on hover
+- **Features List**: Tooltip shows included features
+- **Availability**: Count display (e.g., "3 available")
+
+### Pricing Strategy Tips 💡
+- ✅ Price higher for extra legroom seats ($45-99)
+- ✅ Price moderately for preferred location ($25-50)
+- ✅ Price lower for exit row (restrictions apply)
+- ✅ Apply dynamic pricing for demand periods
+- ✅ Offer early-bird discounts for advance purchase
+
+---
+
+## Editing and Deleting Arrangements
+
+### Edit Existing Preferences
+1. In **Seat Preferences** section
+2. Click **Edit** icon next to passenger
+3. Modify preferences in dialog
+4. Click **Update** to save changes
+
+### Edit Existing Groups
+1. In **Group Seating** section
+2. Click **Edit** icon next to group ID
+3. Modify group members or options
+4. Click **Update** to save changes
+
+### Edit Family Allocations
+1. In **Family Seating** section
+2. Click **Edit** icon next to family ID
+3. Update composition (adults/children/infants)
+4. Click **Recalculate** to re-run safety allocation
+5. Click **Update** to save changes
+
+### Delete Arrangements
+1. Locate arrangement to delete
+2. Click **Delete** icon (🗑️ trash icon)
+3. Confirmation dialog appears
+4. Click **Confirm** to delete
+5. Arrangement removed, seats freed
+
+⚠️ **Warning**: Deleting arrangements will remove seating allocations. Affected passengers will need to be reassigned.
+
+---
+
+## Best Practices
+
+### Seat Preference Best Practices
+- ✅ Set preferences during booking process
+- ✅ Update before 72 hours before flight
+- ✅ Honor accessibility requirements
+- ✅ Document special seating needs
+
+### Group Seating Best Practices
+- ✅ Keep groups together for passenger satisfaction
+- ✅ Allocate early (before check-in period)
+- ✅ Use visual indicators to communicate
+- ✅ Monitor group member check-ins
+
+### Family Seating Best Practices
+- ✅ Always use auto-allocation for compliance
+- ✅ Verify infant ages for safety zone application
+- ✅ Apply extra legroom for families with young children
+- ✅ Note special assistance needs (strollers, car seats)
+
+### Premium Seat Best Practices
+- ✅ Price competitively but profitably
+- ✅ Highlight value proposition (extra legroom, priority)
+- ✅ Offer targeted upgrades to suitable passengers
+- ✅ Track upsell conversion rates
+- ✅ Adjust pricing based on demand and availability
+
+---
+
+## Common Workflows
+
+### Workflow 1: Prepare Family Group for Check-In
+1. Select flight AA101
+2. Identify traveling family (2A + 2C + 1I)
+3. Click "Auto-Allocate Family Seating"
+4. Enter family composition
+5. Enable safety rules
+6. Review allocation (rows 5-6)
+7. Click "Apply Allocation"
+8. Notify family of seating via email/SMS
+
+### Workflow 2: Maximize Premium Revenue
+1. Select high-demand flight (long-haul)
+2. Configure premium seats (rows 1-3, 9-10)
+3. Set higher pricing ($89-99 for extra legroom)
+4. Target economy passengers
+5. Offer in booking confirmation
+6. Track upsell percentage
+
+### Workflow 3: Handle Special Accommodation
+1. Passenger has reduced mobility (wheelchair)
+2. Set seat preferences (accessibility requirements)
+3. Select aisle seat for wheelchair access
+4. Apply to same row as travel companion
+5. Link as group seating
+6. Note special assistance in passenger record
+7. Alert cabin crew during check-in
+
+---
+
+## Troubleshooting
+
+### Problem: Auto-Allocation Fails for Family
+**Cause**: Not enough suitable seats for family requirements
+
+**Solution**:
+1. Review family composition
+2. Check for infant safe zone availability
+3. Try different flight if available
+4. Manually select specific seats using "Manual Override"
+5. Contact scheduling for aircraft adjustment
+
+### Problem: Premium Seats Not Showing on Map
+**Cause**: Premium configuration not applied or seats deselected
+
+**Solution**:
+1. Verify premium configuration saved
+2. Check "Available" toggle for seats
+3. Refresh page
+4. Re-run seat configuration
+
+### Problem: Group Seating Not Keeping Members Together
+**Cause**: "Keep Together" not enabled or insufficient consecutive seats
+
+**Solution**:
+1. Enable "Keep Together" checkbox
+2. Verify seat availability (use seat map)
+3. Reduce group size if needed
+4. Manually allocate specific consecutive seats
+
+### Problem: Family Safety Rules Violated
+**Cause**: Manual override disabled safety compliance
+
+**Solution**:
+1. Use auto-allocation (respects rules)
+2. If manual needed, review infant zone requirements
+3. Adjust family composition (add more adults)
+4. Contact safety team for special cases
+
+---
+
+## Seat Map Reference
+
+**Sample Premium + Group + Family Allocation**:
+```
+Row 1:  1A👑  1B👑  1C   1D  1E   1F
+        [Extra Legroom Premium Seats]
+
+Row 5:  5A🔗 5B🔗 5C   5D   5E   5F
+        [Group Seating - 4 members linked]
+
+Row 7:  7A❤️  7B❤️  7C   7D❤️  7E   7F❤️
+Row 8:  8A❤️  8B❤️  8C   8D   8E   8F
+        [Family Seating - 6 members (2A+2C+1I+1GP)]
+
+Legend:
+👑 = Premium seat with extra legroom/features
+🔗 = Group seating (members linked)
+❤️ = Family seating (members linked, safety compliant)
+```
+
+---
+
+## Related Documentation
+
+---
+
 ## Support and Feedback
 
 If you encounter issues not covered in this guide:
