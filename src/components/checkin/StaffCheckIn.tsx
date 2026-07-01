@@ -5,19 +5,20 @@ import useCheckInStore from '@/stores/useCheckInStore';
 import useDataStore from '@/stores/useDataStore';
 import useToastStore from '@/stores/useToastStore';
 import useRealtimeUpdates from '@/hooks/useRealtimeUpdates';
-import SeatMapVisual from '@/components/seats/SeatMapVisual';
-import FlightSelectionPanel from '@/components/checkin/FlightSelectionPanel';
-import CheckInFilters from '@/components/checkin/CheckInFilters';
-import PassengerListPanel from '@/components/checkin/PassengerListPanel';
-import PassengerDetailsPanel from '@/components/checkin/PassengerDetailsPanel';
-import ChangeSeatDialog from '@/components/checkin/ChangeSeatDialog';
-import SeatPreferencesDialog from '@/components/seats/SeatPreferencesDialog';
-import GroupSeatingDialog from '@/components/seats/GroupSeatingDialog';
-import FamilySeatingDialog from '@/components/seats/FamilySeatingDialog';
-import PremiumSeatUpsellDialog from '@/components/seats/PremiumSeatUpsellDialog';
-import SeatArrangementSummary from '@/components/seats/SeatArrangementSummary';
-import FlightInfoGrid from '@/components/ui/FlightInfoGrid';
-import PageHeader from '@/components/ui/PageHeader';
+import SeatMapVisual from '../seats/SeatMapVisual';
+import FlightSelectionPanel from './FlightSelectionPanel';
+import CheckInFilters from './CheckInFilters';
+import PassengerListPanel from './PassengerListPanel';
+import PassengerDetailsPanel from './PassengerDetailsPanel';
+import ChangeSeatDialog from './ChangeSeatDialog';
+import BoardingPassDialog from './BoardingPassDialog';
+import SeatPreferencesDialog from '../seats/SeatPreferencesDialog';
+import GroupSeatingDialog from '../seats/GroupSeatingDialog';
+import FamilySeatingDialog from '../seats/FamilySeatingDialog';
+import PremiumSeatUpsellDialog from '../seats/PremiumSeatUpsellDialog';
+import SeatArrangementSummary from '../seats/SeatArrangementSummary';
+import FlightInfoGrid from '../ui/FlightInfoGrid';
+import PageHeader from '../ui/PageHeader';
 import type { Passenger } from '@/types/passenger';
 import { Container, Paper, Typography, Grid, Box, Button, Stack, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
@@ -51,6 +52,7 @@ const StaffCheckIn: React.FC = () => {
   const [groupSeatingDialog, setGroupSeatingDialog] = useState(false);
   const [familySeatingDialog, setFamilySeatingDialog] = useState(false);
   const [premiumSeatDialog, setPremiumSeatDialog] = useState(false);
+  const [boardingPassDialog, setBoardingPassDialog] = useState(false);
 
   // Get passengers for selected flight
   const flightPassengers = selectedFlight
@@ -127,6 +129,11 @@ const StaffCheckIn: React.FC = () => {
   const handleChangeSeatClick = (passenger: Passenger) => {
     setSelectedPassenger(passenger);
     setChangeSeatDialog(true);
+  };
+
+  const handleViewBoardingPass = (passenger: Passenger) => {
+    setSelectedPassenger(passenger);
+    setBoardingPassDialog(true);
   };
 
   const handleFilterChange = (filterType: string, value: boolean | null) => {
@@ -216,6 +223,7 @@ const StaffCheckIn: React.FC = () => {
                     onCheckIn={handleCheckIn}
                     onUndoCheckIn={handleUndoCheckIn}
                     onChangeSeat={handleChangeSeatClick}
+                    onViewBoardingPass={handleViewBoardingPass}
                   />
                 </Grid>
               </Grid>
@@ -327,6 +335,10 @@ const StaffCheckIn: React.FC = () => {
                 setPassengerDetailsDialog(false);
                 setPremiumSeatDialog(true);
               }}
+              onViewBoardingPass={() => {
+                setPassengerDetailsDialog(false);
+                setBoardingPassDialog(true);
+              }}
             />
           ) : (
             <Typography variant="body1" color="text.secondary">
@@ -335,6 +347,13 @@ const StaffCheckIn: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <BoardingPassDialog
+        open={boardingPassDialog}
+        passenger={selectedPassenger}
+        flight={selectedFlight}
+        onClose={() => setBoardingPassDialog(false)}
+      />
 
       {/* Group Seating Dialog */}
       {selectedFlight && (
