@@ -98,6 +98,7 @@ export type SeatPreferencesDialogFormData = z.infer<typeof SeatPreferencesDialog
 export const GroupSeatingDialogSchema = z.object({
   groupName: z.string(),
   keepTogether: z.boolean(),
+  priority: z.enum(['HIGH', 'NORMAL']),
 });
 
 export type GroupSeatingDialogFormData = z.infer<typeof GroupSeatingDialogSchema>;

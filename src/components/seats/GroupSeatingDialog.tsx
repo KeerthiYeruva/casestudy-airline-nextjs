@@ -15,6 +15,7 @@ import {
   DialogActions,
   Button,
   TextField,
+  MenuItem,
   FormControlLabel,
   Switch,
   Typography,
@@ -34,9 +35,58 @@ import { GroupSeatingDialogSchema, type GroupSeatingDialogFormData } from '@/lib
 interface GroupSeatingDialogProps {
   open: boolean;
   onClose: () => void;
-  onAllocate: (groupSeating: GroupSeating, passengerIds: string[]) => void;
+  onAllocate: (groupSeating: GroupSeating, passengerIds: string[], allocatedSeats: string[]) => void;
   passengers: Passenger[];
   flightId: string;
+}
+
+const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+function getSeatRow(seat: string) {
+  return Number.parseInt(seat.match(/^\d+/)?.[0] ?? '0', 10);
+}
+
+function getAvailableSeatsForRow(row: number, occupiedSeats: Set<string>) {
+  return seatLetters
+    .map((letter) => `${row}${letter}`)
+    .filter((seat) => !occupiedSeats.has(seat));
+}
+
+function findGroupSeatBlock(seatsNeeded: number, keepTogether: boolean, occupiedSeats: Set<string>) {
+  if (keepTogether) {
+    for (let row = 1; row <= 10; row++) {
+      const availableSeats = getAvailableSeatsForRow(row, occupiedSeats);
+      if (availableSeats.length >= seatsNeeded) {
+        return availableSeats.slice(0, seatsNeeded);
+      }
+    }
+
+    for (let startRow = 1; startRow <= 9; startRow++) {
+      const availableSeats = [
+        ...getAvailableSeatsForRow(startRow, occupiedSeats),
+        ...getAvailableSeatsForRow(startRow + 1, occupiedSeats),
+      ];
+
+      if (availableSeats.length >= seatsNeeded) {
+        return availableSeats.slice(0, seatsNeeded);
+      }
+    }
+  }
+
+  const cabinSections = [
+    [1, 2, 3],
+    [4, 5, 6, 7],
+    [8, 9, 10],
+  ];
+
+  for (const rows of cabinSections) {
+    const availableSeats = rows.flatMap((row) => getAvailableSeatsForRow(row, occupiedSeats));
+    if (availableSeats.length >= seatsNeeded) {
+      return availableSeats.slice(0, seatsNeeded);
+    }
+  }
+
+  return [];
 }
 
 const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
@@ -47,23 +97,27 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
   flightId
 }) => {
   const [selectedPassengers, setSelectedPassengers] = useState<string[]>([]);
+  const [allocationError, setAllocationError] = useState('');
   const { control, handleSubmit, register, reset } = useForm<GroupSeatingDialogFormData>({
     resolver: zodResolver(GroupSeatingDialogSchema),
     defaultValues: {
       groupName: '',
       keepTogether: true,
+      priority: 'NORMAL',
     },
   });
 
   useEffect(() => {
     if (open) {
-      reset({ groupName: '', keepTogether: true });
+      reset({ groupName: '', keepTogether: true, priority: 'NORMAL' });
+      setAllocationError('');
     }
   }, [open, reset]);
 
   const handleClose = () => {
-    reset({ groupName: '', keepTogether: true });
+    reset({ groupName: '', keepTogether: true, priority: 'NORMAL' });
     setSelectedPassengers([]);
+    setAllocationError('');
     onClose();
   };
 
@@ -72,6 +126,7 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
   );
 
   const handleTogglePassenger = (passengerId: string) => {
+    setAllocationError('');
     setSelectedPassengers(prev =>
       prev.includes(passengerId)
         ? prev.filter(id => id !== passengerId)
@@ -87,15 +142,30 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
     const normalizedGroupName = formData.groupName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_');
     const groupId = normalizedGroupName || `group_${selectedPassengers.join('_')}`;
     const leadPassengerId = selectedPassengers[0];
+    const occupiedSeats = new Set(
+      passengers
+        .filter(passenger => passenger.seat && !selectedPassengers.includes(passenger.id))
+        .map(passenger => passenger.seat)
+    );
+    const allocatedSeats = findGroupSeatBlock(selectedPassengers.length, formData.keepTogether, occupiedSeats);
+
+    if (allocatedSeats.length !== selectedPassengers.length) {
+      setAllocationError('Unable to find enough nearby seats for this group. Try disabling keep together or free up seats first.');
+      return;
+    }
+    const assignedRows = Array.from(new Set(allocatedSeats.map(getSeatRow))).filter(row => row > 0);
 
     const groupSeating: GroupSeating = {
       groupId,
+      groupName: formData.groupName.trim() || undefined,
       size: selectedPassengers.length,
       keepTogether: formData.keepTogether,
-      leadPassengerId
+      leadPassengerId,
+      priority: formData.priority,
+      assignedRows,
     };
 
-    onAllocate(groupSeating, selectedPassengers);
+    onAllocate(groupSeating, selectedPassengers, allocatedSeats);
     handleClose();
   };
 
@@ -114,6 +184,17 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
             placeholder="e.g., Corporate Group, Tour Group"
             fullWidth
             {...register('groupName')}
+          />
+
+          <Controller
+            name="priority"
+            control={control}
+            render={({ field }) => (
+              <TextField {...field} select label="Priority" fullWidth>
+                <MenuItem value="NORMAL">Normal</MenuItem>
+                <MenuItem value="HIGH">High</MenuItem>
+              </TextField>
+            )}
           />
 
           <Controller
@@ -205,6 +286,12 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
           {selectedPassengers.length > 0 && selectedPassengers.length < 2 && (
             <Alert severity="warning">
               Please select at least 2 passengers to create a group
+            </Alert>
+          )}
+
+          {allocationError && (
+            <Alert severity="error">
+              {allocationError}
             </Alert>
           )}
         </Box>

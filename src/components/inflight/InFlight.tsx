@@ -88,6 +88,19 @@ const InFlight: React.FC = () => {
   const [shopQuantity, setShopQuantity] = useState(1);
   const [shopCategory, setShopCategory] = useState("All");
 
+  useEffect(() => {
+    if (selectedFlight || flights.length === 0) {
+      return;
+    }
+
+    const defaultFlight =
+      flights.find((flight) => flight.status === "Boarding") ??
+      flights.find((flight) => flight.status === "On Time") ??
+      flights[0];
+
+    selectFlight(defaultFlight);
+  }, [flights, selectFlight, selectedFlight]);
+
   const flightPassengers = selectedFlight
     ? passengers.filter((p) => p.flightId === selectedFlight.id)
     : [];
@@ -238,7 +251,7 @@ const InFlight: React.FC = () => {
       />
 
       <Grid container spacing={{ xs: 2, sm: 3, xl: 4 }} sx={{ minWidth: 0 }}>
-        <Grid size={{ xs: 12, md: 3, lg: 2 }} sx={{ minWidth: 0 }}>
+        <Grid size={{ xs: 12, md: 3 }} sx={{ minWidth: 0 }}>
           <InFlightFlightList
             flights={flights}
             selectedFlightId={selectedFlight?.id}
@@ -246,7 +259,7 @@ const InFlight: React.FC = () => {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 9, lg: 10 }} sx={{ minWidth: 0 }}>
+        <Grid size={{ xs: 12, md: 9 }} sx={{ minWidth: 0 }}>
           {selectedFlight ? (
             <>
               <FlightInfoGrid flight={selectedFlight} />

@@ -363,15 +363,15 @@ const StaffCheckIn: React.FC = () => {
           onClose={() => setGroupSeatingDialog(false)}
           flightId={selectedFlight.id}
           passengers={flightPassengers.filter(p => !p.checkedIn)}
-          onAllocate={async (groupSeating, passengerIds) => {
+          onAllocate={async (groupSeating, passengerIds, allocatedSeats) => {
             const results = await Promise.all(
-              passengerIds.map(passengerId => 
-                updatePassenger(passengerId, { groupSeating })
+              passengerIds.map((passengerId, index) => 
+                updatePassenger(passengerId, { groupSeating, seat: allocatedSeats[index] })
               )
             );
             const successCount = results.filter(r => r !== null).length;
             if (successCount > 0) {
-              showToast(`Group seating allocated for ${successCount} passengers`, 'success');
+              showToast(`Group seating allocated for ${successCount} passengers in nearby seats`, 'success');
               setGroupSeatingDialog(false);
               await fetchPassengers();
             } else {

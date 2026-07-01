@@ -9,9 +9,12 @@ export interface SeatPreferences {
 
 export interface GroupSeating {
   groupId: string;
+  groupName?: string;
   size: number;
   keepTogether: boolean;
   leadPassengerId: string;
+  priority?: 'HIGH' | 'NORMAL';
+  assignedRows?: number[];
 }
 
 export interface FamilySeating {
