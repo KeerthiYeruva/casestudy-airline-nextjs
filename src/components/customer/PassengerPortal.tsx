@@ -21,9 +21,11 @@ import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineE
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 import useDataStore from "@/stores/useDataStore";
 import BoardingPassDialog from "../checkin/BoardingPassDialog";
 import ChangeSeatDialog from "../checkin/ChangeSeatDialog";
+import ConnectionStatusChip from "../ui/ConnectionStatusChip";
 import StatusChip from "../ui/StatusChip";
 import type { Flight } from "@/types/flight";
 import type { Passenger } from "@/types/passenger";
@@ -65,6 +67,7 @@ const formatRoute = (flight: Flight | null) => {
 
 export default function PassengerPortal() {
   const { flights, passengers, fetchFlights, fetchPassengers, checkInPassenger, changeSeat } = useDataStore();
+  const { isConnected } = useRealtimeUpdates();
   const [search, setSearch] = useState<PortalSearch>(defaultSearch);
   const [submittedSearch, setSubmittedSearch] = useState<PortalSearch | null>(null);
   const [boardingPassTrip, setBoardingPassTrip] = useState<PassengerTrip | null>(null);
@@ -216,11 +219,14 @@ export default function PassengerPortal() {
     <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3 } }}>
       <Stack spacing={3}>
         <Box>
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 0.5 }}>
-            <ManageSearchIcon color="primary" />
-            <Typography variant="h4" component="h2" sx={{ fontWeight: 800, fontSize: { xs: "1.75rem", sm: "2.25rem" } }}>
-              My Trips
-            </Typography>
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", justifyContent: "space-between", mb: 0.5, flexWrap: "wrap" }}>
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+              <ManageSearchIcon color="primary" />
+              <Typography variant="h4" component="h2" sx={{ fontWeight: 800, fontSize: { xs: "1.75rem", sm: "2.25rem" } }}>
+                My Trips
+              </Typography>
+            </Stack>
+            <ConnectionStatusChip isConnected={isConnected} />
           </Stack>
           <Typography variant="body1" color="text.secondary">
             Find a booking by PNR and last name to view upcoming flights, past trips, and booking details.

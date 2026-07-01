@@ -31,6 +31,8 @@ import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import GroupsIcon from "@mui/icons-material/Groups";
 import FlightIcon from "@mui/icons-material/Flight";
 
+export type AdminDashboardTab = "passengers" | "services" | "seats" | "flights" | "crew" | "aircraft";
+
 interface ConfirmDialogState {
   open: boolean;
   title?: string;
@@ -39,7 +41,20 @@ interface ConfirmDialogState {
   onConfirm: () => void;
 }
 
-const AdminDashboard: React.FC = () => {
+interface AdminDashboardProps {
+  initialTab?: AdminDashboardTab;
+}
+
+const adminTabIndexes: Record<AdminDashboardTab, number> = {
+  passengers: 0,
+  services: 1,
+  seats: 2,
+  flights: 3,
+  crew: 4,
+  aircraft: 5,
+};
+
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = "passengers" }) => {
   const {
     flights,
     passengers,
@@ -49,13 +64,22 @@ const AdminDashboard: React.FC = () => {
     error: dataStoreError,
     fetchFlights,
     fetchPassengers,
+    fetchCatalog,
+    addFlight,
     addPassenger,
     updateFlight,
+    deleteFlight,
     updatePassenger,
     deletePassenger,
-    setAncillaryServices,
-    setMealOptions,
-    setShopItems,
+    addAncillaryService,
+    updateAncillaryService,
+    deleteAncillaryService,
+    addMealOption,
+    updateMealOption,
+    deleteMealOption,
+    addShopItem,
+    updateShopItem,
+    deleteShopItem,
     resetToInitialData,
   } = useDataStore();
   const {
@@ -78,11 +102,12 @@ const AdminDashboard: React.FC = () => {
       if (passengers.length === 0) {
         fetchPassengers();
       }
+      fetchCatalog();
       hasFetchedRef.current = true;
     }
-  }, [flights.length, passengers.length, fetchFlights, fetchPassengers]);
+  }, [flights.length, passengers.length, fetchFlights, fetchPassengers, fetchCatalog]);
 
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(adminTabIndexes[initialTab]);
   const [serviceDialog, setServiceDialog] = useState(false);
   const [mealDialog, setMealDialog] = useState(false);
   const [shopItemDialog, setShopItemDialog] = useState(false);
@@ -121,20 +146,19 @@ const AdminDashboard: React.FC = () => {
     setServiceDialog(true);
   };
 
-  const handleSaveService = () => {
+  const handleSaveService = async () => {
     if (!serviceForm || !serviceForm.trim()) {
       showToast("Service name cannot be empty", "error");
       return;
     }
+    const serviceName = serviceForm.trim();
+
     if (editingService) {
-      const updated = ancillaryServices.map((s) =>
-        s === editingService ? serviceForm.trim() : s
-      );
-      setAncillaryServices(updated);
-      showToast("Service updated successfully", "success");
+      const result = await updateAncillaryService(editingService, serviceName);
+      showToast(result ? "Service updated successfully" : "Failed to update service", result ? "success" : "error");
     } else {
-      setAncillaryServices([...ancillaryServices, serviceForm.trim()]);
-      showToast("Service added successfully", "success");
+      const result = await addAncillaryService(serviceName);
+      showToast(result ? "Service added successfully" : "Failed to add service", result ? "success" : "error");
     }
     setServiceDialog(false);
   };
@@ -145,9 +169,9 @@ const AdminDashboard: React.FC = () => {
       title: "Delete Service",
       message: `Delete "${service}"?`,
       severity: "error",
-      onConfirm: () => {
-        setAncillaryServices(ancillaryServices.filter((s) => s !== service));
-        showToast("Service deleted successfully", "success");
+      onConfirm: async () => {
+        const result = await deleteAncillaryService(service);
+        showToast(result ? "Service deleted successfully" : "Failed to delete service", result ? "success" : "error");
       },
     });
   };
@@ -163,20 +187,19 @@ const AdminDashboard: React.FC = () => {
     setMealDialog(true);
   };
 
-  const handleSaveMeal = () => {
+  const handleSaveMeal = async () => {
     if (!mealForm || !mealForm.trim()) {
       showToast("Meal option name cannot be empty", "error");
       return;
     }
+    const mealName = mealForm.trim();
+
     if (editingMeal) {
-      const updated = mealOptions.map((m) =>
-        m === editingMeal ? mealForm.trim() : m
-      );
-      setMealOptions(updated);
-      showToast("Meal option updated successfully", "success");
+      const result = await updateMealOption(editingMeal, mealName);
+      showToast(result ? "Meal option updated successfully" : "Failed to update meal option", result ? "success" : "error");
     } else {
-      setMealOptions([...mealOptions, mealForm.trim()]);
-      showToast("Meal option added successfully", "success");
+      const result = await addMealOption(mealName);
+      showToast(result ? "Meal option added successfully" : "Failed to add meal option", result ? "success" : "error");
     }
     setMealDialog(false);
   };
@@ -187,9 +210,9 @@ const AdminDashboard: React.FC = () => {
       title: "Delete Meal",
       message: `Delete "${meal}"?`,
       severity: "error",
-      onConfirm: () => {
-        setMealOptions(mealOptions.filter((m) => m !== meal));
-        showToast("Meal option deleted successfully", "success");
+      onConfirm: async () => {
+        const result = await deleteMealOption(meal);
+        showToast(result ? "Meal option deleted successfully" : "Failed to delete meal option", result ? "success" : "error");
       },
     });
   };
@@ -211,19 +234,13 @@ const AdminDashboard: React.FC = () => {
     setShopItemDialog(true);
   };
 
-  const handleSaveShopItem = (formData: ShopItemDialogFormData) => {
+  const handleSaveShopItem = async (formData: ShopItemDialogFormData) => {
     if (editMode) {
-      const updated = shopItems.map((item) =>
-        item.id === formData.id ? formData : item
-      );
-      setShopItems(updated);
-      showToast(`${formData.name} updated successfully`, "success");
+      const result = await updateShopItem(formData.id, formData);
+      showToast(result ? `${formData.name} updated successfully` : "Failed to update shop item", result ? "success" : "error");
     } else {
-      setShopItems([
-        ...shopItems,
-        { ...formData, id: `SHOP${Date.now()}` },
-      ]);
-      showToast(`${formData.name} added successfully`, "success");
+      const result = await addShopItem({ ...formData, id: `SHOP${Date.now()}` });
+      showToast(result ? `${formData.name} added successfully` : "Failed to add shop item", result ? "success" : "error");
     }
     setShopItemDialog(false);
   };
@@ -235,9 +252,9 @@ const AdminDashboard: React.FC = () => {
       title: "Delete Shop Item",
       message: `Are you sure you want to delete ${item?.name || "this item"}?`,
       severity: "error",
-      onConfirm: () => {
-        setShopItems(shopItems.filter((item) => item.id !== id));
-        showToast(`${item?.name || "Item"} deleted successfully`, "success");
+      onConfirm: async () => {
+        const result = await deleteShopItem(id);
+        showToast(result ? `${item?.name || "Item"} deleted successfully` : "Failed to delete shop item", result ? "success" : "error");
       },
     });
   };
@@ -363,6 +380,16 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 3 && (
           <FlightOpsTab
             flights={flights}
+            onAddFlight={async (flight) => {
+              const result = await addFlight(flight);
+              if (result) {
+                await fetchFlights();
+                showToast(`${result.flightNumber} created successfully`, "success");
+              } else {
+                showToast("Failed to create flight", "error");
+              }
+              return !!result;
+            }}
             onUpdateFlight={async (id, updates) => {
               const result = await updateFlight(id, updates);
               if (result) {
@@ -373,6 +400,20 @@ const AdminDashboard: React.FC = () => {
                 showToast(`${result.flightNumber} updated successfully`, "success");
               } else {
                 showToast("Failed to update flight", "error");
+              }
+              return !!result;
+            }}
+            onDeleteFlight={async (id) => {
+              const result = await deleteFlight(id);
+              if (result) {
+                if (selectedFlight?.id === id) {
+                  selectFlight(null);
+                }
+                await fetchFlights();
+                await fetchPassengers();
+                showToast(`${result.flightNumber} deleted successfully`, "success");
+              } else {
+                showToast("Failed to delete flight", "error");
               }
               return !!result;
             }}

@@ -17,10 +17,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import type { Passenger } from "@/types/passenger";
 import type { ShopItem } from "@/types/services";
 import {
-  shopItems as shopItemsData,
   shopCategories as shopCategoriesData,
-  ancillaryServices as ancillaryServicesData,
-  mealOptions as mealOptionsData,
 } from "@/data/flightData";
 import { Container, Paper, Typography, Grid, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import "@/styles/InFlight.scss";
@@ -35,16 +32,14 @@ const InFlight: React.FC = () => {
     shopCategories,
     fetchFlights,
     fetchPassengers,
+    fetchCatalog,
     addAncillaryServiceToPassenger,
     removeAncillaryServiceFromPassenger,
     changeMealPreference,
     addShopRequest,
     removeShopRequest,
     updatePassenger,
-    setShopItems,
     setShopCategories,
-    setAncillaryServices,
-    setMealOptions,
   } = useDataStore();
   const { selectedFlight, selectFlight } = useCheckInStore();
   const { showToast } = useToastStore();
@@ -62,18 +57,10 @@ const InFlight: React.FC = () => {
         fetchPassengers();
       }
       
-      // Initialize static data
-      if (shopItems.length === 0) {
-        setShopItems(shopItemsData);
-      }
+      fetchCatalog();
+
       if (shopCategories.length === 0) {
         setShopCategories(shopCategoriesData);
-      }
-      if (ancillaryServices.length === 0) {
-        setAncillaryServices(ancillaryServicesData);
-      }
-      if (mealOptions.length === 0) {
-        setMealOptions(mealOptionsData);
       }
       hasFetchedRef.current = true;
     }
@@ -86,10 +73,8 @@ const InFlight: React.FC = () => {
     mealOptions.length,
     fetchFlights,
     fetchPassengers,
-    setShopItems,
+    fetchCatalog,
     setShopCategories,
-    setAncillaryServices,
-    setMealOptions,
   ]);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);

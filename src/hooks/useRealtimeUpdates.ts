@@ -13,6 +13,7 @@ type EventType =
   | 'seat_unlocked' 
   | 'passenger_deleted' 
   | 'flight_updated'
+  | 'catalog_updated'
   | 'connected'
   | 'connection_established';
 
@@ -36,7 +37,7 @@ interface LockedSeat {
  */
 export function useRealtimeUpdates() {
   const { user } = useAuthStore();
-  const { fetchPassengers, fetchFlights } = useDataStore();
+  const { fetchPassengers, fetchFlights, fetchCatalog } = useDataStore();
   const eventSourceRef = useRef<EventSource | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [lockedSeats, setLockedSeats] = useState<Map<string, LockedSeat>>(new Map());
@@ -140,6 +141,12 @@ export function useRealtimeUpdates() {
           break;
         }
 
+        case 'catalog_updated': {
+          console.log('[Realtime] Refreshing catalog after update');
+          fetchCatalog();
+          break;
+        }
+
         case 'seat_locked': {
           const lockData = eventData.data as LockedSeat;
           if (lockData && lockData.seatId) {
@@ -170,7 +177,7 @@ export function useRealtimeUpdates() {
     } catch (error) {
       console.error('[Realtime] Error handling event:', error);
     }
-  }, [fetchPassengers, fetchFlights]);
+  }, [fetchPassengers, fetchFlights, fetchCatalog]);
 
   /**
    * Connect to SSE endpoint
@@ -178,6 +185,11 @@ export function useRealtimeUpdates() {
   const connectRef = useRef<(() => void) | undefined>(undefined);
   
   const connect = useCallback(() => {
+    if (typeof EventSource === 'undefined') {
+      console.warn('[Realtime] EventSource is not available in this environment');
+      return;
+    }
+
     if (eventSourceRef.current?.readyState === EventSource.OPEN) {
       console.log('[Realtime] Already connected');
       return;

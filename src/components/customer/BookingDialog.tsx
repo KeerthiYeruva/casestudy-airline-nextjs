@@ -23,6 +23,7 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import { DEFAULT_ANCILLARY_SERVICES } from "@/constants/appConstants";
+import useDataStore from "@/stores/useDataStore";
 import type { Flight } from "@/types/flight";
 import type { Passenger } from "@/types/passenger";
 
@@ -67,7 +68,7 @@ const defaultPaymentForm: PaymentForm = {
 };
 
 const seatLetters = ["A", "B", "C", "D", "E", "F"];
-const mealOptions = ["Regular", "Vegetarian", "Vegan", "Gluten-Free", "Kosher", "Halal"];
+const defaultMealOptions = ["Regular", "Vegetarian", "Vegan", "Gluten-Free", "Kosher", "Halal"];
 const addOnPrices: Record<string, number> = {
   "Priority Boarding": 29,
   "Extra Baggage": 65,
@@ -226,6 +227,11 @@ export default function BookingDialog({
   onClose,
   onCreateBooking,
 }: BookingDialogProps) {
+  const {
+    ancillaryServices,
+    mealOptions,
+    fetchCatalog,
+  } = useDataStore();
   const [form, setForm] = useState<BookingForm>(defaultForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmation, setConfirmation] = useState<Passenger | null>(null);
@@ -240,8 +246,16 @@ export default function BookingDialog({
   const [paymentForm, setPaymentForm] = useState<PaymentForm>(defaultPaymentForm);
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (open) {
+      fetchCatalog();
+    }
+  }, [open, fetchCatalog]);
+
   const occupiedSeats = useMemo(() => (flight ? getOccupiedSeats(flight, passengers) : new Set<string>()), [flight, passengers]);
   const suggestedSeat = useMemo(() => (flight ? getFirstAvailableSeat(flight, occupiedSeats) : null), [flight, occupiedSeats]);
+  const availableMealOptions = mealOptions.length > 0 ? mealOptions : defaultMealOptions;
+  const availableAddOns = ancillaryServices.length > 0 ? ancillaryServices : DEFAULT_ANCILLARY_SERVICES;
   const includedCabinServices = cabinClass === "Business" || cabinClass === "First" ? ["Priority Boarding"] : [];
   const paidAddOns = selectedAddOns.filter((service) => !includedCabinServices.includes(service));
   const addOnsTotal = paidAddOns.reduce((sum, service) => sum + (addOnPrices[service] ?? 0), 0) * passengerCount;
@@ -438,7 +452,7 @@ export default function BookingDialog({
                   onChange={(event) => updateForm("specialMeal", event.target.value)}
                   fullWidth
                 >
-                  {mealOptions.map((meal) => (
+                  {availableMealOptions.map((meal) => (
                     <MenuItem key={meal} value={meal}>{meal}</MenuItem>
                   ))}
                 </TextField>
@@ -456,7 +470,7 @@ export default function BookingDialog({
                   </Typography>
                 </Box>
                 <Grid container spacing={1}>
-                  {DEFAULT_ANCILLARY_SERVICES.map((service) => {
+                  {availableAddOns.map((service) => {
                     const included = includedCabinServices.includes(service);
                     const checked = selectedAddOns.includes(service) || included;
                     const price = addOnPrices[service] ?? 0;

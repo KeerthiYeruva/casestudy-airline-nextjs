@@ -3,10 +3,13 @@ import { passengerDB } from '@/lib/db';
 import { handleApiError, successResponse, notFoundResponse, badRequestResponse } from '@/lib/apiUtils';
 import { SeatChangeSchema, validateSchema } from '@/lib/validationSchemas';
 import { eventBroadcaster } from '@/lib/eventBroadcaster';
+import { revalidatePath } from 'next/cache';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
+
+export const dynamic = 'force-dynamic';
 
 // PUT change passenger seat
 export async function PUT(request: Request, { params }: RouteParams) {
@@ -24,6 +27,14 @@ export async function PUT(request: Request, { params }: RouteParams) {
     
     if (!result) {
       return notFoundResponse('Passenger');
+    }
+
+    try {
+      revalidatePath('/api/passengers');
+      revalidatePath(`/api/passengers/${id}`);
+      revalidatePath(`/api/passengers?flightId=${result.flightId}`);
+    } catch (e) {
+      console.warn('Cache revalidation failed:', e);
     }
     
     // Broadcast seat change to all connected clients

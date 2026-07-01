@@ -53,6 +53,16 @@ export interface DataActions {
   checkInPassenger: (id: string) => Promise<Passenger | null>;
   undoCheckIn: (id: string) => Promise<Passenger | null>;
   changeSeat: (id: string, newSeat: string) => Promise<Passenger | null>;
+  fetchCatalog: () => Promise<void>;
+  addAncillaryService: (service: string) => Promise<string | null>;
+  updateAncillaryService: (oldService: string, newService: string) => Promise<string | null>;
+  deleteAncillaryService: (service: string) => Promise<string | null>;
+  addMealOption: (meal: string) => Promise<string | null>;
+  updateMealOption: (oldMeal: string, newMeal: string) => Promise<string | null>;
+  deleteMealOption: (meal: string) => Promise<string | null>;
+  addShopItem: (item: ShopItem) => Promise<ShopItem | null>;
+  updateShopItem: (id: string, updates: Partial<ShopItem>) => Promise<ShopItem | null>;
+  deleteShopItem: (id: string) => Promise<ShopItem | null>;
   setAncillaryServices: (services: string[]) => void;
   setMealOptions: (meals: string[]) => void;
   setShopItems: (items: ShopItem[]) => void;

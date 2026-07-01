@@ -2,11 +2,11 @@
 import { flightDB } from '@/lib/db';
 import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
 import { CreateFlightSchema, validateSchema } from '@/lib/validationSchemas';
+import { eventBroadcaster } from '@/lib/eventBroadcaster';
+import { revalidatePath } from 'next/cache';
 import type { Flight } from '@/types/flight';
 
-// Enable caching for this route
-export const dynamic = 'force-static';
-export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic';
 
 // GET all flights with caching
 export async function GET() {
@@ -14,11 +14,7 @@ export async function GET() {
     const flights = await flightDB.getAll();
     const response = successResponse(flights);
     
-    // Add cache control headers
-    response.headers.set(
-      'Cache-Control',
-      'public, s-maxage=60, stale-while-revalidate=120'
-    );
+    response.headers.set('Cache-Control', 'no-store');
     
     return response;
   } catch (error) {
@@ -32,6 +28,18 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = validateSchema(CreateFlightSchema, body);
     const newFlight = await flightDB.create(validatedData as Partial<Flight>);
+
+    try {
+      revalidatePath('/api/flights');
+    } catch (e) {
+      console.warn('Cache revalidation failed:', e);
+    }
+
+    eventBroadcaster.broadcast({
+      type: 'flight_updated',
+      data: newFlight,
+    });
+
     return successResponse(newFlight, HTTP_STATUS.CREATED);
   } catch (error) {
     return handleApiError(error);

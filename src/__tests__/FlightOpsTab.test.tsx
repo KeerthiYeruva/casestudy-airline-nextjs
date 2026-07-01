@@ -23,10 +23,18 @@ const mockFlights: Flight[] = [
 ];
 
 describe('FlightOpsTab', () => {
+  const defaultProps = {
+    flights: mockFlights,
+    onAddFlight: jest.fn(),
+    onUpdateFlight: jest.fn(),
+    onDeleteFlight: jest.fn(),
+  };
+
   it('renders operational flight fields', () => {
-    render(<FlightOpsTab flights={mockFlights} onUpdateFlight={jest.fn()} />);
+    render(<FlightOpsTab {...defaultProps} />);
 
     expect(screen.getByText('Flight Status & Gates')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /create flight/i })).toBeInTheDocument();
     expect(screen.getByText('AA101')).toBeInTheDocument();
     expect(screen.getByText('Gate A12')).toBeInTheDocument();
     expect(screen.getByText('Terminal 4')).toBeInTheDocument();
@@ -37,7 +45,7 @@ describe('FlightOpsTab', () => {
   it('submits edited gate and terminal details', async () => {
     const onUpdateFlight = jest.fn().mockResolvedValue(true);
 
-    render(<FlightOpsTab flights={mockFlights} onUpdateFlight={onUpdateFlight} />);
+    render(<FlightOpsTab {...defaultProps} onUpdateFlight={onUpdateFlight} />);
 
     fireEvent.change(screen.getByLabelText('Gate'), { target: { value: 'B8' } });
     fireEvent.change(screen.getByLabelText('Terminal'), { target: { value: '2' } });

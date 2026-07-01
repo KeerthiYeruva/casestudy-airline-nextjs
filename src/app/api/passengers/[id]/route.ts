@@ -10,6 +10,8 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
+export const dynamic = 'force-dynamic';
+
 // GET single passenger by ID with caching
 export async function GET(_request: Request, { params }: RouteParams) {
   try {
@@ -21,10 +23,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
     }
     
     const response = successResponse(passenger);
-    response.headers.set(
-      'Cache-Control',
-      'public, s-maxage=30, stale-while-revalidate=60'
-    );
+    response.headers.set('Cache-Control', 'no-store');
     
     return response;
   } catch (error) {
@@ -51,6 +50,9 @@ export async function PUT(request: Request, { params }: RouteParams) {
     try {
       revalidatePath('/api/passengers');
       revalidatePath(`/api/passengers/${id}`);
+      if (updatedPassenger.flightId) {
+        revalidatePath(`/api/passengers?flightId=${updatedPassenger.flightId}`);
+      }
     } catch (e) {
       console.warn('Cache revalidation failed:', e);
     }
@@ -81,6 +83,9 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     try {
       revalidatePath('/api/passengers');
       revalidatePath(`/api/passengers/${id}`);
+      if (deletedPassenger.flightId) {
+        revalidatePath(`/api/passengers?flightId=${deletedPassenger.flightId}`);
+      }
     } catch (e) {
       console.warn('Cache revalidation failed:', e);
     }

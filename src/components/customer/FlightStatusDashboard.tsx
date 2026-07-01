@@ -22,7 +22,9 @@ import ConnectingAirportsIcon from "@mui/icons-material/ConnectingAirports";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 import useDataStore from "@/stores/useDataStore";
+import ConnectionStatusChip from "../ui/ConnectionStatusChip";
 import StatusChip from "../ui/StatusChip";
 import type { Flight } from "@/types/flight";
 
@@ -55,6 +57,7 @@ const matchesQuery = (flight: Flight, query: string) => {
 
 export default function FlightStatusDashboard() {
   const { flights, fetchFlights } = useDataStore();
+  const { isConnected } = useRealtimeUpdates();
   const [filters, setFilters] = useState<StatusFilters>({ query: "", status: "All" });
   const hasFetchedRef = useRef(false);
 
@@ -94,11 +97,14 @@ export default function FlightStatusDashboard() {
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
       <Stack spacing={3}>
         <Box>
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 0.5 }}>
-            <ConnectingAirportsIcon color="primary" />
-            <Typography variant="h4" component="h2" sx={{ fontWeight: 800, fontSize: { xs: "1.75rem", sm: "2.25rem" } }}>
-              Flight Status
-            </Typography>
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", justifyContent: "space-between", mb: 0.5, flexWrap: "wrap" }}>
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+              <ConnectingAirportsIcon color="primary" />
+              <Typography variant="h4" component="h2" sx={{ fontWeight: 800, fontSize: { xs: "1.75rem", sm: "2.25rem" } }}>
+                Flight Status
+              </Typography>
+            </Stack>
+            <ConnectionStatusChip isConnected={isConnected} />
           </Stack>
           <Typography variant="body1" color="text.secondary">
             Track current flight status, gate assignments, terminals, and schedule details.

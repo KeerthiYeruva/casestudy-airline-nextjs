@@ -275,28 +275,46 @@ export const passengerDB = {
 // Database operations for Services
 export const serviceDB = {
   getAll: (): string[] => [...services],
-  add: (service: string): void => {
+  add: (service: string): string => {
     if (!services.includes(service)) {
       services.push(service);
     }
+    return service;
   },
-  remove: (service: string): void => {
+  update: (oldService: string, newService: string): string | null => {
+    const index = services.findIndex(s => s === oldService);
+    if (index === -1) return null;
+    services[index] = newService;
+    return newService;
+  },
+  remove: (service: string): string | null => {
+    if (!services.includes(service)) return null;
     services = services.filter(s => s !== service);
+    return service;
   },
 };
 
 // Database operations for Meals
 export const mealDB = {
   getAll: (): string[] => [...meals],
-  add: (meal: string): void => {
+  add: (meal: string): string => {
     if (!meals.includes(meal)) {
       meals.push(meal);
 
     }
+    return meal;
   },
-  remove: (meal: string): void => {
+  update: (oldMeal: string, newMeal: string): string | null => {
+    const index = meals.findIndex(m => m === oldMeal);
+    if (index === -1) return null;
+    meals[index] = newMeal;
+    return newMeal;
+  },
+  remove: (meal: string): string | null => {
+    if (!meals.includes(meal)) return null;
     meals = meals.filter(m => m !== meal);
 
+    return meal;
   },
 };
 

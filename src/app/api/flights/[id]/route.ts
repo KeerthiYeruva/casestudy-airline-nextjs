@@ -2,11 +2,15 @@
 import { flightDB } from '@/lib/db';
 import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtils';
 import { UpdateFlightSchema, validateSchema } from '@/lib/validationSchemas';
+import { eventBroadcaster } from '@/lib/eventBroadcaster';
+import { revalidatePath } from 'next/cache';
 import type { Flight } from '@/types/flight';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
+
+export const dynamic = 'force-dynamic';
 
 // GET single flight by ID
 export async function GET(_request: Request, { params }: RouteParams) {
@@ -35,6 +39,18 @@ export async function PUT(request: Request, { params }: RouteParams) {
     if (!updatedFlight) {
       return notFoundResponse('Flight');
     }
+
+    try {
+      revalidatePath('/api/flights');
+      revalidatePath(`/api/flights/${id}`);
+    } catch (e) {
+      console.warn('Cache revalidation failed:', e);
+    }
+
+    eventBroadcaster.broadcast({
+      type: 'flight_updated',
+      data: updatedFlight,
+    });
     
     return successResponse(updatedFlight);
   } catch (error) {
@@ -51,6 +67,19 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     if (!deletedFlight) {
       return notFoundResponse('Flight');
     }
+
+    try {
+      revalidatePath('/api/flights');
+      revalidatePath(`/api/flights/${id}`);
+      revalidatePath('/api/passengers');
+    } catch (e) {
+      console.warn('Cache revalidation failed:', e);
+    }
+
+    eventBroadcaster.broadcast({
+      type: 'flight_updated',
+      data: deletedFlight,
+    });
     
     return successResponse(deletedFlight);
   } catch (error) {

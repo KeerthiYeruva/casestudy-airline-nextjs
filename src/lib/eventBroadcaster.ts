@@ -8,7 +8,7 @@ type SSEClient = {
 };
 
 type EventData = {
-  type: 'passenger_updated' | 'passenger_checked_in' | 'seat_changed' | 'seat_locked' | 'seat_unlocked' | 'passenger_deleted' | 'flight_updated';
+  type: 'passenger_updated' | 'passenger_checked_in' | 'seat_changed' | 'seat_locked' | 'seat_unlocked' | 'passenger_deleted' | 'flight_updated' | 'catalog_updated';
   data: unknown;
   timestamp: number;
 };

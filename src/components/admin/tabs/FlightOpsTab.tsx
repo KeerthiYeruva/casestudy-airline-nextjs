@@ -16,8 +16,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import FlightDialog from "@/components/admin/FlightDialog";
 import StatusChip from "../../ui/StatusChip";
 import type { Flight } from "@/types/flight";
 
@@ -31,7 +34,9 @@ interface FlightOpsDraft {
 
 interface FlightOpsTabProps {
   flights: Flight[];
+  onAddFlight: (flight: Partial<Flight>) => Promise<boolean>;
   onUpdateFlight: (id: string, updates: Partial<Flight>) => Promise<boolean>;
+  onDeleteFlight: (id: string) => Promise<boolean>;
 }
 
 const flightStatuses: FlightStatus[] = [
@@ -49,9 +54,11 @@ const getFlightDraft = (flight: Flight): FlightOpsDraft => ({
   terminal: flight.terminal || "",
 });
 
-const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onUpdateFlight }) => {
+const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onAddFlight, onUpdateFlight, onDeleteFlight }) => {
   const [drafts, setDrafts] = useState<Record<string, FlightOpsDraft>>({});
   const [savingFlightId, setSavingFlightId] = useState<string | null>(null);
+  const [flightDialogOpen, setFlightDialogOpen] = useState(false);
+  const [deletingFlightId, setDeletingFlightId] = useState<string | null>(null);
 
   const getDraft = (flight: Flight) => drafts[flight.id] || getFlightDraft(flight);
 
@@ -86,24 +93,36 @@ const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onUpdateFlight }) 
     }
   };
 
-  if (flights.length === 0) {
-    return <Alert severity="info">No flights are available to manage.</Alert>;
-  }
+  const handleDelete = async (flight: Flight) => {
+    if (!window.confirm(`Delete flight ${flight.flightNumber}? Associated passengers will also be removed.`)) return;
+
+    setDeletingFlightId(flight.id);
+    await onDeleteFlight(flight.id);
+    setDeletingFlightId(null);
+  };
 
   return (
     <Stack spacing={2.5}>
-      <Box>
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
-          Flight Status & Gates
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Update operational flight status, assigned gate, and terminal for staff-facing views.
-        </Typography>
-      </Box>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "space-between", alignItems: { xs: "stretch", sm: "flex-start" } }}>
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            Flight Status & Gates
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Create flights and update operational status, assigned gate, and terminal for staff-facing views.
+          </Typography>
+        </Box>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setFlightDialogOpen(true)}>
+          Create Flight
+        </Button>
+      </Stack>
+
+      {flights.length === 0 && <Alert severity="info">No flights are available to manage.</Alert>}
 
       {flights.map((flight) => {
         const draft = getDraft(flight);
         const isSaving = savingFlightId === flight.id;
+        const isDeleting = deletingFlightId === flight.id;
 
         return (
           <Paper key={flight.id} variant="outlined" sx={{ p: { xs: 2, md: 2.5 } }}>
@@ -128,9 +147,19 @@ const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onUpdateFlight }) 
                     {flight.origin} to {flight.destination} · {flight.departureTime}
                   </Typography>
                 </Box>
-                <Stack direction="row" spacing={1}>
+                <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
                   <Chip label={`Gate ${flight.gate || "TBD"}`} size="small" variant="outlined" />
                   <Chip label={`Terminal ${flight.terminal || "TBD"}`} size="small" variant="outlined" />
+                  <Button
+                    color="error"
+                    variant="outlined"
+                    size="small"
+                    startIcon={<DeleteIcon />}
+                    onClick={() => handleDelete(flight)}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Deleting" : "Delete"}
+                  </Button>
                 </Stack>
               </Stack>
 
@@ -187,6 +216,8 @@ const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onUpdateFlight }) 
           </Paper>
         );
       })}
+
+      <FlightDialog open={flightDialogOpen} onClose={() => setFlightDialogOpen(false)} onSave={onAddFlight} />
     </Stack>
   );
 };

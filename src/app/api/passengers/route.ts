@@ -2,11 +2,11 @@
 import { passengerDB } from '@/lib/db';
 import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
 import { CreatePassengerSchema, validateSchema } from '@/lib/validationSchemas';
+import { eventBroadcaster } from '@/lib/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
 import type { Passenger } from '@/types/passenger';
 
-// Enable dynamic caching with revalidation
-export const revalidate = 30; // Revalidate every 30 seconds for frequently updated passenger data
+export const dynamic = 'force-dynamic';
 
 // GET all passengers or filter by flightId with caching
 export async function GET(request: Request) {
@@ -23,11 +23,7 @@ export async function GET(request: Request) {
     
     const response = successResponse(passengers);
     
-    // Add cache control headers with shorter cache time for dynamic data
-    response.headers.set(
-      'Cache-Control',
-      'public, s-maxage=30, stale-while-revalidate=60'
-    );
+    response.headers.set('Cache-Control', 'no-store');
     
     return response;
   } catch (error) {
@@ -45,10 +41,18 @@ export async function POST(request: Request) {
     // Revalidate cache after creation
     try {
       revalidatePath('/api/passengers');
+      if (newPassenger.flightId) {
+        revalidatePath(`/api/passengers?flightId=${newPassenger.flightId}`);
+      }
     } catch (e) {
       // Cache revalidation is best-effort
       console.warn('Cache revalidation failed:', e);
     }
+
+    eventBroadcaster.broadcast({
+      type: 'passenger_updated',
+      data: newPassenger,
+    });
     
     return successResponse(newPassenger, HTTP_STATUS.CREATED);
   } catch (error) {

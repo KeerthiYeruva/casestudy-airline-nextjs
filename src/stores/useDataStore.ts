@@ -84,6 +84,28 @@ const useDataStore = create<DataStore>()(
         }
       },
 
+      fetchCatalog: async () => {
+        try {
+          const [servicesResponse, mealsResponse, shopResponse] = await Promise.all([
+            fetch('/api/services'),
+            fetch('/api/meals'),
+            fetch('/api/shop'),
+          ]);
+
+          const servicesResult: APIResponse<AncillaryService[]> = await servicesResponse.json();
+          const mealsResult: APIResponse<MealOption[]> = await mealsResponse.json();
+          const shopResult: APIResponse<ShopItem[]> = await shopResponse.json();
+
+          set({
+            ancillaryServices: servicesResult.success && servicesResult.data ? servicesResult.data : _get().ancillaryServices,
+            mealOptions: mealsResult.success && mealsResult.data ? mealsResult.data : _get().mealOptions,
+            shopItems: shopResult.success && shopResult.data ? shopResult.data : _get().shopItems,
+          });
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+        }
+      },
+
       // Flight CRUD operations
       addFlight: async (flight: Partial<Flight>) => {
         try {
@@ -279,6 +301,182 @@ const useDataStore = create<DataStore>()(
       setMealOptions: (meals: MealOption[]) => set({ mealOptions: meals }),
       setShopItems: (items: ShopItem[]) => set({ shopItems: items }),
       setShopCategories: (categories: ShopCategory[]) => set({ shopCategories: categories }),
+
+      addAncillaryService: async (service: string) => {
+        try {
+          const response = await fetch('/api/services', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ service }),
+          });
+          const result: APIResponse<string> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ ancillaryServices: Array.from(new Set([...state.ancillaryServices, result.data!])) }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to add service' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
+
+      updateAncillaryService: async (oldService: string, newService: string) => {
+        try {
+          const response = await fetch('/api/services', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldService, newService }),
+          });
+          const result: APIResponse<string> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ ancillaryServices: state.ancillaryServices.map((service) => (service === oldService ? result.data! : service)) }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to update service' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
+
+      deleteAncillaryService: async (service: string) => {
+        try {
+          const response = await fetch('/api/services', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ service }),
+          });
+          const result: APIResponse<string> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ ancillaryServices: state.ancillaryServices.filter((item) => item !== service) }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to delete service' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
+
+      addMealOption: async (meal: string) => {
+        try {
+          const response = await fetch('/api/meals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ meal }),
+          });
+          const result: APIResponse<string> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ mealOptions: Array.from(new Set([...state.mealOptions, result.data!])) }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to add meal option' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
+
+      updateMealOption: async (oldMeal: string, newMeal: string) => {
+        try {
+          const response = await fetch('/api/meals', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldMeal, newMeal }),
+          });
+          const result: APIResponse<string> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ mealOptions: state.mealOptions.map((meal) => (meal === oldMeal ? result.data! : meal)) }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to update meal option' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
+
+      deleteMealOption: async (meal: string) => {
+        try {
+          const response = await fetch('/api/meals', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ meal }),
+          });
+          const result: APIResponse<string> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ mealOptions: state.mealOptions.filter((item) => item !== meal) }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to delete meal option' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
+
+      addShopItem: async (item: ShopItem) => {
+        try {
+          const response = await fetch('/api/shop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item),
+          });
+          const result: APIResponse<ShopItem> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ shopItems: [...state.shopItems, result.data!] }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to add shop item' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
+
+      updateShopItem: async (id: string, updates: Partial<ShopItem>) => {
+        try {
+          const response = await fetch(`/api/shop/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updates),
+          });
+          const result: APIResponse<ShopItem> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ shopItems: state.shopItems.map((item) => (item.id === id ? result.data! : item)) }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to update shop item' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
+
+      deleteShopItem: async (id: string) => {
+        try {
+          const response = await fetch(`/api/shop/${id}`, { method: 'DELETE' });
+          const result: APIResponse<ShopItem> = await response.json();
+          if (result.success && result.data) {
+            set((state) => ({ shopItems: state.shopItems.filter((item) => item.id !== id) }));
+            return result.data;
+          }
+          set({ error: result.error || 'Failed to delete shop item' });
+          return null;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' });
+          return null;
+        }
+      },
 
       // Reset to initial data from flightData.ts
       resetToInitialData: async () => {

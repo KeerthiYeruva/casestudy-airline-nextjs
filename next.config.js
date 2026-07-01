@@ -52,7 +52,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, s-maxage=60, stale-while-revalidate=120',
+            value: 'no-store',
           },
         ],
       },
