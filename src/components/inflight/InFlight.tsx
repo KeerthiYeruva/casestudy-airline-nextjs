@@ -12,6 +12,8 @@ import PassengerServicePanel from "@/components/inflight/PassengerServicePanel";
 import AddServiceDialog from "@/components/inflight/AddServiceDialog";
 import ChangeMealDialog from "@/components/inflight/ChangeMealDialog";
 import ShopDialog from "@/components/inflight/ShopDialog";
+import FlightInfoGrid from "@/components/ui/FlightInfoGrid";
+import PageHeader from "@/components/ui/PageHeader";
 import type { Passenger } from "@/types/passenger";
 import type { ShopItem } from "@/types/services";
 import {
@@ -20,9 +22,7 @@ import {
   ancillaryServices as ancillaryServicesData,
   mealOptions as mealOptionsData,
 } from "@/data/flightData";
-import { Container, Paper, Typography, Grid, Box, Chip, Dialog, DialogTitle, DialogContent } from "@mui/material";
-import WifiIcon from "@mui/icons-material/Wifi";
-import WifiOffIcon from "@mui/icons-material/WifiOff";
+import { Container, Paper, Typography, Grid, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import "@/styles/InFlight.scss";
 
 const InFlight: React.FC = () => {
@@ -233,25 +233,11 @@ const InFlight: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
-      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-        <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-          In-Flight Services
-        </Typography>
-        <Chip 
-          icon={isConnected ? <WifiIcon /> : <WifiOffIcon />}
-          label={isConnected ? 'Live Updates' : 'Offline'}
-          color={isConnected ? 'success' : 'default'}
-          size="small"
-          sx={{ ml: 'auto' }}
-        />
-        {selectedFlight && (
-          <Chip 
-            label={`${selectedFlight.flightNumber}`} 
-            color="primary" 
-            sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
-          />
-        )}
-      </Box>
+      <PageHeader
+        title="In-Flight Services"
+        isConnected={isConnected}
+        selectedFlightNumber={selectedFlight?.flightNumber}
+      />
 
       <Grid container spacing={{ xs: 2, sm: 3 }}>
         <Grid size={{ xs: 12, md: 3 }}>
@@ -265,29 +251,7 @@ const InFlight: React.FC = () => {
         <Grid size={{ xs: 12, md: 9 }}>
           {selectedFlight ? (
             <>
-              <Paper elevation={3} className="flight-details" sx={{ mb: 2, p: { xs: 1.5, sm: 2 } }}>
-                <Typography variant="h5" gutterBottom sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
-                  {selectedFlight.name}
-                </Typography>
-                <Grid container spacing={{ xs: 1.5, sm: 2 }}>
-                  <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Time</Typography>
-                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.time}</Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Route</Typography>
-                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.from} → {selectedFlight.to}</Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Gate</Typography>
-                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.gate}</Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Status</Typography>
-                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.status}</Typography>
-                  </Grid>
-                </Grid>
-              </Paper>
+              <FlightInfoGrid flight={selectedFlight} />
 
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12, lg: 7 }}>

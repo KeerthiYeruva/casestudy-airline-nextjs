@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Paper, Typography, List, ListItemButton, ListItemText, Box, Chip } from "@mui/material";
+import { Paper, Typography, List, ListItemButton, ListItemText, Box } from "@mui/material";
 import FlightIcon from "@mui/icons-material/Flight";
+import StatusChip from "@/components/ui/StatusChip";
 import type { Flight } from "@/types/flight";
 
 interface InFlightFlightListProps {
@@ -42,11 +43,7 @@ const InFlightFlightList: React.FC<InFlightFlightListProps> = ({
                   <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                     {flight.flightNumber}
                   </Typography>
-                  <Chip 
-                    label={flight.status} 
-                    size="small" 
-                    color={flight.status === 'On Time' ? 'success' : flight.status === 'Boarding' ? 'warning' : 'error'}
-                  />
+                  <StatusChip status={flight.status} />
                 </Box>
               }
               secondary={

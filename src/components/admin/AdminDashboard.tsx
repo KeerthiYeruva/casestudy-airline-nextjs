@@ -10,21 +10,18 @@ import ConfirmDialog from "@/components/common/ConfirmDialog";
 import PassengerTab from "@/components/admin/tabs/PassengerTab";
 import ServicesMenuTab from "@/components/admin/tabs/ServicesMenuTab";
 import SeatManagementTab from "@/components/admin/tabs/SeatManagementTab";
+import AdminMetrics from "@/components/admin/AdminMetrics";
 import ShopItemDialog from "@/components/admin/ShopItemDialog";
+import PageHeader from "@/components/ui/PageHeader";
 import type { ShopItem } from "@/types/services";
 import {
   Container,
   Paper,
-  Typography,
   Tabs,
   Tab,
-  Box,
-  Chip,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
-import WifiIcon from "@mui/icons-material/Wifi";
-import WifiOffIcon from "@mui/icons-material/WifiOff";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 
 interface ShopItemFormData {
@@ -255,26 +252,14 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
-      <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5, flexWrap: 'wrap' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <SettingsIcon color="primary" />
-            <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-              Admin Dashboard
-            </Typography>
-          </Box>
-          <Chip 
-            icon={isConnected ? <WifiIcon /> : <WifiOffIcon />}
-            label={isConnected ? 'Live Updates' : 'Offline'}
-            color={isConnected ? 'success' : 'default'}
-            size="small"
-            sx={{ ml: 'auto' }}
-          />
-        </Box>
-        <Typography variant="body2" color="text.secondary">
-          Manage passengers, flights, and services
-        </Typography>
-      </Box>
+      <PageHeader
+        title="Admin Dashboard"
+        description="Manage passengers, flights, and services"
+        icon={<SettingsIcon color="primary" />}
+        isConnected={isConnected}
+      />
+
+      <AdminMetrics flights={flights} passengers={passengers} />
 
       <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 } }}>
         <Tabs
