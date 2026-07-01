@@ -1,5 +1,9 @@
 # In-Flight Service Tab User Guide
 
+## Current Status
+
+The In-Flight tab loads services, meal options, and shop items from the API-backed catalog via Zustand. Admin catalog edits broadcast `catalog_updated` events, so cabin crew views refresh the latest services and menu data automatically.
+
 ## Overview
 The **In-Flight Service Tab** is designed for cabin crew to manage passenger services during the flight. This interface allows flight attendants to view passenger details, add ancillary services, change meal preferences, and process in-flight shop purchases in real-time.
 

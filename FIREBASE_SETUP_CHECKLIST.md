@@ -1,5 +1,9 @@
 # Firebase Real-Time Setup Checklist
 
+## Security Notice
+
+Do not commit real Firebase or Google API keys to Markdown, source code, screenshots, or test fixtures. Store local values in `.env.local` and deployment values in Vercel/Firebase hosting environment variables. If a key is exposed publicly, rotate or revoke it in Google Cloud Console before closing any GitHub secret scanning alert.
+
 ## ✅ COMPLETED
 
 ### Code Changes
@@ -22,7 +26,7 @@
 - [x] Firestore database created (asia-south2)
 
 ### Documentation
-- [x] All 12 .md files updated with current features
+- [x] All 13 .md files updated with current features and secret-safe setup guidance
 - [x] Seat management features documented
 - [x] i18n & accessibility features documented
 
@@ -127,6 +131,8 @@
 
 ## 📋 FINAL CHECKLIST
 
+- [ ] Revoke or restrict any previously exposed Google/Firebase API key
+- [ ] Create a replacement key if production Firebase auth still needs one
 - [ ] Enable Google Auth in Firebase
 - [ ] Publish Firestore Rules
 - [ ] Add Vercel domain to Firebase authorized domains

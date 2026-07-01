@@ -1,24 +1,27 @@
 # Testing Notes
 
+## Current Status
+
+Use focused tests for changed workflows first. Recent validated checks include TypeScript, lint, FlightOpsTab, PassengerPortal, and FlightStatusDashboard. The full Jest suite still has known unrelated failures around older Admin/Seat tests and e2e specs being picked up by Jest; treat those as test-debt items rather than regressions in the latest CRUD/live-update work.
+
 ## Current Test Status
 
-### FlightList Component Tests ✅
+### Flight Operations Tests
 - **Status:** PASSING
-- **File:** `src/__tests__/FlightList.test.js`
-- **Test:** Renders flight list component correctly
+- **File:** `src/__tests__/FlightOpsTab.test.tsx`
+- **Command:** `npm test -- --runInBand src/__tests__/FlightOpsTab.test.tsx`
 
-### Auth Component Tests ⚠️
-- **Status:** Requires Firebase Configuration
-- **File:** `src/__tests__/Auth.test.js`
-- **Tests:** 9 comprehensive test cases
-- **Issue:** Tests require Firebase to be mocked or configured
+### Customer Live Workflow Tests
+- **Status:** PASSING
+- **Files:** `src/__tests__/PassengerPortal.test.tsx`, `src/__tests__/FlightStatusDashboard.test.tsx`
+- **Command:** `npm test -- --runInBand src/__tests__/PassengerPortal.test.tsx src/__tests__/FlightStatusDashboard.test.tsx`
 
-## Why Auth Tests Need Firebase Setup
+## Firebase/Auth Test Guidance
 
 The Auth component uses Firebase authentication, which requires either:
 
 1. **Option 1: Real Firebase Configuration** (Recommended for E2E testing)
-   - Configure `firebaseConfig.js` with real credentials
+  - Configure `.env.local` with real credentials locally only
    - Tests will use actual Firebase test environment
    - Provides authentic integration testing
 
@@ -31,7 +34,7 @@ The Auth component uses Firebase authentication, which requires either:
 
 The test file includes proper setup:
 ```javascript
-jest.mock('../firebaseConfig', () => ({
+jest.mock('@/lib/firebaseConfig', () => ({
   auth: {},
   googleProvider: {}
 }));
@@ -87,32 +90,26 @@ npm test
 
 ### Run Specific Test Suite
 ```powershell
-npm test FlightList.test.js  # ✅ This will pass
-npm test Auth.test.js        # ⚠️ Needs Firebase configuration
+npm test -- --runInBand src/__tests__/FlightOpsTab.test.tsx
+npm test -- --runInBand src/__tests__/PassengerPortal.test.tsx src/__tests__/FlightStatusDashboard.test.tsx
 ```
 
 ### Skip Firebase-Dependent Tests
 ```powershell
-npm test -- --testPathIgnorePatterns=Auth.test.js
+npm test -- --testPathIgnorePatterns=e2e
 ```
 
 ## Test Coverage Summary
 
-### ✅ Working Tests (1 suite, 1 test)
-- FlightList component rendering
-- Redux store integration
-- Material-UI ListItem rendering
+### ✅ Recently Validated Tests
+- Flight operations create/update UI
+- Customer My Trips search/check-in/seat-change flows
+- Public Flight Status filters and live-update connection guard
 
-### ⚠️ Firebase-Dependent Tests (1 suite, 9 tests)
-- Login screen rendering
-- Google sign-in button accessibility
-- User profile display when authenticated
-- Role chip display (Admin/Staff)
-- Role dropdown accessibility
-- Logout functionality
-- Loading state handling
-- Error message display
-- Accessibility features (ARIA labels)
+### ⚠️ Known Full-Suite Gaps
+- Some legacy Admin/Seat tests use incomplete passenger mocks.
+- `e2e/home.smoke.spec.ts` is currently picked up by Jest and should be excluded or moved fully under Playwright execution.
+- Some MUI dialog/timing tests may need `findBy*`, `waitFor`, or transition-aware assertions.
 
 ## Production Application Status
 
@@ -131,16 +128,16 @@ For your case study submission:
 
 1. **Include the test files** - They demonstrate testing knowledge
 2. **Note in documentation** - "Auth tests require Firebase configuration for integration testing"
-3. **Show passing FlightList test** - Demonstrates Jest + React Testing Library setup
+3. **Show passing focused tests** - Demonstrates Jest + React Testing Library setup for current workflows
 4. **Emphasize manual testing** - All features manually tested and verified
-5. **Highlight test infrastructure** - Complete test setup with 9 comprehensive test cases ready
+5. **Highlight test infrastructure** - Jest, React Testing Library, Playwright, and focused regression commands are available
 
 ## Alternative: Simple Mock Implementation
 
 If you need passing tests without Firebase, create a simplified Auth component mock:
 
 ```javascript
-// __mocks__/Auth.js
+// __mocks__/Auth.tsx
 import React from 'react';
 import { Button } from '@mui/material';
 
@@ -153,7 +150,7 @@ export default Auth;
 
 Then in tests:
 ```javascript
-jest.mock('../components/Auth');
+jest.mock('@/components/auth/Auth');
 ```
 
 This makes tests pass but doesn't test actual authentication logic.

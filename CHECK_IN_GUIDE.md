@@ -1,5 +1,9 @@
 # Check-In Tab User Guide
 
+## Current Status
+
+The Check-In workflow is wired to live passenger and seat APIs. Check-in, undo check-in, and seat changes trigger Server-Sent Events so Admin, In-Flight, My Trips, and Flight Status screens can refresh without a manual page reload.
+
 ## Overview
 The **Check-In tab** is designed for airline staff at the airport to manage passenger check-in operations efficiently. This interface provides a comprehensive view of flight passengers, their seat assignments, and check-in status.
 

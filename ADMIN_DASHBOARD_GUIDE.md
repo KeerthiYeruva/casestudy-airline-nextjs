@@ -1,5 +1,9 @@
 # Admin Dashboard - Passengers Tab User Guide
 
+## Current Status
+
+The Admin area now exposes separate navigation entries for Dashboard, Passengers, Flights, Seats, and Services. Passenger and flight changes go through API-backed Zustand actions with cache-safe responses and SSE broadcasts, so Check-In, In-Flight, Customer My Trips, and Flight Status views can refresh from operational events.
+
 ## Overview
 The **Admin Dashboard - Passengers Tab** is the central hub for managing all passenger data across flights. This interface is designed for airline administrators to add, edit, delete, and manage passenger information with comprehensive filtering and validation capabilities.
 
@@ -13,8 +17,8 @@ The **Admin Dashboard - Passengers Tab** is the central hub for managing all pas
 
 ### Navigation
 1. Log in to the Airline Management System
-2. Click the **"Admin"** button in the top navigation bar
-3. Select the **"Passengers"** tab (default view)
+2. Open the **Admin** section from the role-based sidebar/navigation
+3. Choose **Passengers**, **Flights**, **Seats**, or **Services** from the admin management entries
 
 ---
 

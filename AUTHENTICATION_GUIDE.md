@@ -2,6 +2,10 @@
 
 This application supports **both Mock Authentication and Firebase Authentication**. You can easily switch between them.
 
+## Current Status
+
+Authentication is implemented in `src/components/auth/Auth.tsx` with Zustand state in `src/stores/useAuthStore.ts`. Firebase config is read from environment variables in `src/lib/firebaseConfig.js`; do not paste real Firebase API keys into this guide or any committed source file.
+
 ---
 
 ## 🎯 Current Setup: MOCK Authentication (Active)
@@ -26,26 +30,26 @@ The app is currently using **mock authentication** - no Firebase setup required!
    - Scroll to "Your apps" section
    - Copy the Firebase configuration
 
-5. Update `src/firebaseConfig.js`:
-```javascript
-const firebaseConfig = {
-  apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456"
-};
+5. Create or update `.env.local` with Firebase values:
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789012
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abcdef123456
 ```
 
-### Step 2: Update Auth Component (`src/components/Auth.js`)
+`src/lib/firebaseConfig.js` already reads these variables and falls back to mock-safe placeholders when they are absent.
 
-**Comment out MOCK sections and uncomment FIREBASE sections:**
+### Step 2: Verify Auth Component (`src/components/auth/Auth.tsx`)
+
+The current auth component auto-detects Firebase configuration and can fall back to mock users for local/demo development. You should not need to manually comment or uncomment large code sections.
 
 1. **Import Section** (top of file):
 ```javascript
 // UNCOMMENT THIS:
-import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '../firebaseConfig';
+import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/lib/firebaseConfig';
 
 // COMMENT OUT: Mock user data section
 // const MOCK_USERS = [ ... ];
@@ -121,66 +125,18 @@ const handleLogout = async () => {
 6. **Remove Mock User Selection from Dialog**:
 Remove the "User" FormControl that shows John Doe / Jane Smith selection.
 
-### Step 3: Update Auth Slice (`src/slices/authSlice.js`)
+### Step 3: Verify Zustand Auth Store
 
-**Comment out MOCK thunks and uncomment FIREBASE thunks:**
+Authentication state is managed in `src/stores/useAuthStore.ts`. The store tracks the current user, role, loading/error state, and role permissions. No separate global store setup is required for Firebase user objects in the current codebase.
 
-1. **Import Section**:
-```javascript
-// UNCOMMENT THESE:
-import { signInWithPopup, signOut } from 'firebase/auth';
-import { auth, googleProvider } from '../firebaseConfig';
-```
+### Step 4: Verify Role-Based Navigation
 
-2. **Async Thunks**:
-```javascript
-// COMMENT OUT: Mock loginWithGoogle and logoutUser
-
-// UNCOMMENT THESE:
-export const loginWithGoogle = createAsyncThunk(
-  'auth/loginWithGoogle',
-  async (_, { rejectWithValue }) => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      return {
-        displayName: result.user.displayName,
-        email: result.user.email,
-        photoURL: result.user.photoURL,
-        uid: result.user.uid,
-      };
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const logoutUser = createAsyncThunk(
-  'auth/logoutUser',
-  async (_, { rejectWithValue }) => {
-    try {
-      await signOut(auth);
-      return null;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-```
-
-### Step 4: Update Store.js (No changes needed)
-
-The Redux store middleware is already configured to handle Firebase user objects:
-```javascript
-serializableCheck: {
-  ignoredActions: ['auth/loginSuccess', 'auth/setUser', 'auth/loginWithGoogle/fulfilled'],
-  ignoredPaths: ['auth.user'],
-}
-```
+`src/components/layout/HomeClient.tsx` reads auth state and role permissions to decide which views are available. Customers can use public/customer workflows, staff can access operations, and admins can access the full management surface.
 
 ### Step 5: Test Firebase Authentication
 
 1. Stop the development server (Ctrl+C)
-2. Start it again: `npm start`
+2. Start it again: `npm run dev`
 3. Click "Sign in with Google"
 4. Select your Google account
 5. Choose role (Admin/Staff)
@@ -190,10 +146,7 @@ serializableCheck: {
 
 ## 🔙 How to Switch Back to Mock Authentication
 
-Simply reverse the process:
-1. Comment out all FIREBASE sections
-2. Uncomment all MOCK sections
-3. Restart the dev server
+Remove or leave blank the Firebase environment variables and restart the dev server. The auth component can fall back to mock/demo behavior when Firebase is not configured.
 
 ---
 
@@ -201,10 +154,11 @@ Simply reverse the process:
 
 | File | What to Change |
 |------|----------------|
-| `src/firebaseConfig.js` | Replace Firebase config values |
-| `src/components/Auth.js` | Toggle MOCK/FIREBASE comments |
-| `src/slices/authSlice.js` | Toggle MOCK/FIREBASE comments |
-| `src/Store.js` | ✅ No changes needed |
+| `.env.local` | Store local Firebase values, ignored by git |
+| `src/lib/firebaseConfig.js` | Reads Firebase values from environment variables |
+| `src/components/auth/Auth.tsx` | Login/logout and role selection UI |
+| `src/stores/useAuthStore.ts` | Auth and role state |
+| `src/components/layout/HomeClient.tsx` | Role-based navigation and view access |
 
 ---
 
@@ -246,7 +200,7 @@ Simply reverse the process:
 **Solution:** Add your domain to Firebase Console → Authentication → Settings → Authorized domains
 
 ### Firebase Error: "API key not valid"
-**Solution:** Double-check your Firebase config in `firebaseConfig.js`
+**Solution:** Double-check `NEXT_PUBLIC_FIREBASE_API_KEY` in `.env.local` or your deployment environment. If the key was exposed publicly, revoke or restrict it in Google Cloud Console and create a replacement.
 
 ### App Still Shows Mock Users After Switching
 **Solution:** 

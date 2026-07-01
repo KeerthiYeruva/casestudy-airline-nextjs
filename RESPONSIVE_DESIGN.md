@@ -1,5 +1,9 @@
 # Responsive Design Documentation
 
+## Current Status
+
+The current app uses a role-based responsive shell with public/customer views, staff workflows, and admin management sections. Dense operational screens should preserve scan-friendly layouts on desktop while stacking controls and dialogs predictably on mobile.
+
 ## Overview
 This airline management application is designed with a mobile-first, responsive approach supporting three device categories: **Mobile**, **Tablet**, and **Desktop**.
 

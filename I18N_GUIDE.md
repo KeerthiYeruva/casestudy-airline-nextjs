@@ -2,6 +2,10 @@
 
 This guide explains how to use the internationalization features in the Airline Management System.
 
+## Current Status
+
+The app uses `next-intl` with locale routing under `src/app/[locale]`, configuration in `src/i18n.ts`, and middleware/proxy support in `src/proxy.ts`. Message files live in the top-level `messages/` directory.
+
 ## Overview
 
 The application supports multiple languages, currencies, and timezones:
@@ -28,13 +32,15 @@ src/
 ├── lib/
 │   └── i18nUtils.ts           # Currency, timezone utilities
 ├── components/
-│   └── LocaleSelector.tsx     # Language/currency selector
-└── messages/
-    ├── en.json                # English translations
-    ├── es.json                # Spanish translations
-    ├── fr.json                # French translations
-    ├── de.json                # German translations
-    └── ja.json                # Japanese translations
+│   └── common/LocaleSelector.tsx # Language/currency selector
+└── messages/                   # See top-level messages/ directory
+
+messages/
+├── en.json                     # English translations
+├── es.json                     # Spanish translations
+├── fr.json                     # French translations
+├── de.json                     # German translations
+└── ja.json                     # Japanese translations
 ```
 
 ## Using Translations

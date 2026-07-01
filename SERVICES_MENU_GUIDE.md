@@ -1,5 +1,9 @@
 # Admin Dashboard - Services & Menu Tab User Guide
 
+## Current Status
+
+Services, meal options, and shop items are now managed through API-backed store actions. Admin changes call `/api/services`, `/api/meals`, or `/api/shop`, update the DB helper layer, broadcast `catalog_updated`, and refresh In-Flight and Booking catalog choices across connected clients. Shop categories remain static/local catalog groupings for now.
+
 ## Overview
 The **Services & Menu Tab** in the Admin Dashboard is the central management interface for all flight services, meal options, and in-flight shop items. This tab allows airline administrators to configure what services and products are available to passengers during their flights.
 
@@ -25,6 +29,8 @@ The Services & Menu tab is divided into three main sections:
 1. **Ancillary Services** - Extra services that can be added to passenger bookings
 2. **Meal Options** - Special meal preferences available to passengers
 3. **Shop Items** - Products available for purchase in the in-flight shop
+
+These three sections are live operational catalog data. Updates are no longer local-only UI mutations.
 
 Each section has its own management interface with add, edit, and delete capabilities.
 

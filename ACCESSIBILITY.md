@@ -1,5 +1,9 @@
 # Accessibility Implementation Guide
 
+## Current Status
+
+Accessibility coverage applies across the live operations shell: role-based navigation, Admin, Check-In, In-Flight, Booking, My Trips, Flight Status, and dialogs. Continue validating new CRUD and SSE-driven UI states for keyboard access, focus order, status announcements, and clear error messaging.
+
 ## WCAG 2.0 Level A Compliance
 
 ### Implemented Features

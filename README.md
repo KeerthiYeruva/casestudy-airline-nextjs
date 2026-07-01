@@ -2,6 +2,10 @@
 
 Modern airline check-in and in-flight management system built with **Next.js 16**, **React 19**, **TypeScript**, **Zustand**, **Firebase**, and **Material-UI**.
 
+## Current Status
+
+The app uses the Next.js App Router with a client-heavy operations shell, API route handlers, Zustand stores, and Server-Sent Events for live operational updates. Passenger, flight, check-in, seat-change, service, meal, and shop-item CRUD flows are wired through UI -> store -> API -> DB helper -> SSE refresh. Firebase credentials must be supplied through local or deployment environment variables only; never commit real API keys or project secrets to documentation or source files.
+
 ##  Prerequisites
 
 - Node.js 18.17 or higher
@@ -52,6 +56,12 @@ npm start
 npm test
 ```
 
+For focused validation during development, prefer targeted commands such as:
+
+```bash
+npm test -- --runInBand src/__tests__/PassengerPortal.test.tsx src/__tests__/FlightStatusDashboard.test.tsx
+```
+
 ##  Features
 
 ### Core Modules
@@ -79,9 +89,10 @@ npm test
 - **Admin Dashboard**
   - Flight CRUD operations (Create, Read, Update, Delete)
   - Passenger management with advanced filtering
-  - Meal options configuration
-  - Ancillary services management
-  - Shop items and categories management
+  - API-backed meal options configuration
+  - API-backed ancillary services management
+  - API-backed shop item management
+  - Static shop categories for demo/catalog grouping
   - Real-time data synchronization
   - **Seat Management Tab** ⭐ NEW
     - Centralized seat preference management
@@ -108,7 +119,7 @@ npm test
 ### Technical Features
 - **State Management**: Zustand stores with persistence and devtools
 - **API Routes**: RESTful API endpoints with TypeScript
-- **Real-time Updates**: Automatic data synchronization across components with Server-Sent Events (SSE)
+- **Real-time Updates**: Automatic data synchronization across Admin, Check-In, In-Flight, and Customer screens with Server-Sent Events (SSE)
 - **Seat Locking**: Real-time seat locking during changes to prevent conflicts
 - **Error Handling**: Global error boundaries and toast notifications
 - **Accessibility**: WCAG 2.1 Level AA compliant with ARIA labels
@@ -135,33 +146,32 @@ The project uses Jest and React Testing Library:
 - [Check-In Guide](./CHECK_IN_GUIDE.md) - Staff check-in system walkthrough
 - [In-Flight Guide](./INFLIGHT_GUIDE.md) - In-flight services management
 - [Admin Dashboard Guide](./ADMIN_DASHBOARD_GUIDE.md) - Admin features
-- [Services Menu Guide](./SERVICES_MENU_GUIDE.md) - Meal and shop management
-- [Internationalization (i18n) Guide](./I18N_GUIDE.md) ⭐ NEW - Multi-language setup
-- [Seat Management Guide](./SEAT_MANAGEMENT_GUIDE.md) ⭐ NEW - Advanced seating features
+- [Services Menu Guide](./SERVICES_MENU_GUIDE.md) - API-backed services, meal, and shop management
+- [Internationalization (i18n) Guide](./I18N_GUIDE.md) - Multi-language setup
+- [Admin Dashboard Guide](./ADMIN_DASHBOARD_GUIDE.md) - Passenger, flight, and seat-management workflows
 
 ### Technical Documentation
 - [Accessibility Features](./ACCESSIBILITY.md) - WCAG compliance details
 - [Responsive Design](./RESPONSIVE_DESIGN.md) - Mobile-first approach
 - [Performance Guide](./PERFORMANCE_GUIDE.md) - Optimization strategies
-- [Testing Notes](./TESTING_NOTES.md) - Test coverage and strategies
-- [Features Implementation](./FEATURES_IMPLEMENTATION.md) ⭐ NEW - i18n & seat management
+- [Testing Notes](./TESTING_NOTES.md) - Current focused checks and known full-suite gaps
 
 ##  Technologies Stack
 
 ### Frontend Framework
-- **Next.js 16.0.7**: React framework with App Router & Turbopack for optimal performance
-- **React 19.2.0**: Latest UI library with React Server Components
-- **TypeScript 5**: Full type-safe development with strict mode
-- **next-intl 4.5.8** ⭐ NEW: Internationalization framework for Next.js App Router
+- **Next.js 16.2.9**: React framework with App Router & Turbopack for optimal performance
+- **React 19.2.7**: UI library with React Server Components support
+- **TypeScript 6**: Full type-safe development with strict mode
+- **next-intl 4.13.0**: Internationalization framework for Next.js App Router
 
 ### State Management
-- **Zustand 5.0.2**: Lightweight, performant state management
+- **Zustand 5.0.14**: Lightweight, performant state management
   - Persist middleware for localStorage synchronization
   - Devtools integration for debugging
   - Multiple specialized stores (Auth, Admin, CheckIn, Data, Toast)
 
 ### UI & Styling
-- **Material-UI (MUI) 7.3.6**: Comprehensive React component library
+- **Material-UI (MUI) 9.1.2**: Comprehensive React component library
   - @mui/material: Core components
   - @mui/icons-material: Icon library
   - @mui/material-nextjs: Next.js integration for SSR optimization
@@ -169,14 +179,14 @@ The project uses Jest and React Testing Library:
 - **Sass 1.94.2**: CSS preprocessor for custom styling
 
 ### Backend & Database
-- **Firebase 12.6.0**: Backend-as-a-Service platform
+- **Firebase 12.15.0**: Backend-as-a-Service platform
   - Authentication (Google Sign-In)
   - Real-time data capabilities
 - **Next.js API Routes**: RESTful API endpoints with TypeScript
 - **In-memory Database**: Custom DB implementation for development
 
 ### Testing
-- **Jest 29.7.0**: JavaScript testing framework
+- **Jest 30.4.2**: JavaScript testing framework
 - **React Testing Library 16.3.0**: Component testing utilities
 - **@testing-library/jest-dom 6.9.1**: Custom Jest matchers
 - **@testing-library/user-event 14.6.1**: User interaction simulation

@@ -1,5 +1,9 @@
 # Performance Optimizations Guide
 
+## Current Status
+
+The app uses Next.js 16 App Router, Turbopack builds, `@mui/material-nextjs` App Router cache integration, dynamic API routes for live operations, and client-side code splitting through lazy-loaded workflow screens. Operational APIs intentionally use `Cache-Control: no-store` because correctness and live updates matter more than shared response caching for CRUD data.
+
 ## Overview
 
 This document outlines the performance optimizations implemented in the Airline Management System to improve load times, reduce bundle sizes, and enhance overall user experience.
@@ -14,9 +18,13 @@ This document outlines the performance optimizations implemented in the Airline 
 
 ```
 📁 src/app/
-  ├── page.tsx (Server Component) - SEO metadata, initial HTML
-  └── components/
-      └── HomeClient.tsx (Client Component) - Interactive features
+  ├── layout.tsx (minimal App Router wrapper)
+  └── [locale]/
+      ├── layout.tsx (Server Component) - metadata, i18n, providers
+      └── page.tsx (Server Component) - delegates to HomeClient
+
+📁 src/components/layout/
+  └── HomeClient.tsx (Client Component) - interactive app shell
 ```
 
 #### Benefits:
@@ -27,10 +35,10 @@ This document outlines the performance optimizations implemented in the Airline 
 
 #### Implementation:
 
-**Server Component** (`src/app/page.tsx`):
+**Server Component** (`src/app/[locale]/page.tsx`):
 ```typescript
 import { Metadata } from 'next';
-import HomeClient from '@/components/HomeClient';
+import HomeClient from '@/components/layout/HomeClient';
 
 export const metadata: Metadata = {
   title: 'Airline Management System',
@@ -48,19 +56,18 @@ export default function Home() {
 // Contains interactive features, state management, event handlers
 ```
 
-## 2. API Response Caching
+## 2. API Freshness for Live Operations
 
 ### Cache Configuration
 
-Implemented multi-layer caching strategy for API routes:
+Operational API routes are dynamic and return fresh data. This favors correctness for live airline workflows over CDN response caching.
 
 #### Flights API (`/api/flights`)
-- **Cache Duration:** 60 seconds
-- **Revalidation:** 120 seconds (stale-while-revalidate)
-- **Rationale:** Flight data changes infrequently
+- **Cache-Control:** `no-store`
+- **Rationale:** Flight status, gate, terminal, and capacity changes must be visible immediately across connected clients.
 
 ```typescript
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const flights = await flightDB.getAll();
@@ -68,24 +75,24 @@ export async function GET() {
   
   response.headers.set(
     'Cache-Control',
-    'public, s-maxage=60, stale-while-revalidate=120'
+    'no-store'
   );
   
   return response;
 }
 ```
 
-#### Passengers API (`/api/passengers`)
-- **Cache Duration:** 30 seconds
-- **Revalidation:** 60 seconds
-- **Rationale:** Passenger data updates more frequently
+#### Passengers and Catalog APIs
+- Passenger, check-in, seat, service, meal, and shop endpoints are dynamic.
+- Mutations revalidate relevant paths on a best-effort basis and broadcast SSE events.
+- Clients refresh via Zustand actions after events such as `passenger_updated`, `seat_changed`, `flight_updated`, and `catalog_updated`.
 
 ```typescript
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 response.headers.set(
   'Cache-Control',
-  'public, s-maxage=30, stale-while-revalidate=60'
+  'no-store'
 );
 ```
 
@@ -93,9 +100,9 @@ response.headers.set(
 
 | Directive | Purpose |
 |-----------|---------|
-| `public` | Response can be cached by browsers and CDNs |
-| `s-maxage=60` | CDN/edge cache for 60 seconds |
-| `stale-while-revalidate=120` | Serve stale content while fetching fresh data |
+| `no-store` | Prevent stale operational data from being cached |
+| `force-dynamic` | Ensure route handlers run on demand for live data |
+| `revalidatePath` | Best-effort invalidation after mutations |
 
 ## 3. React Server Components Caching
 
@@ -256,22 +263,22 @@ Page                     Size     First Load JS
 
 ### Cache Levels:
 
-1. **Browser Cache:** 60s for static assets
-2. **CDN Cache:** 60s for API responses
-3. **Server Cache:** Next.js Data Cache with revalidation
-4. **Component Cache:** React Server Components cache
+1. **Static Asset Cache:** handled by Next.js for built assets
+2. **Operational API Freshness:** `no-store` for live CRUD endpoints
+3. **Server Rendering:** App Router Server Components for layouts/pages
+4. **Client State Refresh:** Zustand actions triggered by SSE events
 
 ### Cache Invalidation:
 
 ```typescript
-// Automatic revalidation
-export const revalidate = 60;
-
-// Manual revalidation
-revalidateTag('flights');
-
-// Path-based revalidation
+// Path-based revalidation after mutations
 revalidatePath('/api/flights');
+
+// Client refresh after realtime events
+eventBroadcaster.broadcast({
+  type: 'flight_updated',
+  data: updatedFlight,
+});
 ```
 
 ## 10. Monitoring and Debugging
