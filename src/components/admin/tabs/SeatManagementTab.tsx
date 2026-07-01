@@ -12,7 +12,9 @@ import GroupSeatingDialog from "../../seats/GroupSeatingDialog";
 import FamilySeatingDialog from "../../seats/FamilySeatingDialog";
 import PremiumSeatUpsellDialog from "../../seats/PremiumSeatUpsellDialog";
 import PassengerSelectionDialog from "../PassengerSelectionDialog";
-import { Passenger, Flight, SeatPreferences, GroupSeating, FamilySeating } from "@/types";
+import type { Flight } from "@/types/flight";
+import type { Passenger } from "@/types/passenger";
+import type { FamilySeating, GroupSeating, SeatPreferences } from "@/types/seat";
 
 interface SeatManagementTabProps {
   passengers: Passenger[];

@@ -5,14 +5,15 @@ import useCheckInStore from "@/stores/useCheckInStore";
 import useDataStore from "@/stores/useDataStore";
 import useToastStore from "@/stores/useToastStore";
 import useRealtimeUpdates from "@/hooks/useRealtimeUpdates";
-import SeatMapVisual from "./SeatMapVisual";
-import InFlightFlightList from "./inflight/InFlightFlightList";
-import InFlightPassengerList from "./inflight/InFlightPassengerList";
-import PassengerServicePanel from "./inflight/PassengerServicePanel";
-import AddServiceDialog from "./inflight/AddServiceDialog";
-import ChangeMealDialog from "./inflight/ChangeMealDialog";
-import ShopDialog from "./inflight/ShopDialog";
-import { Passenger, ShopItem } from "@/types";
+import SeatMapVisual from "@/components/seats/SeatMapVisual";
+import InFlightFlightList from "@/components/inflight/InFlightFlightList";
+import InFlightPassengerList from "@/components/inflight/InFlightPassengerList";
+import PassengerServicePanel from "@/components/inflight/PassengerServicePanel";
+import AddServiceDialog from "@/components/inflight/AddServiceDialog";
+import ChangeMealDialog from "@/components/inflight/ChangeMealDialog";
+import ShopDialog from "@/components/inflight/ShopDialog";
+import type { Passenger } from "@/types/passenger";
+import type { ShopItem } from "@/types/services";
 import {
   shopItems as shopItemsData,
   shopCategories as shopCategoriesData,
@@ -22,7 +23,7 @@ import {
 import { Container, Paper, Typography, Grid, Box, Chip, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import WifiIcon from "@mui/icons-material/Wifi";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
-import "../styles/InFlight.scss";
+import "@/styles/InFlight.scss";
 
 const InFlight: React.FC = () => {
   const {

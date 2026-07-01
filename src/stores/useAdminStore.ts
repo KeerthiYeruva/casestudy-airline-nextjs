@@ -3,7 +3,8 @@
 // Zustand store for admin view state
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { AdminStore, Flight, FilterOptions } from '@/types';
+import type { Flight } from '@/types/flight';
+import type { AdminStore, FilterOptions } from '@/types/store';
 
 const useAdminStore = create<AdminStore>()(
   devtools(

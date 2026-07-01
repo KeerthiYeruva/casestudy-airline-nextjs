@@ -22,7 +22,8 @@ import {
   Chip
 } from '@mui/material';
 import { FamilyRestroom as FamilyIcon } from '@mui/icons-material';
-import type { FamilySeating, Passenger } from '@/types';
+import type { Passenger } from '@/types/passenger';
+import type { FamilySeating } from '@/types/seat';
 import useToastStore from '@/stores/useToastStore';
 
 interface FamilySeatingDialogProps {

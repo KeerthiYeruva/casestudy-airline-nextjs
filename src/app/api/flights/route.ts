@@ -2,7 +2,7 @@
 import { flightDB } from '@/lib/db';
 import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
 import { CreateFlightSchema, validateSchema } from '@/lib/validationSchemas';
-import type { Flight } from '@/types';
+import type { Flight } from '@/types/flight';
 
 // Enable caching for this route
 export const dynamic = 'force-static';

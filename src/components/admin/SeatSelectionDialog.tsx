@@ -11,7 +11,8 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
-import { Passenger, Flight } from "@/types";
+import type { Flight } from "@/types/flight";
+import type { Passenger } from "@/types/passenger";
 import { SEAT_ROWS, SEAT_LETTERS } from "@/constants/appConstants";
 
 interface SeatSelectionDialogProps {

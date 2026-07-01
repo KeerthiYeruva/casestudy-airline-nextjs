@@ -14,19 +14,12 @@
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import type { 
-  DataStore, 
-  Flight, 
-  Passenger, 
-  AncillaryService, 
-  MealOption, 
-  ShopItem, 
-  ShopCategory,
-  SeatPreferences,
-  GroupSeating,
-  FamilySeating,
-  APIResponse 
-} from '@/types';
+import type { APIResponse } from '@/types/api';
+import type { Flight } from '@/types/flight';
+import type { Passenger } from '@/types/passenger';
+import type { FamilySeating, GroupSeating, SeatPreferences } from '@/types/seat';
+import type { AncillaryService, MealOption, ShopCategory, ShopItem } from '@/types/services';
+import type { DataStore } from '@/types/store';
 import { 
   flights as initialFlights,
   passengers as initialPassengers,

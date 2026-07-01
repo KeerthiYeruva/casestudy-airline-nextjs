@@ -25,7 +25,8 @@ import {
   Chip
 } from '@mui/material';
 import { Group as GroupIcon } from '@mui/icons-material';
-import type { GroupSeating, Passenger } from '@/types';
+import type { Passenger } from '@/types/passenger';
+import type { GroupSeating } from '@/types/seat';
 
 interface GroupSeatingDialogProps {
   open: boolean;

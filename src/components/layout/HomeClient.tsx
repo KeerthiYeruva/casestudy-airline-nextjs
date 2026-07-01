@@ -2,8 +2,8 @@
 
 import { useState, lazy, Suspense } from "react";
 import useAuthStore from "@/stores/useAuthStore";
-import Auth from "@/components/Auth";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import Auth from "@/components/auth/Auth";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { 
   AppBar, 
   Toolbar, 
@@ -26,11 +26,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import SettingsIcon from "@mui/icons-material/Settings";
-import LocaleSelector from "@/components/LocaleSelector";
+import LocaleSelector from "@/components/common/LocaleSelector";
 
-const StaffCheckIn = lazy(() => import("@/components/StaffCheckIn"));
-const InFlight = lazy(() => import("@/components/InFlight"));
-const AdminDashboard = lazy(() => import("@/components/AdminDashboard"));
+const StaffCheckIn = lazy(() => import("@/components/checkin/StaffCheckIn"));
+const InFlight = lazy(() => import("@/components/inflight/InFlight"));
+const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
 
 const LoadingFallback = () => (
   <Box className="loading-container" role="status" aria-live="polite">

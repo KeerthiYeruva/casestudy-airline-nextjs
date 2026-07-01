@@ -19,7 +19,7 @@ import {
   SelectChangeEvent,
   Grid,
 } from "@mui/material";
-import { ShopItem } from "@/types";
+import type { ShopItem } from "@/types/services";
 
 interface ShopDialogProps {
   open: boolean;

@@ -3,7 +3,7 @@ import { passengerDB } from '@/lib/db';
 import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
 import { CreatePassengerSchema, validateSchema } from '@/lib/validationSchemas';
 import { revalidatePath } from 'next/cache';
-import type { Passenger } from '@/types';
+import type { Passenger } from '@/types/passenger';
 
 // Enable dynamic caching with revalidation
 export const revalidate = 30; // Revalidate every 30 seconds for frequently updated passenger data
