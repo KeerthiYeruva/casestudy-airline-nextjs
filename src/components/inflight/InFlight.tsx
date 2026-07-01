@@ -19,10 +19,14 @@ import type { ShopItem } from "@/types/services";
 import {
   shopCategories as shopCategoriesData,
 } from "@/data/flightData";
-import { Box, Button, Container, Paper, Typography, Grid } from "@mui/material";
+import { Container, Paper, Typography, Grid } from "@mui/material";
 import "@/styles/InFlight.scss";
 
-const InFlight: React.FC = () => {
+interface InFlightProps {
+  openSeatMapRequest?: number;
+}
+
+const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
   const {
     flights,
     passengers,
@@ -78,7 +82,7 @@ const InFlight: React.FC = () => {
   ]);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
-  const [seatMapDialog, setSeatMapDialog] = useState(false);
+  const [seatMapClosedRequest, setSeatMapClosedRequest] = useState(0);
   const [addServiceDialog, setAddServiceDialog] = useState(false);
   const [changeMealDialog, setChangeMealDialog] = useState(false);
   const [shopDialog, setShopDialog] = useState(false);
@@ -104,43 +108,34 @@ const InFlight: React.FC = () => {
   const flightPassengers = selectedFlight
     ? passengers.filter((p) => p.flightId === selectedFlight.id)
     : [];
+  const selectedPassengerOnFlight = selectedPassenger
+    ? flightPassengers.find((passenger) => passenger.id === selectedPassenger.id)
+    : null;
+  const currentPassengerData = selectedPassengerOnFlight
+    ? passengers.find((passenger) => passenger.id === selectedPassengerOnFlight.id) || selectedPassengerOnFlight
+    : flightPassengers[0] ?? null;
+  const seatMapDialogOpen = openSeatMapRequest > seatMapClosedRequest;
 
-  useEffect(() => {
-    if (!selectedFlight || flightPassengers.length === 0) {
-      setSelectedPassenger(null);
-      return;
-    }
-
-    const selectedPassengerStillOnFlight = selectedPassenger
-      ? flightPassengers.some((passenger) => passenger.id === selectedPassenger.id)
-      : false;
-
-    if (!selectedPassengerStillOnFlight) {
-      setSelectedPassenger(flightPassengers[0]);
-    }
-  }, [selectedFlight, passengers, selectedPassenger]);
+  const handleCloseSeatMap = () => {
+    setSeatMapClosedRequest(openSeatMapRequest);
+  };
 
   const handleFlightSelect = (flight: (typeof flights)[0]) => {
     selectFlight(flight);
+    setSelectedPassenger(null);
   };
 
   const handleSeatClick = (seat: string) => {
     const passenger = flightPassengers.find((p) => p.seat === seat);
     if (passenger) {
       setSelectedPassenger(passenger);
-      setSeatMapDialog(false);
+      handleCloseSeatMap();
     }
   };
 
   const handlePassengerSelect = (passenger: Passenger) => {
     setSelectedPassenger(passenger);
   };
-
-  // Derive the current passenger data from the passengers array
-  // This ensures we always show the latest data without setState in effect
-  const currentPassengerData = selectedPassenger 
-    ? passengers.find((p) => p.id === selectedPassenger.id) || selectedPassenger
-    : null;
 
   const availableServices = ancillaryServices.filter(
     (service) => !currentPassengerData?.ancillaryServices.includes(service)
@@ -298,12 +293,6 @@ const InFlight: React.FC = () => {
                 </Grid>
               </Grid>
 
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                <Button variant="outlined" onClick={() => setSeatMapDialog(true)}>
-                  View Seat Map
-                </Button>
-              </Box>
-
             </>
           ) : (
             <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
@@ -354,9 +343,9 @@ const InFlight: React.FC = () => {
       )}
 
       <CabinSeatMapDialog
-        open={seatMapDialog}
+        open={seatMapDialogOpen}
         passengers={flightPassengers}
-        onClose={() => setSeatMapDialog(false)}
+        onClose={handleCloseSeatMap}
         onSeatSelect={handleSeatClick}
       />
     </Container>
