@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Box,
@@ -42,6 +42,13 @@ interface BookingForm {
   specialMeal: string;
 }
 
+interface PaymentForm {
+  cardholderName: string;
+  cardNumber: string;
+  expiryDate: string;
+  securityCode: string;
+}
+
 const defaultForm: BookingForm = {
   name: "",
   dateOfBirth: "",
@@ -49,12 +56,24 @@ const defaultForm: BookingForm = {
   specialMeal: "Regular",
 };
 
+const defaultPaymentForm: PaymentForm = {
+  cardholderName: "",
+  cardNumber: "",
+  expiryDate: "",
+  securityCode: "",
+};
+
 const seatLetters = ["A", "B", "C", "D", "E", "F"];
 const mealOptions = ["Regular", "Vegetarian", "Vegan", "Gluten-Free", "Kosher", "Halal"];
 
-const getFirstAvailableSeat = (flight: Flight, passengers: Passenger[]) => {
-  const occupiedSeats = new Set(passengers.filter((passenger) => passenger.flightId === flight.id).map((passenger) => passenger.seat));
-  const totalRows = Math.max(1, Math.ceil(flight.totalSeats / seatLetters.length));
+const getOccupiedSeats = (flight: Flight, passengers: Passenger[]) => {
+  return new Set(passengers.filter((passenger) => passenger.flightId === flight.id).map((passenger) => passenger.seat));
+};
+
+const getSeatRows = (flight: Flight) => Math.max(1, Math.ceil(flight.totalSeats / seatLetters.length));
+
+const getFirstAvailableSeat = (flight: Flight, occupiedSeats: Set<string>) => {
+  const totalRows = getSeatRows(flight);
 
   for (let row = 1; row <= totalRows; row += 1) {
     for (const letter of seatLetters) {
@@ -68,10 +87,119 @@ const getFirstAvailableSeat = (flight: Flight, passengers: Passenger[]) => {
   return null;
 };
 
+const getSeatGrid = (flight: Flight) => {
+  const totalRows = Math.max(1, Math.ceil(flight.totalSeats / seatLetters.length));
+  return Array.from({ length: totalRows }, (_, rowIndex) => rowIndex + 1);
+};
+
+const isPremiumSeat = (seat: string) => {
+  const row = Number(seat.match(/^\d+/)?.[0] || 0);
+  return row > 0 && row <= 3;
+};
+
+const getSeatButtonTone = (seat: string, selectedSeat: string | null, occupiedSeats: Set<string>) => {
+  if (occupiedSeats.has(seat)) return "inherit";
+  if (selectedSeat === seat) return "primary";
+  if (isPremiumSeat(seat)) return "warning";
+  return "primary";
+};
+
+const SeatSelector = ({
+  flight,
+  selectedSeat,
+  occupiedSeats,
+  onSelectSeat,
+}: {
+  flight: Flight;
+  selectedSeat: string | null;
+  occupiedSeats: Set<string>;
+  onSelectSeat: (seat: string) => void;
+}) => {
+  const rows = getSeatGrid(flight);
+
+  return (
+    <Paper variant="outlined" sx={{ p: 2 }}>
+      <Stack spacing={1.5}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ justifyContent: "space-between" }}>
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+              Choose Seat
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Select an available seat before confirming your booking.
+            </Typography>
+          </Box>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
+            <Chip label="Available" size="small" variant="outlined" />
+            <Chip label="Premium rows 1-3" size="small" color="warning" variant="outlined" />
+            <Chip label="Occupied" size="small" color="default" />
+          </Stack>
+        </Stack>
+
+        <Box sx={{ textAlign: "center" }}>
+          <Typography variant="caption" sx={{ px: 2, py: 0.5, bgcolor: "primary.main", color: "primary.contrastText", borderRadius: 1 }}>
+            FRONT OF AIRCRAFT
+          </Typography>
+        </Box>
+
+        <Box sx={{ maxHeight: 320, overflow: "auto", border: "1px solid", borderColor: "divider", borderRadius: 1, p: 1.5 }}>
+          <Stack spacing={0.75}>
+            {rows.map((row) => (
+              <Stack key={row} direction="row" spacing={0.75} sx={{ alignItems: "center", justifyContent: "center" }}>
+                <Typography variant="caption" sx={{ width: 24, textAlign: "right", color: "text.secondary", fontWeight: 700 }}>
+                  {row}
+                </Typography>
+                {seatLetters.map((letter, index) => {
+                  const seat = `${row}${letter}`;
+                  const isOccupied = occupiedSeats.has(seat);
+                  const isSelected = selectedSeat === seat;
+
+                  return (
+                    <React.Fragment key={seat}>
+                      <Button
+                        aria-label={`Seat ${seat}`}
+                        variant={isSelected ? "contained" : "outlined"}
+                        color={getSeatButtonTone(seat, selectedSeat, occupiedSeats)}
+                        disabled={isOccupied}
+                        onClick={() => onSelectSeat(seat)}
+                        sx={{ minWidth: 44, width: 44, height: 36, p: 0, fontSize: "0.75rem", fontWeight: 800 }}
+                      >
+                        {seat}
+                      </Button>
+                      {index === 2 && <Box sx={{ width: 20 }} />}
+                    </React.Fragment>
+                  );
+                })}
+              </Stack>
+            ))}
+          </Stack>
+        </Box>
+      </Stack>
+    </Paper>
+  );
+};
+
 const createBookingReference = (name: string, flight: Flight, passengerCount: number) => {
   const letters = name.replace(/[^a-z]/gi, "").toUpperCase().padEnd(3, "X").slice(0, 3);
   const flightDigits = flight.flightNumber.replace(/\D/g, "").padStart(3, "0").slice(-3);
   return `${letters}${flightDigits}${passengerCount}`.slice(0, 10);
+};
+
+const getCabinPrice = (cabinClass: CabinClass) => {
+  if (cabinClass === "First") return 1249;
+  if (cabinClass === "Business") return 849;
+  if (cabinClass === "Premium Economy") return 429;
+  return 249;
+};
+
+const getFormattedCardNumber = (value: string) => {
+  return value.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ");
+};
+
+const getFormattedExpiryDate = (value: string) => {
+  const digits = value.replace(/\D/g, "").slice(0, 4);
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
 };
 
 export default function BookingDialog({
@@ -87,14 +215,29 @@ export default function BookingDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmation, setConfirmation] = useState<Passenger | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const [paymentForm, setPaymentForm] = useState<PaymentForm>(defaultPaymentForm);
 
-  const suggestedSeat = useMemo(() => (flight ? getFirstAvailableSeat(flight, passengers) : null), [flight, passengers]);
+  const occupiedSeats = useMemo(() => (flight ? getOccupiedSeats(flight, passengers) : new Set<string>()), [flight, passengers]);
+  const suggestedSeat = useMemo(() => (flight ? getFirstAvailableSeat(flight, occupiedSeats) : null), [flight, occupiedSeats]);
+  const totalPrice = getCabinPrice(cabinClass) * passengerCount;
+  const isPaymentComplete =
+    paymentForm.cardholderName.trim().length > 0 &&
+    paymentForm.cardNumber.replace(/\s/g, "").length === 16 &&
+    /^\d{2}\/\d{2}$/.test(paymentForm.expiryDate) &&
+    paymentForm.securityCode.length >= 3;
+
+  useEffect(() => {
+    setSelectedSeat(suggestedSeat);
+  }, [suggestedSeat]);
 
   const resetAndClose = () => {
     setForm(defaultForm);
     setConfirmation(null);
     setError(null);
     setIsSubmitting(false);
+    setSelectedSeat(null);
+    setPaymentForm(defaultPaymentForm);
     onClose();
   };
 
@@ -102,11 +245,25 @@ export default function BookingDialog({
     setForm((currentForm) => ({ ...currentForm, [key]: value }));
   };
 
+  const updatePaymentForm = <Key extends keyof PaymentForm>(key: Key, value: PaymentForm[Key]) => {
+    setPaymentForm((currentForm) => ({ ...currentForm, [key]: value }));
+  };
+
   const handleCreateBooking = async () => {
-    if (!flight || !suggestedSeat) return;
+    if (!flight || !selectedSeat) return;
 
     if (!form.name.trim()) {
       setError("Passenger name is required.");
+      return;
+    }
+
+    if (occupiedSeats.has(selectedSeat)) {
+      setError(`Seat ${selectedSeat} is no longer available. Please choose another seat.`);
+      return;
+    }
+
+    if (!isPaymentComplete) {
+      setError("Complete payment details before confirming your booking.");
       return;
     }
 
@@ -115,7 +272,7 @@ export default function BookingDialog({
 
     const createdPassenger = await onCreateBooking({
       name: form.name.trim(),
-      seat: suggestedSeat,
+      seat: selectedSeat,
       flightId: flight.id,
       passport: { number: "", expiryDate: "", country: "" },
       address: form.address.trim(),
@@ -164,6 +321,10 @@ export default function BookingDialog({
                   <Typography variant="caption" color="text.secondary">Cabin</Typography>
                   <Typography variant="h6" sx={{ fontWeight: 800 }}>{cabinClass}</Typography>
                 </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <Typography variant="caption" color="text.secondary">Paid</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 800 }}>${totalPrice.toLocaleString()}</Typography>
+                </Grid>
               </Grid>
             </Paper>
           </Stack>
@@ -178,7 +339,7 @@ export default function BookingDialog({
                   </Typography>
                 </Box>
                 <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
-                  <Chip icon={<EventSeatIcon />} label={`Seat ${suggestedSeat || "TBD"}`} />
+                  <Chip icon={<EventSeatIcon />} label={`Seat ${selectedSeat || "TBD"}`} />
                   <Chip label={cabinClass} variant="outlined" />
                   <Chip label={`${passengerCount} passenger${passengerCount === 1 ? "" : "s"}`} variant="outlined" />
                 </Stack>
@@ -193,6 +354,13 @@ export default function BookingDialog({
 
             {!suggestedSeat && <Alert severity="warning">No seats are currently available for this flight.</Alert>}
             {error && <Alert severity="error">{error}</Alert>}
+
+            <SeatSelector
+              flight={flight}
+              selectedSeat={selectedSeat}
+              occupiedSeats={occupiedSeats}
+              onSelectSeat={setSelectedSeat}
+            />
 
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -237,6 +405,64 @@ export default function BookingDialog({
               </Grid>
             </Grid>
 
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Stack spacing={2}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ justifyContent: "space-between" }}>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+                      Payment
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Secure mock checkout for this booking.
+                    </Typography>
+                  </Box>
+                  <Chip label={`Total $${totalPrice.toLocaleString()}`} color="success" />
+                </Stack>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <TextField
+                      label="Cardholder Name"
+                      value={paymentForm.cardholderName}
+                      onChange={(event) => updatePaymentForm("cardholderName", event.target.value)}
+                      fullWidth
+                      required
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <TextField
+                      label="Card Number"
+                      value={paymentForm.cardNumber}
+                      onChange={(event) => updatePaymentForm("cardNumber", getFormattedCardNumber(event.target.value))}
+                      fullWidth
+                      required
+                      slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 19 } }}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 6, md: 3 }}>
+                    <TextField
+                      label="Expiry Date"
+                      placeholder="MM/YY"
+                      value={paymentForm.expiryDate}
+                      onChange={(event) => updatePaymentForm("expiryDate", getFormattedExpiryDate(event.target.value))}
+                      fullWidth
+                      required
+                      slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 5 } }}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 6, md: 3 }}>
+                    <TextField
+                      label="Security Code"
+                      value={paymentForm.securityCode}
+                      onChange={(event) => updatePaymentForm("securityCode", event.target.value.replace(/\D/g, "").slice(0, 4))}
+                      fullWidth
+                      required
+                      slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 4 } }}
+                    />
+                  </Grid>
+                </Grid>
+              </Stack>
+            </Paper>
+
             <Divider />
             <Typography variant="body2" color="text.secondary">
               The passenger will appear in staff check-in as not checked in, with a generated booking reference and assigned seat.
@@ -250,7 +476,7 @@ export default function BookingDialog({
           <Button
             variant="contained"
             onClick={handleCreateBooking}
-            disabled={isSubmitting || !suggestedSeat}
+            disabled={isSubmitting || !selectedSeat || !isPaymentComplete}
           >
             {isSubmitting ? "Creating" : "Confirm Booking"}
           </Button>

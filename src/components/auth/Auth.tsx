@@ -59,6 +59,7 @@ const Auth: React.FC = () => {
   const [selectedMockUser, setSelectedMockUser] = useState(0);
   const firebaseEnabled = isFirebaseConfigured();
   const currentRole = normalizeUserRole(role);
+  const currentRoleLabel = currentRole ? roleLabels[currentRole] : 'Role required';
 
   useEffect(() => {
     if (!firebaseEnabled) return;
@@ -317,7 +318,7 @@ const Auth: React.FC = () => {
             {user?.displayName}
           </Typography>
           <Chip
-            label={roleLabels[currentRole]}
+            label={currentRoleLabel}
             size="small"
             color={currentRole === UserRole.ADMIN || currentRole === UserRole.SUPER_ADMIN ? 'secondary' : 'primary'}
             sx={{ fontSize: '0.65rem', height: 18, mt: 0.25 }}
@@ -348,7 +349,7 @@ const Auth: React.FC = () => {
         }}
       >
         <Select
-          value={currentRole}
+          value={currentRole || ''}
           onChange={(e) => handleRoleChange(e.target.value as UserRole)}
           displayEmpty
           aria-label="Change role"

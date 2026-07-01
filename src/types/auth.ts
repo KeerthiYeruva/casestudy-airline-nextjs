@@ -9,10 +9,10 @@ export enum UserRole {
 
 export type LegacyUserRole = 'admin' | 'staff';
 
-export function normalizeUserRole(role?: UserRole | LegacyUserRole | null): UserRole {
+export function normalizeUserRole(role?: UserRole | LegacyUserRole | null): UserRole | null {
   if (role === 'admin') return UserRole.ADMIN;
   if (role === 'staff') return UserRole.CHECKIN_AGENT;
-  return role || UserRole.CHECKIN_AGENT;
+  return role ?? null;
 }
 
 export interface RolePermissions {
@@ -58,7 +58,7 @@ export const rolePermissions: Record<UserRole, RolePermissions> = {
     canAccessAdminDashboard: false,
   },
   [UserRole.CHECKIN_AGENT]: {
-    canUseCustomerPortal: true,
+    canUseCustomerPortal: false,
     canUseCheckIn: true,
     canUseInFlightServices: false,
     canManageFlightOperations: false,
@@ -69,7 +69,7 @@ export const rolePermissions: Record<UserRole, RolePermissions> = {
     canAccessAdminDashboard: false,
   },
   [UserRole.CABIN_CREW]: {
-    canUseCustomerPortal: true,
+    canUseCustomerPortal: false,
     canUseCheckIn: false,
     canUseInFlightServices: true,
     canManageFlightOperations: false,
@@ -80,7 +80,7 @@ export const rolePermissions: Record<UserRole, RolePermissions> = {
     canAccessAdminDashboard: false,
   },
   [UserRole.OPERATIONS]: {
-    canUseCustomerPortal: true,
+    canUseCustomerPortal: false,
     canUseCheckIn: true,
     canUseInFlightServices: true,
     canManageFlightOperations: true,
@@ -91,7 +91,7 @@ export const rolePermissions: Record<UserRole, RolePermissions> = {
     canAccessAdminDashboard: false,
   },
   [UserRole.ADMIN]: {
-    canUseCustomerPortal: true,
+    canUseCustomerPortal: false,
     canUseCheckIn: true,
     canUseInFlightServices: true,
     canManageFlightOperations: true,
@@ -102,7 +102,7 @@ export const rolePermissions: Record<UserRole, RolePermissions> = {
     canAccessAdminDashboard: true,
   },
   [UserRole.SUPER_ADMIN]: {
-    canUseCustomerPortal: true,
+    canUseCustomerPortal: false,
     canUseCheckIn: true,
     canUseInFlightServices: true,
     canManageFlightOperations: true,

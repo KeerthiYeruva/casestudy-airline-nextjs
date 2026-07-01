@@ -84,6 +84,13 @@ jest.mock('@/stores/useDataStore', () => ({
   }),
 }));
 
+const fillPaymentDetails = () => {
+  fireEvent.change(screen.getByLabelText(/cardholder name/i), { target: { value: 'Maya Patel' } });
+  fireEvent.change(screen.getByLabelText(/card number/i), { target: { value: '4242424242424242' } });
+  fireEvent.change(screen.getByLabelText(/expiry date/i), { target: { value: '1230' } });
+  fireEvent.change(screen.getByLabelText(/security code/i), { target: { value: '123' } });
+};
+
 describe('FlightSearch', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -133,6 +140,7 @@ describe('FlightSearch', () => {
     expect(await screen.findByRole('dialog', { name: /book aa101/i })).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText(/passenger name/i), { target: { value: 'Maya Patel' } });
+  fillPaymentDetails();
     fireEvent.click(screen.getByRole('button', { name: /confirm booking/i }));
 
     await waitFor(() => {
@@ -147,5 +155,37 @@ describe('FlightSearch', () => {
 
     expect(await screen.findByText(/booking created for maya patel/i)).toBeInTheDocument();
     expect(screen.getByText('MAY1012')).toBeInTheDocument();
+  });
+
+  it('lets the passenger choose a seat during booking', async () => {
+    render(<FlightSearch />);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /select flight/i })[0]);
+    expect(await screen.findByRole('dialog', { name: /book aa101/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /seat 2a/i }));
+    fireEvent.change(screen.getByLabelText(/passenger name/i), { target: { value: 'Maya Patel' } });
+    fillPaymentDetails();
+    fireEvent.click(screen.getByRole('button', { name: /confirm booking/i }));
+
+    await waitFor(() => {
+      expect(mockAddPassenger).toHaveBeenCalledWith(expect.objectContaining({
+        name: 'Maya Patel',
+        flightId: 'FL001',
+        seat: '2A',
+      }));
+    });
+  });
+
+  it('requires payment details before confirming a booking', async () => {
+    render(<FlightSearch />);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /select flight/i })[0]);
+    expect(await screen.findByRole('dialog', { name: /book aa101/i })).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText(/passenger name/i), { target: { value: 'Maya Patel' } });
+
+    expect(screen.getByRole('button', { name: /confirm booking/i })).toBeDisabled();
+    expect(mockAddPassenger).not.toHaveBeenCalled();
   });
 });

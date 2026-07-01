@@ -40,7 +40,7 @@ const InFlight = lazy(() => import("@/components/inflight/InFlight"));
 const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
 
 type ViewKey = "search" | "trips" | "status" | "signin" | "checkin" | "inflight" | "admin";
-type AccessLevel = "public" | "checkin" | "cabin" | "admin";
+type AccessLevel = "public" | "customer" | "checkin" | "cabin" | "admin";
 
 interface NavigationItem {
   view: Exclude<ViewKey, "signin">;
@@ -66,7 +66,7 @@ const navigationItems: NavigationItem[] = [
     mobileLabel: "My Trips",
     description: "Manage a booking by PNR",
     icon: <ConfirmationNumberIcon />,
-    access: "public",
+    access: "customer",
   },
   {
     view: "status",
@@ -104,10 +104,17 @@ const navigationItems: NavigationItem[] = [
 
 const canAccessLevel = (access: AccessLevel, role: UserRole | null, isAuthenticated: boolean) => {
   if (access === "public") return true;
+  if (access === "customer") {
+    if (!isAuthenticated) return true;
+    const currentRole = normalizeUserRole(role);
+    if (!currentRole) return false;
+    return rolePermissions[currentRole].canUseCustomerPortal;
+  }
   if (!isAuthenticated) return false;
-  if (!role) return false;
+  const currentRole = normalizeUserRole(role);
+  if (!currentRole) return false;
 
-  const permissions = rolePermissions[normalizeUserRole(role)];
+  const permissions = rolePermissions[currentRole];
   if (access === "checkin") return permissions.canUseCheckIn;
   if (access === "cabin") return permissions.canUseInFlightServices;
   return permissions.canAccessAdminDashboard;
@@ -139,7 +146,7 @@ export default function HomeClient() {
   const [currentView, setCurrentView] = useState<ViewKey>("search");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, role } = useAuthStore();
-  const currentRole = role ? normalizeUserRole(role) : null;
+  const currentRole = normalizeUserRole(role);
 
   const canAccessAdmin = isAuthenticated && !!currentRole && rolePermissions[currentRole].canAccessAdminDashboard;
   const accessibleNavigationItems = navigationItems.filter((item) => canAccessNavigationItem(item, currentRole, isAuthenticated));
