@@ -3,12 +3,16 @@ import EventSeatIcon from '@mui/icons-material/EventSeat';
 import PaidIcon from '@mui/icons-material/Paid';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import StarIcon from '@mui/icons-material/Star';
+import TodayIcon from '@mui/icons-material/Today';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import type { Flight } from '@/types/flight';
 import type { Passenger } from '@/types/passenger';
+
+const PREMIUM_SEAT_REVENUE = 49;
 
 interface AdminMetricsProps {
   flights: Flight[];
@@ -34,6 +38,26 @@ function formatCurrency(value: number) {
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function getTodayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getTopAncillaryService(passengers: Passenger[]) {
+  const serviceCounts = passengers.reduce<Record<string, number>>((counts, passenger) => {
+    passenger.ancillaryServices.forEach((service) => {
+      counts[service] = (counts[service] || 0) + 1;
+    });
+
+    return counts;
+  }, {});
+
+  const [topService, topCount] = Object.entries(serviceCounts).sort((firstService, secondService) => {
+    return secondService[1] - firstService[1] || firstService[0].localeCompare(secondService[0]);
+  })[0] || ['None', 0];
+
+  return { topService, topCount };
 }
 
 function MetricCard({ label, value, helper, icon, tone }: MetricCardProps) {
@@ -80,12 +104,17 @@ function MetricCard({ label, value, helper, icon, tone }: MetricCardProps) {
 }
 
 export default function AdminMetrics({ flights, passengers }: AdminMetricsProps) {
+  const today = getTodayIsoDate();
+  const todaysFlightIds = new Set(flights.filter((flight) => flight.date === today).map((flight) => flight.id));
+  const flightsToday = todaysFlightIds.size;
+  const passengersToday = passengers.filter((passenger) => todaysFlightIds.has(passenger.flightId)).length;
   const totalPassengers = passengers.length;
   const checkedInPassengers = passengers.filter((passenger) => passenger.checkedIn).length;
   const totalSeats = flights.reduce((total, flight) => total + flight.totalSeats, 0);
   const occupancyRate = totalSeats > 0 ? (totalPassengers / totalSeats) * 100 : 0;
   const premiumPassengers = passengers.filter((passenger) => passenger.premiumUpgrade).length;
-  const premiumConversion = totalPassengers > 0 ? (premiumPassengers / totalPassengers) * 100 : 0;
+  const premiumSeatRevenue = premiumPassengers * PREMIUM_SEAT_REVENUE;
+  const { topService, topCount } = getTopAncillaryService(passengers);
   const ancillaryRevenue = passengers.reduce((total, passenger) => {
     const passengerTotal = passenger.shopRequests.reduce((subtotal, request) => {
       return subtotal + request.price * request.quantity;
@@ -96,14 +125,21 @@ export default function AdminMetrics({ flights, passengers }: AdminMetricsProps)
 
   const metrics = [
     {
-      label: 'Passengers',
-      value: totalPassengers.toLocaleString(),
-      helper: `${flights.length} flights tracked`,
-      icon: <PeopleAltIcon fontSize="small" />,
+      label: 'Passengers Today',
+      value: passengersToday.toLocaleString(),
+      helper: `${flightsToday} flights departing today`,
+      icon: <TodayIcon fontSize="small" />,
       tone: 'primary' as const,
     },
     {
-      label: 'Check-In Rate',
+      label: 'Flights Today',
+      value: flightsToday.toLocaleString(),
+      helper: `${flights.length} flights tracked`,
+      icon: <PeopleAltIcon fontSize="small" />,
+      tone: 'info' as const,
+    },
+    {
+      label: 'Check-In %',
       value: formatPercent(totalPassengers > 0 ? (checkedInPassengers / totalPassengers) * 100 : 0),
       helper: `${checkedInPassengers}/${totalPassengers} completed`,
       icon: <CheckCircleIcon fontSize="small" />,
@@ -117,25 +153,32 @@ export default function AdminMetrics({ flights, passengers }: AdminMetricsProps)
       tone: 'info' as const,
     },
     {
-      label: 'Ancillary Revenue',
-      value: formatCurrency(ancillaryRevenue),
-      helper: 'In-flight shop requests',
+      label: 'Premium Seat Revenue',
+      value: formatCurrency(premiumSeatRevenue),
+      helper: `${premiumPassengers} premium upgrades`,
       icon: <PaidIcon fontSize="small" />,
       tone: 'warning' as const,
     },
     {
-      label: 'Premium Conversion',
-      value: formatPercent(premiumConversion),
-      helper: `${premiumPassengers} upgrades`,
-      icon: <StarIcon fontSize="small" />,
+      label: 'Top Ancillary Service',
+      value: topService,
+      helper: topCount > 0 ? `${topCount} passengers selected` : 'No services selected yet',
+      icon: <TrendingUpIcon fontSize="small" />,
       tone: 'secondary' as const,
+    },
+    {
+      label: 'Shop Revenue',
+      value: formatCurrency(ancillaryRevenue),
+      helper: 'In-flight shop requests',
+      icon: <StarIcon fontSize="small" />,
+      tone: 'warning' as const,
     },
   ];
 
   return (
     <Grid container spacing={2} sx={{ mb: 3 }}>
       {metrics.map((metric) => (
-        <Grid key={metric.label} size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
+        <Grid key={metric.label} size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 12 / 7 }}>
           <MetricCard {...metric} />
         </Grid>
       ))}

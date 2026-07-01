@@ -25,16 +25,20 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import SearchIcon from "@mui/icons-material/Search";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import ConnectingAirportsIcon from "@mui/icons-material/ConnectingAirports";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LocaleSelector from "@/components/common/LocaleSelector";
 
 const FlightSearch = lazy(() => import("@/components/customer/FlightSearch"));
+const PassengerPortal = lazy(() => import("@/components/customer/PassengerPortal"));
+const FlightStatusDashboard = lazy(() => import("@/components/customer/FlightStatusDashboard"));
 const StaffCheckIn = lazy(() => import("@/components/checkin/StaffCheckIn"));
 const InFlight = lazy(() => import("@/components/inflight/InFlight"));
 const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
 
-type ViewKey = "search" | "signin" | "checkin" | "inflight" | "admin";
+type ViewKey = "search" | "trips" | "status" | "signin" | "checkin" | "inflight" | "admin";
 type UserRole = "admin" | "staff" | null;
 type AccessLevel = "public" | "staff" | "admin";
 
@@ -54,6 +58,22 @@ const navigationItems: NavigationItem[] = [
     mobileLabel: "Flight Search",
     description: "Find available routes and dates",
     icon: <SearchIcon />,
+    access: "public",
+  },
+  {
+    view: "trips",
+    label: "My Trips",
+    mobileLabel: "My Trips",
+    description: "Manage a booking by PNR",
+    icon: <ConfirmationNumberIcon />,
+    access: "public",
+  },
+  {
+    view: "status",
+    label: "Status",
+    mobileLabel: "Flight Status",
+    description: "Track status, gates, and terminals",
+    icon: <ConnectingAirportsIcon />,
     access: "public",
   },
   {
@@ -334,6 +354,8 @@ export default function HomeClient() {
           
           <Suspense fallback={<LoadingFallback />}>
             {activeView === "search" && <FlightSearch />}
+            {activeView === "trips" && <PassengerPortal />}
+            {activeView === "status" && <FlightStatusDashboard />}
             {activeView === "signin" && <Auth />}
             {activeView === "checkin" && <StaffCheckIn />}
             {activeView === "inflight" && <InFlight />}

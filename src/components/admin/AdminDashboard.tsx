@@ -11,6 +11,8 @@ import PassengerTab from "@/components/admin/tabs/PassengerTab";
 import ServicesMenuTab from "@/components/admin/tabs/ServicesMenuTab";
 import SeatManagementTab from "@/components/admin/tabs/SeatManagementTab";
 import FlightOpsTab from "@/components/admin/tabs/FlightOpsTab";
+import CrewManagementTab from "@/components/admin/tabs/CrewManagementTab";
+import AircraftManagementTab from "@/components/admin/tabs/AircraftManagementTab";
 import AdminMetrics from "@/components/admin/AdminMetrics";
 import ShopItemDialog from "@/components/admin/ShopItemDialog";
 import PageHeader from "@/components/ui/PageHeader";
@@ -26,6 +28,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import GroupsIcon from "@mui/icons-material/Groups";
+import FlightIcon from "@mui/icons-material/Flight";
 
 interface ConfirmDialogState {
   open: boolean;
@@ -273,6 +277,16 @@ const AdminDashboard: React.FC = () => {
             icon={<FlightTakeoffIcon />}
             iconPosition="start"
           />
+          <Tab
+            label="Crew"
+            icon={<GroupsIcon />}
+            iconPosition="start"
+          />
+          <Tab
+            label="Aircraft"
+            icon={<FlightIcon />}
+            iconPosition="start"
+          />
         </Tabs>
 
         {activeTab === 0 && (
@@ -359,6 +373,44 @@ const AdminDashboard: React.FC = () => {
                 showToast(`${result.flightNumber} updated successfully`, "success");
               } else {
                 showToast("Failed to update flight", "error");
+              }
+              return !!result;
+            }}
+          />
+        )}
+
+        {activeTab === 4 && (
+          <CrewManagementTab
+            flights={flights}
+            onUpdateFlight={async (id, updates) => {
+              const result = await updateFlight(id, updates);
+              if (result) {
+                if (selectedFlight?.id === id) {
+                  selectFlight(result);
+                }
+                await fetchFlights();
+                showToast(`${result.flightNumber} crew updated successfully`, "success");
+              } else {
+                showToast("Failed to update crew", "error");
+              }
+              return !!result;
+            }}
+          />
+        )}
+
+        {activeTab === 5 && (
+          <AircraftManagementTab
+            flights={flights}
+            onUpdateFlight={async (id, updates) => {
+              const result = await updateFlight(id, updates);
+              if (result) {
+                if (selectedFlight?.id === id) {
+                  selectFlight(result);
+                }
+                await fetchFlights();
+                showToast(`${result.flightNumber} aircraft updated successfully`, "success");
+              } else {
+                showToast("Failed to update aircraft", "error");
               }
               return !!result;
             }}

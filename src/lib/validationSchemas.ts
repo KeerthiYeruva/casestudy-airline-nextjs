@@ -225,6 +225,10 @@ export const CreateFlightSchema = z.object({
   status: z.enum(['On Time', 'Delayed', 'Boarding', 'Departed', 'Arrived', 'Cancelled']),
   
   aircraft: z.string().min(1, 'Aircraft type is required'),
+
+  aircraftStatus: z.enum(['Active', 'Maintenance', 'Out of Service']).optional(),
+
+  seatLayout: z.string().optional(),
   
   gate: z.string().min(1, 'Gate number is required'),
   
@@ -233,6 +237,12 @@ export const CreateFlightSchema = z.object({
   totalSeats: z.number().int().positive('Total seats must be positive'),
   
   availableSeats: z.number().int().nonnegative('Available seats cannot be negative'),
+
+  crew: z.object({
+    pilot: z.string(),
+    coPilot: z.string(),
+    cabinCrew: z.array(z.string()),
+  }).optional(),
 });
 
 /**
