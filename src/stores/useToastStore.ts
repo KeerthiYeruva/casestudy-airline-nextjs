@@ -3,7 +3,7 @@
 // Zustand store for toast notifications
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { ToastStore } from '@/types';
+import type { ToastStore } from '@/types/store';
 
 const useToastStore = create<ToastStore>()(
   devtools(

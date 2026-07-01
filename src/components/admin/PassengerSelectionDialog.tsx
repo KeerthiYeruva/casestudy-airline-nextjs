@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { Passenger } from "@/types";
+import type { Passenger } from "@/types/passenger";
 
 interface PassengerSelectionDialogProps {
   open: boolean;

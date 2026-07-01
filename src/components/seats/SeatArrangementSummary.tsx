@@ -23,7 +23,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
-import { Passenger } from '@/types';
+import type { Passenger } from '@/types/passenger';
 
 interface SeatArrangementSummaryProps {
   passengers: Passenger[];

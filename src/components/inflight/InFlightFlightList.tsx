@@ -3,7 +3,7 @@
 import React from "react";
 import { Paper, Typography, List, ListItemButton, ListItemText, Box, Chip } from "@mui/material";
 import FlightIcon from "@mui/icons-material/Flight";
-import { Flight } from "@/types";
+import type { Flight } from "@/types/flight";
 
 interface InFlightFlightListProps {
   flights: Flight[];

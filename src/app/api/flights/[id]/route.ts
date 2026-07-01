@@ -2,7 +2,7 @@
 import { flightDB } from '@/lib/db';
 import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtils';
 import { UpdateFlightSchema, validateSchema } from '@/lib/validationSchemas';
-import type { Flight } from '@/types';
+import type { Flight } from '@/types/flight';
 
 interface RouteParams {
   params: Promise<{ id: string }>;

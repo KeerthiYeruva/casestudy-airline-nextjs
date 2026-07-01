@@ -10,7 +10,9 @@ import {
   shopCategories 
 } from '@/data/flightData';
 import * as firestoreService from './firestoreService';
-import type { Flight, Passenger, ShopItem } from '@/types';
+import type { Flight } from '@/types/flight';
+import type { Passenger } from '@/types/passenger';
+import type { ShopItem } from '@/types/services';
 
 // In-memory fallback storage
 let flights: Flight[] = JSON.parse(JSON.stringify(initialFlights));

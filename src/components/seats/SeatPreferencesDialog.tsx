@@ -26,7 +26,7 @@ import {
 } from '@mui/material';
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import type { SeatPreferences, SeatPreference, SeatType } from '@/types';
+import type { SeatPreferences, SeatPreference, SeatType } from '@/types/seat';
 
 interface SeatPreferencesDialogProps {
   open: boolean;

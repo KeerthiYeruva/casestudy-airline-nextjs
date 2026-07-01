@@ -5,13 +5,13 @@ import useAdminStore from "@/stores/useAdminStore";
 import useDataStore from "@/stores/useDataStore";
 import useToastStore from "@/stores/useToastStore";
 import useRealtimeUpdates from "@/hooks/useRealtimeUpdates";
-import SimpleInputDialog from "./SimpleInputDialog";
-import ConfirmDialog from "./ConfirmDialog";
-import PassengerTab from "./admin/tabs/PassengerTab";
-import ServicesMenuTab from "./admin/tabs/ServicesMenuTab";
-import SeatManagementTab from "./admin/tabs/SeatManagementTab";
-import ShopItemDialog from "./admin/ShopItemDialog";
-import { ShopItem } from "@/types";
+import SimpleInputDialog from "@/components/common/SimpleInputDialog";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
+import PassengerTab from "@/components/admin/tabs/PassengerTab";
+import ServicesMenuTab from "@/components/admin/tabs/ServicesMenuTab";
+import SeatManagementTab from "@/components/admin/tabs/SeatManagementTab";
+import ShopItemDialog from "@/components/admin/ShopItemDialog";
+import type { ShopItem } from "@/types/services";
 import {
   Container,
   Paper,

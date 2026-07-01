@@ -3,7 +3,8 @@
 // Zustand store for check-in view state
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { CheckInStore, Flight, FilterOptions } from '@/types';
+import type { Flight } from '@/types/flight';
+import type { CheckInStore, FilterOptions } from '@/types/store';
 
 const useCheckInStore = create<CheckInStore>()(
   devtools(

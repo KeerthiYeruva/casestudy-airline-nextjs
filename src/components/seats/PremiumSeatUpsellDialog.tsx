@@ -33,7 +33,8 @@ import {
   Power as PowerIcon,
   Weekend as ComfortIcon
 } from '@mui/icons-material';
-import type { PremiumSeatUpsell, Passenger } from '@/types';
+import type { Passenger } from '@/types/passenger';
+import type { PremiumSeatUpsell } from '@/types/seat';
 import { formatCurrency } from '@/lib/i18nUtils';
 
 interface PremiumSeatUpsellDialogProps {

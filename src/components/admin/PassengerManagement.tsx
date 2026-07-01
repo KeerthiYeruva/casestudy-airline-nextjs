@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { Passenger, Flight } from "@/types";
+import type { Flight } from "@/types/flight";
+import type { Passenger } from "@/types/passenger";
 import PassengerFilters from "./PassengerFilters";
 import PassengerTable from "./PassengerTable";
 import PassengerDialog from "./PassengerDialog";
-import ConfirmDialog from "../ConfirmDialog";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 import useToastStore from "@/stores/useToastStore";
 
 interface FilterOptions {

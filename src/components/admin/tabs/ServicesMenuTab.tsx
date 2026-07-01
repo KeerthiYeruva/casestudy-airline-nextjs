@@ -2,7 +2,7 @@
 
 import React from "react";
 import ServicesMenuManagement from "../ServicesMenuManagement";
-import { ShopItem } from "@/types";
+import type { ShopItem } from "@/types/services";
 
 interface ServicesMenuTabProps {
   ancillaryServices: string[];

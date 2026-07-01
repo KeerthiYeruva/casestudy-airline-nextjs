@@ -4,7 +4,7 @@ import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtil
 import { UpdatePassengerSchema, validateSchema } from '@/lib/validationSchemas';
 import { eventBroadcaster } from '@/lib/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
-import type { Passenger } from '@/types';
+import type { Passenger } from '@/types/passenger';
 
 interface RouteParams {
   params: Promise<{ id: string }>;

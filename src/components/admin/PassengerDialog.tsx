@@ -22,7 +22,8 @@ import {
   FormHelperText,
   Box,
 } from "@mui/material";
-import { Passenger, Flight } from "@/types";
+import type { Flight } from "@/types/flight";
+import type { Passenger } from "@/types/passenger";
 import SeatSelectionDialog from "./SeatSelectionDialog";
 import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
 

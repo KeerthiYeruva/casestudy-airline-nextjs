@@ -30,7 +30,8 @@ import StarIcon from "@mui/icons-material/Star";
 import GroupIcon from "@mui/icons-material/Group";
 import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Passenger, Flight } from "@/types";
+import type { Flight } from "@/types/flight";
+import type { Passenger } from "@/types/passenger";
 
 interface PassengerTableProps {
   passengers: Passenger[];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Auth from '../components/Auth';
+import Auth from '../components/auth/Auth';
 import useAuthStore from '../stores/useAuthStore';
 
 // Mock Firebase auth

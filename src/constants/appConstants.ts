@@ -1,6 +1,7 @@
 // TypeScript constants for the Airline Management System
 
-import type { Passenger, ShopItem } from '@/types';
+import type { Passenger } from '@/types/passenger';
+import type { ShopItem } from '@/types/services';
 
 // Shop Categories
 export const SHOP_CATEGORIES = [

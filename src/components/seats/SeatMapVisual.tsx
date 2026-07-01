@@ -11,7 +11,7 @@ import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineE
 import StarIcon from "@mui/icons-material/Star";
 import GroupIcon from "@mui/icons-material/Group";
 import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
-import { Passenger } from "@/types";
+import type { Passenger } from "@/types/passenger";
 
 interface SeatMapVisualProps {
   passengers: Passenger[];

@@ -12,7 +12,8 @@ import {
   where,
   onSnapshot
 } from './firebaseConfig';
-import type { Flight, Passenger } from '@/types';
+import type { Flight } from '@/types/flight';
+import type { Passenger } from '@/types/passenger';
 import { flights as initialFlights, passengers as initialPassengers, shopItems as initialShopItems } from '@/data/flightData';
 
 // Collection names

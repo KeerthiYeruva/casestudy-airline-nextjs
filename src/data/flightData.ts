@@ -1,5 +1,7 @@
 // TypeScript mock data for flights and passengers
-import type { Flight, Passenger, ShopItem } from "@/types";
+import type { Flight } from "@/types/flight";
+import type { Passenger } from "@/types/passenger";
+import type { ShopItem } from "@/types/services";
 
 export const flights: Flight[] = [
   {

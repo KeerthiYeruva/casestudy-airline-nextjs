@@ -22,7 +22,7 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import AccessibleIcon from '@mui/icons-material/Accessible';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
-import { Passenger } from "@/types";
+import type { Passenger } from "@/types/passenger";
 
 interface PassengerServicePanelProps {
   passenger: Passenger;
