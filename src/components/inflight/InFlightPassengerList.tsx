@@ -25,18 +25,27 @@ interface InFlightPassengerListProps {
   passengers: Passenger[];
   selectedPassengerId: string | undefined;
   onPassengerSelect: (passenger: Passenger) => void;
+  embedded?: boolean;
 }
 
 const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
   passengers,
   selectedPassengerId,
   onPassengerSelect,
+  embedded = false,
 }) => {
-  return (
-    <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-      <Typography variant="h6" gutterBottom>
-        Passengers ({passengers.length})
-      </Typography>
+  const content = (
+    <>
+      {!embedded && (
+        <Typography variant="h6" gutterBottom>
+          Passengers ({passengers.length})
+        </Typography>
+      )}
+      {embedded && passengers.length === 0 && (
+        <Typography variant="body2" color="text.secondary">
+          No passengers match this search.
+        </Typography>
+      )}
       <List sx={{ pt: 0, overflowY: 'auto', overflowX: 'hidden', flex: 1, minWidth: 0 }}>
         {passengers.map((passenger, index) => (
           <React.Fragment key={passenger.id}>
@@ -66,7 +75,10 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                         <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }} noWrap>
                           {passenger.name}
                         </Typography>
-                        <Chip label={passenger.seat} size="small" sx={{ height: 20, fontSize: '0.7rem', mt: 0.5 }} />
+                        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
+                          <Chip label={passenger.seat} size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+                          <Chip label={passenger.bookingReference} size="small" variant="outlined" sx={{ height: 20, fontSize: '0.7rem' }} />
+                        </Box>
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 0.5, flex: '0 1 auto', flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0 }}>
@@ -113,6 +125,16 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
           </React.Fragment>
         ))}
       </List>
+    </>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  return (
+    <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      {content}
     </Paper>
   );
 };

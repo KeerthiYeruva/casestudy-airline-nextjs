@@ -142,39 +142,39 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
   );
 
   const handleAddService = async () => {
-    if (!selectedPassenger || !selectedService) {
+    if (!currentPassengerData || !selectedService) {
       showToast("Please select a passenger and service", "warning");
       return;
     }
-    await addAncillaryServiceToPassenger(selectedPassenger.id, selectedService);
-    showToast(`${selectedService} added for ${selectedPassenger.name}`, "success");
+    await addAncillaryServiceToPassenger(currentPassengerData.id, selectedService);
+    showToast(`${selectedService} added for ${currentPassengerData.name}`, "success");
     setAddServiceDialog(false);
     setSelectedService("");
     await fetchPassengers();
   };
 
   const handleRemoveService = async (service: string) => {
-    if (selectedPassenger) {
-      await removeAncillaryServiceFromPassenger(selectedPassenger.id, service);
+    if (currentPassengerData) {
+      await removeAncillaryServiceFromPassenger(currentPassengerData.id, service);
       showToast(`${service} removed`, "info");
       await fetchPassengers();
     }
   };
 
   const handleChangeMeal = async () => {
-    if (!selectedPassenger || !selectedMeal) {
+    if (!currentPassengerData || !selectedMeal) {
       showToast("Please select a meal option", "warning");
       return;
     }
-    await changeMealPreference(selectedPassenger.id, selectedMeal);
-    showToast(`Meal changed to ${selectedMeal} for ${selectedPassenger.name}`, "success");
+    await changeMealPreference(currentPassengerData.id, selectedMeal);
+    showToast(`Meal changed to ${selectedMeal} for ${currentPassengerData.name}`, "success");
     setChangeMealDialog(false);
     setSelectedMeal("");
     await fetchPassengers();
   };
 
   const handleAddShopItem = async () => {
-    if (!selectedPassenger || !selectedShopItem) {
+    if (!currentPassengerData || !selectedShopItem) {
       showToast("Please select a passenger and shop item", "warning");
       return;
     }
@@ -183,7 +183,7 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
       return;
     }
     await addShopRequest(
-      selectedPassenger.id,
+      currentPassengerData.id,
       selectedShopItem.name,
       shopQuantity,
       selectedShopItem.price
@@ -201,21 +201,21 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
   };
 
   const handleRemoveShopItem = async (item: string) => {
-    if (selectedPassenger) {
-      await removeShopRequest(selectedPassenger.id, item);
+    if (currentPassengerData) {
+      await removeShopRequest(currentPassengerData.id, item);
       showToast(`${item} removed from cart`, "info");
       await fetchPassengers();
     }
   };
 
   const handleUpdateQuantity = async (itemName: string, newQuantity: number) => {
-    if (selectedPassenger && newQuantity > 0) {
-      const passenger = passengers.find((p) => p.id === selectedPassenger.id);
+    if (currentPassengerData && newQuantity > 0) {
+      const passenger = passengers.find((p) => p.id === currentPassengerData.id);
       if (passenger && passenger.shopRequests) {
         const updatedRequests = passenger.shopRequests.map((r) =>
           r.itemName === itemName ? { ...r, quantity: newQuantity } : r
         );
-        await updatePassenger(selectedPassenger.id, {
+        await updatePassenger(currentPassengerData.id, {
           shopRequests: updatedRequests,
         });
         await fetchPassengers();
@@ -261,11 +261,22 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
 
               <Grid container spacing={{ xs: 2, xl: 3 }} sx={{ minWidth: 0 }}>
                 <Grid size={{ xs: 12, lg: 4 }} sx={{ minWidth: 0 }}>
-                  <InFlightPassengerList
-                    passengers={flightPassengers}
-                    selectedPassengerId={selectedPassenger?.id}
-                    onPassengerSelect={handlePassengerSelect}
-                  />
+                  <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Box>
+                      <Typography variant="h6">
+                        Passenger Manifest
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Select by seat and booking reference; use the nav seat map for visual lookup.
+                      </Typography>
+                    </Box>
+                    <InFlightPassengerList
+                      passengers={flightPassengers}
+                      selectedPassengerId={selectedPassenger?.id}
+                      onPassengerSelect={handlePassengerSelect}
+                      embedded
+                    />
+                  </Paper>
                 </Grid>
 
                 <Grid size={{ xs: 12, lg: 8 }} sx={{ minWidth: 0 }}>
