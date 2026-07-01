@@ -34,16 +34,17 @@ const StaffCheckIn = lazy(() => import("@/components/checkin/StaffCheckIn"));
 const InFlight = lazy(() => import("@/components/inflight/InFlight"));
 const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
 
-type ViewKey = "search" | "checkin" | "inflight" | "admin";
+type ViewKey = "search" | "signin" | "checkin" | "inflight" | "admin";
 type UserRole = "admin" | "staff" | null;
+type AccessLevel = "public" | "staff" | "admin";
 
 interface NavigationItem {
-  view: ViewKey;
+  view: Exclude<ViewKey, "signin">;
   label: string;
   mobileLabel: string;
   description: string;
   icon: ReactNode;
-  access: "all" | "staff" | "admin";
+  access: AccessLevel;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -53,7 +54,7 @@ const navigationItems: NavigationItem[] = [
     mobileLabel: "Flight Search",
     description: "Find available routes and dates",
     icon: <SearchIcon />,
-    access: "all",
+    access: "public",
   },
   {
     view: "checkin",
@@ -81,10 +82,15 @@ const navigationItems: NavigationItem[] = [
   },
 ];
 
-const canAccessNavigationItem = (item: NavigationItem, role: UserRole) => {
-  if (item.access === "all") return true;
-  if (item.access === "staff") return role === "staff" || role === "admin";
+const canAccessLevel = (access: AccessLevel, role: UserRole, isAuthenticated: boolean) => {
+  if (access === "public") return true;
+  if (!isAuthenticated) return false;
+  if (access === "staff") return role === "staff" || role === "admin";
   return role === "admin";
+};
+
+const canAccessNavigationItem = (item: NavigationItem, role: UserRole, isAuthenticated: boolean) => {
+  return canAccessLevel(item.access, role, isAuthenticated);
 };
 
 const LoadingFallback = () => (
@@ -110,15 +116,11 @@ export default function HomeClient() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, role } = useAuthStore();
 
-  if (!isAuthenticated) {
-    return <Auth />;
-  }
-
-  const canAccessAdmin = role === "admin";
-  const accessibleNavigationItems = navigationItems.filter((item) => canAccessNavigationItem(item, role));
-  const canAccessCurrentView = navigationItems.some(
-    (item) => item.view === currentView && canAccessNavigationItem(item, role)
-  );
+  const canAccessAdmin = isAuthenticated && role === "admin";
+  const accessibleNavigationItems = navigationItems.filter((item) => canAccessNavigationItem(item, role, isAuthenticated));
+  const canAccessCurrentView = currentView === "signin"
+    ? !isAuthenticated
+    : navigationItems.some((item) => item.view === currentView && canAccessNavigationItem(item, role, isAuthenticated));
   const activeView: ViewKey = canAccessCurrentView ? currentView : "search";
 
   return (
@@ -182,8 +184,20 @@ export default function HomeClient() {
               <LocaleSelector />
             </Box>
             
-            {/* Auth Component - Always Visible */}
-            <Auth />
+            {isAuthenticated ? (
+              <Auth />
+            ) : (
+              <Button
+                color="inherit"
+                variant={activeView === "signin" ? "outlined" : "text"}
+                onClick={() => setCurrentView("signin")}
+                aria-label="Sign in"
+                size="small"
+                sx={{ fontSize: '0.875rem', px: 2 }}
+              >
+                Sign In
+              </Button>
+            )}
           </Toolbar>
         </AppBar>
 
@@ -216,43 +230,63 @@ export default function HomeClient() {
           </Box>
           <Divider />
           
-          {/* User Info Section in Drawer */}
-          <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-              Logged in as
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-              <Typography variant="subtitle2" noWrap sx={{ fontWeight: 'bold', flex: 1 }}>
-                {useAuthStore.getState().user?.displayName}
+          {isAuthenticated ? (
+            <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                Logged in as
               </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="caption" color="text.secondary" sx={{ minWidth: 40 }}>
-                Role:
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
-                <Button
-                  variant={role === 'staff' ? 'contained' : 'outlined'}
-                  size="small"
-                  onClick={() => useAuthStore.getState().setRole('staff')}
-                  fullWidth
-                  sx={{ fontSize: '0.75rem', py: 0.5 }}
-                >
-                  Staff
-                </Button>
-                <Button
-                  variant={role === 'admin' ? 'contained' : 'outlined'}
-                  size="small"
-                  color="secondary"
-                  onClick={() => useAuthStore.getState().setRole('admin')}
-                  fullWidth
-                  sx={{ fontSize: '0.75rem', py: 0.5 }}
-                >
-                  Admin
-                </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                <Typography variant="subtitle2" noWrap sx={{ fontWeight: 'bold', flex: 1 }}>
+                  {useAuthStore.getState().user?.displayName}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ minWidth: 40 }}>
+                  Role:
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
+                  <Button
+                    variant={role === 'staff' ? 'contained' : 'outlined'}
+                    size="small"
+                    onClick={() => useAuthStore.getState().setRole('staff')}
+                    fullWidth
+                    sx={{ fontSize: '0.75rem', py: 0.5 }}
+                  >
+                    Staff
+                  </Button>
+                  <Button
+                    variant={role === 'admin' ? 'contained' : 'outlined'}
+                    size="small"
+                    color="secondary"
+                    onClick={() => useAuthStore.getState().setRole('admin')}
+                    fullWidth
+                    sx={{ fontSize: '0.75rem', py: 0.5 }}
+                  >
+                    Admin
+                  </Button>
+                </Box>
               </Box>
             </Box>
-          </Box>
+          ) : (
+            <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                Guest access
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                Search and book flights, or sign in for staff tools.
+              </Typography>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => {
+                  setCurrentView("signin");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                Sign In
+              </Button>
+            </Box>
+          )}
           <Divider />
           
           <List>
@@ -292,7 +326,7 @@ export default function HomeClient() {
         </Drawer>
 
         <Box component="main" id="main-content" sx={{ mt: 3, mb: 3 }} role="main">
-          {!canAccessAdmin && currentView === "admin" && (
+          {isAuthenticated && !canAccessAdmin && currentView === "admin" && (
             <Alert severity="error" sx={{ m: 2 }}>
               Access Denied: Admin privileges required. Please switch to Admin role.
             </Alert>
@@ -300,6 +334,7 @@ export default function HomeClient() {
           
           <Suspense fallback={<LoadingFallback />}>
             {activeView === "search" && <FlightSearch />}
+            {activeView === "signin" && <Auth />}
             {activeView === "checkin" && <StaffCheckIn />}
             {activeView === "inflight" && <InFlight />}
             {activeView === "admin" && canAccessAdmin && <AdminDashboard />}
