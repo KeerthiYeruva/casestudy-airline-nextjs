@@ -657,12 +657,12 @@ const useDataStore = create<DataStore>()(
         }),
         onRehydrateStorage: () => (state) => {
           if (state) {
-            state.flights = state.flights.length > 0 ? state.flights : initialFlights;
-            state.passengers = state.passengers.length > 0 ? state.passengers : initialPassengers;
-            state.ancillaryServices = state.ancillaryServices.length > 0 ? state.ancillaryServices : defaultAncillaryServices;
-            state.mealOptions = state.mealOptions.length > 0 ? state.mealOptions : defaultMealOptions;
-            state.shopItems = state.shopItems.length > 0 ? state.shopItems : defaultShopItems;
-            state.shopCategories = state.shopCategories.length > 0 ? state.shopCategories : defaultShopCategories;
+            state.flights = Array.isArray(state.flights) && state.flights.length > 0 ? state.flights : initialFlights;
+            state.passengers = Array.isArray(state.passengers) && state.passengers.length > 0 ? state.passengers : initialPassengers;
+            state.ancillaryServices = Array.isArray(state.ancillaryServices) && state.ancillaryServices.length > 0 ? state.ancillaryServices : defaultAncillaryServices;
+            state.mealOptions = Array.isArray(state.mealOptions) && state.mealOptions.length > 0 ? state.mealOptions : defaultMealOptions;
+            state.shopItems = Array.isArray(state.shopItems) && state.shopItems.length > 0 ? state.shopItems : defaultShopItems;
+            state.shopCategories = Array.isArray(state.shopCategories) && state.shopCategories.length > 0 ? state.shopCategories : defaultShopCategories;
           }
         },
       }
