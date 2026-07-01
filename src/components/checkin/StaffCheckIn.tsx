@@ -16,10 +16,10 @@ import GroupSeatingDialog from '@/components/seats/GroupSeatingDialog';
 import FamilySeatingDialog from '@/components/seats/FamilySeatingDialog';
 import PremiumSeatUpsellDialog from '@/components/seats/PremiumSeatUpsellDialog';
 import SeatArrangementSummary from '@/components/seats/SeatArrangementSummary';
+import FlightInfoGrid from '@/components/ui/FlightInfoGrid';
+import PageHeader from '@/components/ui/PageHeader';
 import type { Passenger } from '@/types/passenger';
-import { Container, Paper, Typography, Grid, Box, Chip, Button, Stack, Dialog, DialogTitle, DialogContent } from '@mui/material';
-import WifiIcon from '@mui/icons-material/Wifi';
-import WifiOffIcon from '@mui/icons-material/WifiOff';
+import { Container, Paper, Typography, Grid, Box, Button, Stack, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import '@/styles/StaffCheckIn.scss';
@@ -139,25 +139,11 @@ const StaffCheckIn: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
-      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-        <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-          Staff Check-In
-        </Typography>
-        <Chip 
-          icon={isConnected ? <WifiIcon /> : <WifiOffIcon />}
-          label={isConnected ? 'Live Updates' : 'Offline'}
-          color={isConnected ? 'success' : 'default'}
-          size="small"
-          sx={{ ml: 'auto' }}
-        />
-        {selectedFlight && (
-          <Chip 
-            label={`${selectedFlight.flightNumber}`} 
-            color="primary" 
-            sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
-          />
-        )}
-      </Box>
+      <PageHeader
+        title="Staff Check-In"
+        isConnected={isConnected}
+        selectedFlightNumber={selectedFlight?.flightNumber}
+      />
 
       <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Flight Selection */}
@@ -175,39 +161,7 @@ const StaffCheckIn: React.FC = () => {
           {selectedFlight ? (
             <>
               {/* Flight Details */}
-              <Paper elevation={3} className="flight-details" sx={{ mb: 2, p: { xs: 1.5, sm: 2, md: 2.5 } }}>
-                <Typography variant="h5" gutterBottom sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' }, mb: { xs: 1, sm: 1.5 } }}>
-                  {selectedFlight.name}
-                </Typography>
-                <Grid container spacing={{ xs: 1, sm: 1.5, md: 2 }}>
-                  <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                      Time
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.time}</Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                      Route
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>
-                      {selectedFlight.from} → {selectedFlight.to}
-                    </Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                      Gate
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.gate}</Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                      Status
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>{selectedFlight.status}</Typography>
-                  </Grid>
-                </Grid>
-              </Paper>
+              <FlightInfoGrid flight={selectedFlight} />
 
               {/* Group & Family Seating Actions */}
               <Stack direction="row" spacing={2} sx={{ mb: 2 }}>

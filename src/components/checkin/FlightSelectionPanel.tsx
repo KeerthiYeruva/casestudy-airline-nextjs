@@ -6,6 +6,7 @@ import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import StarIcon from "@mui/icons-material/Star";
 import GroupIcon from "@mui/icons-material/Group";
 import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
+import StatusChip from "@/components/ui/StatusChip";
 import type { Flight } from "@/types/flight";
 import type { Passenger } from "@/types/passenger";
 
@@ -68,11 +69,7 @@ const FlightSelectionPanel: React.FC<FlightSelectionPanelProps> = ({
                   <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                     {flight.flightNumber}
                   </Typography>
-                  <Chip 
-                    label={flight.status} 
-                    size="small" 
-                    color={flight.status === 'On Time' ? 'success' : flight.status === 'Boarding' ? 'warning' : 'error'}
-                  />
+                  <StatusChip status={flight.status} />
                 </Box>
 
                 {/* Route and Time */}
