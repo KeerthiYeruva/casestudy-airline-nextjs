@@ -18,12 +18,14 @@ interface PassengerDetailsPanelProps {
   passenger: Passenger;
   onSetPreferences?: () => void;
   onOfferPremiumUpgrade?: () => void;
+  onViewBoardingPass?: () => void;
 }
 
 const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
   passenger,
   onSetPreferences,
   onOfferPremiumUpgrade,
+  onViewBoardingPass,
 }) => {
   return (
     <Paper elevation={3} sx={{ mt: 2, p: { xs: 2, sm: 3 }, bgcolor: passenger.checkedIn ? 'success.50' : 'background.paper' }}>
@@ -112,6 +114,22 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
               )}
             </Box>
           </Box>
+        </>
+      )}
+
+      {passenger.checkedIn && onViewBoardingPass && (
+        <>
+          <Divider sx={{ my: 2 }} />
+          <Button
+            variant="contained"
+            size="medium"
+            startIcon={<ConfirmationNumberIcon />}
+            onClick={onViewBoardingPass}
+            fullWidth
+            sx={{ fontWeight: 'bold' }}
+          >
+            View Boarding Pass
+          </Button>
         </>
       )}
 

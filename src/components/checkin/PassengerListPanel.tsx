@@ -20,6 +20,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
 import AccessibleIcon from '@mui/icons-material/Accessible';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import PersonIcon from '@mui/icons-material/Person';
 import StarIcon from '@mui/icons-material/Star';
 import GroupIcon from '@mui/icons-material/Group';
@@ -33,6 +34,7 @@ interface PassengerListPanelProps {
   onCheckIn: (passengerId: string) => void;
   onUndoCheckIn: (passengerId: string) => void;
   onChangeSeat: (passenger: Passenger) => void;
+  onViewBoardingPass: (passenger: Passenger) => void;
 }
 
 const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
@@ -42,6 +44,7 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
   onCheckIn,
   onUndoCheckIn,
   onChangeSeat,
+  onViewBoardingPass,
 }) => {
   const checkedInCount = passengers.filter(p => p.checkedIn).length;
   
@@ -200,6 +203,19 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
                             sx={{ minWidth: { xs: 40, sm: 36 }, minHeight: { xs: 40, sm: 36 } }}
                           >
                             <AirlineSeatReclineExtraIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="View Boarding Pass">
+                          <IconButton
+                            size="small"
+                            color="success"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              onViewBoardingPass(passenger);
+                            }}
+                            sx={{ minWidth: { xs: 40, sm: 36 }, minHeight: { xs: 40, sm: 36 } }}
+                          >
+                            <ConfirmationNumberIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
                       </>
