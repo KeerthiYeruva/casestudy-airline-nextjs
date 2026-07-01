@@ -19,7 +19,7 @@ import type { ShopItem } from "@/types/services";
 import {
   shopCategories as shopCategoriesData,
 } from "@/data/flightData";
-import { Container, Paper, Typography, Grid } from "@mui/material";
+import { Container, Paper, Typography, Grid, Box } from "@mui/material";
 import "@/styles/InFlight.scss";
 
 interface InFlightProps {

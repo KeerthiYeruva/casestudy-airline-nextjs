@@ -26,10 +26,12 @@ const CabinSeatMapDialog: React.FC<CabinSeatMapDialogProps> = ({
       onClose={onClose}
       fullWidth
       maxWidth="lg"
-      PaperProps={{
-        sx: {
-          borderRadius: 2,
-          maxHeight: { xs: "calc(100% - 32px)", sm: "calc(100% - 64px)" },
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 2,
+            maxHeight: { xs: "calc(100% - 32px)", sm: "calc(100% - 64px)" },
+          },
         },
       }}
     >
