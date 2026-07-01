@@ -33,6 +33,18 @@ jest.mock('@/components/admin/AdminDashboard', () => function MockAdminDashboard
 const mockedUseAuthStore = useAuthStore as unknown as jest.Mock & { getState: jest.Mock };
 
 describe('HomeClient navigation', () => {
+  const setGuestAuth = () => {
+    const authState = {
+      user: null,
+      isAuthenticated: false,
+      role: null,
+      setRole: jest.fn(),
+    };
+
+    mockedUseAuthStore.mockReturnValue(authState);
+    mockedUseAuthStore.getState = jest.fn(() => authState);
+  };
+
   const setAuthRole = (role: UserRole) => {
     const authState = {
       user: { displayName: 'Test User', email: 'test@example.com' },
@@ -47,6 +59,18 @@ describe('HomeClient navigation', () => {
 
   beforeEach(() => {
     setAuthRole(UserRole.ADMIN);
+  });
+
+  it('shows My Trips in the guest customer navbar', async () => {
+    setGuestAuth();
+
+    render(<HomeClient />);
+
+    expect(screen.getByRole('button', { name: /navigate to flight search/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /navigate to my trips/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /navigate to flight status/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+    expect(await screen.findByText('Flight Search View')).toBeInTheDocument();
   });
 
   it('hides My Trips for authenticated admin users', async () => {

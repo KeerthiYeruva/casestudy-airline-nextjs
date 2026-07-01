@@ -178,7 +178,7 @@ const canAccessNavigationItem = (item: NavigationItem, role: UserRole | null, is
   return canAccessLevel(item.access, role, isAuthenticated);
 };
 
-const publicNavigationViews: NavigationItem["view"][] = ["search", "status"];
+const publicNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
 const customerNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
 const checkInNavigationViews: NavigationItem["view"][] = ["checkin", "status"];
 const cabinNavigationViews: NavigationItem["view"][] = ["inflight", "status"];
