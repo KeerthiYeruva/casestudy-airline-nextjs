@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, type ReactNode } from "react";
 import useAuthStore from "@/stores/useAuthStore";
 import Auth from "@/components/auth/Auth";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
@@ -34,6 +34,59 @@ const StaffCheckIn = lazy(() => import("@/components/checkin/StaffCheckIn"));
 const InFlight = lazy(() => import("@/components/inflight/InFlight"));
 const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
 
+type ViewKey = "search" | "checkin" | "inflight" | "admin";
+type UserRole = "admin" | "staff" | null;
+
+interface NavigationItem {
+  view: ViewKey;
+  label: string;
+  mobileLabel: string;
+  description: string;
+  icon: ReactNode;
+  access: "all" | "staff" | "admin";
+}
+
+const navigationItems: NavigationItem[] = [
+  {
+    view: "search",
+    label: "Flights",
+    mobileLabel: "Flight Search",
+    description: "Find available routes and dates",
+    icon: <SearchIcon />,
+    access: "all",
+  },
+  {
+    view: "checkin",
+    label: "Check-In",
+    mobileLabel: "Check-In",
+    description: "Passenger check-in and boarding",
+    icon: <AirlineSeatReclineExtraIcon />,
+    access: "staff",
+  },
+  {
+    view: "inflight",
+    label: "In-Flight",
+    mobileLabel: "In-Flight Services",
+    description: "Meals, shop, and services",
+    icon: <FlightTakeoffIcon />,
+    access: "staff",
+  },
+  {
+    view: "admin",
+    label: "Admin",
+    mobileLabel: "Admin Dashboard",
+    description: "Passenger and service management",
+    icon: <SettingsIcon />,
+    access: "admin",
+  },
+];
+
+const canAccessNavigationItem = (item: NavigationItem, role: UserRole) => {
+  if (item.access === "all") return true;
+  if (item.access === "staff") return role === "staff" || role === "admin";
+  return role === "admin";
+};
+
 const LoadingFallback = () => (
   <Box className="loading-container" role="status" aria-live="polite">
     <CircularProgress aria-label="Loading content" />
@@ -53,7 +106,7 @@ const LoadingFallback = () => (
  * - Mobile responsive menu
  */
 export default function HomeClient() {
-  const [currentView, setCurrentView] = useState("search");
+  const [currentView, setCurrentView] = useState<ViewKey>("search");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, role } = useAuthStore();
 
@@ -62,6 +115,11 @@ export default function HomeClient() {
   }
 
   const canAccessAdmin = role === "admin";
+  const accessibleNavigationItems = navigationItems.filter((item) => canAccessNavigationItem(item, role));
+  const canAccessCurrentView = navigationItems.some(
+    (item) => item.view === currentView && canAccessNavigationItem(item, role)
+  );
+  const activeView: ViewKey = canAccessCurrentView ? currentView : "search";
 
   return (
     <ErrorBoundary>
@@ -102,56 +160,21 @@ export default function HomeClient() {
               gap: 1.5, 
               alignItems: "center"
             }}>
-              <Button
-                color="inherit"
-                startIcon={<SearchIcon />}
-                onClick={() => setCurrentView("search")}
-                variant={currentView === "search" ? "outlined" : "text"}
-                aria-label="Navigate to Flight Search"
-                aria-current={currentView === "search" ? "page" : undefined}
-                size="small"
-                sx={{ fontSize: '0.875rem', px: 2 }}
-              >
-                Flights
-              </Button>
-              <Button
-                color="inherit"
-                startIcon={<AirlineSeatReclineExtraIcon />}
-                onClick={() => setCurrentView("checkin")}
-                variant={currentView === "checkin" ? "outlined" : "text"}
-                aria-label="Navigate to Check-In"
-                aria-current={currentView === "checkin" ? "page" : undefined}
-                size="small"
-                sx={{ fontSize: '0.875rem', px: 2 }}
-              >
-                Check-In
-              </Button>
-              <Button
-                color="inherit"
-                startIcon={<FlightTakeoffIcon />}
-                onClick={() => setCurrentView("inflight")}
-                variant={currentView === "inflight" ? "outlined" : "text"}
-                aria-label="Navigate to In-Flight"
-                aria-current={currentView === "inflight" ? "page" : undefined}
-                size="small"
-                sx={{ fontSize: '0.875rem', px: 2 }}
-              >
-                In-Flight
-              </Button>
-              {canAccessAdmin && (
+              {accessibleNavigationItems.map((item) => (
                 <Button
+                  key={item.view}
                   color="inherit"
-                  startIcon={<SettingsIcon />}
-                  onClick={() => setCurrentView("admin")}
-                  variant={currentView === "admin" ? "outlined" : "text"}
-                  aria-label="Navigate to Admin Dashboard"
-                  aria-current={currentView === "admin" ? "page" : undefined}
+                  startIcon={item.icon}
+                  onClick={() => setCurrentView(item.view)}
+                  variant={activeView === item.view ? "outlined" : "text"}
+                  aria-label={`Navigate to ${item.mobileLabel}`}
+                  aria-current={activeView === item.view ? "page" : undefined}
                   size="small"
                   sx={{ fontSize: '0.875rem', px: 2 }}
                 >
-                  Admin
+                  {item.label}
                 </Button>
-              )}
+              ))}
             </Box>
             
             {/* Locale Selector - Always visible */}
@@ -233,105 +256,38 @@ export default function HomeClient() {
           <Divider />
           
           <List>
-            <ListItem disablePadding>
-              <ListItemButton 
-                selected={currentView === "search"}
-                onClick={() => {
-                  setCurrentView("search");
-                  setMobileMenuOpen(false);
-                }}
-              >
-                <ListItemIcon>
-                  <SearchIcon color={currentView === "search" ? "primary" : "inherit"} />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="Flight Search" 
-                  secondary="Find available routes and dates"
-                  slotProps={{
-                    primary: {
-                      sx: { fontWeight: currentView === 'search' ? 'bold' : 'normal' }
-                    }
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem disablePadding>
-              <ListItemButton 
-                selected={currentView === "checkin"}
-                onClick={() => {
-                  setCurrentView("checkin");
-                  setMobileMenuOpen(false);
-                }}
-              >
-                <ListItemIcon>
-                  <AirlineSeatReclineExtraIcon color={currentView === "checkin" ? "primary" : "inherit"} />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="Check-In" 
-                  secondary="Passenger check-in and boarding"
-                  slotProps={{
-                    primary: {
-                      sx: { fontWeight: currentView === 'checkin' ? 'bold' : 'normal' }
-                    }
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-            
-            <ListItem disablePadding>
-              <ListItemButton 
-                selected={currentView === "inflight"}
-                onClick={() => {
-                  setCurrentView("inflight");
-                  setMobileMenuOpen(false);
-                }}
-              >
-                <ListItemIcon>
-                  <FlightTakeoffIcon color={currentView === "inflight" ? "primary" : "inherit"} />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="In-Flight Services" 
-                  secondary="Meals, shop, and services"
-                  slotProps={{
-                    primary: {
-                      sx: { fontWeight: currentView === 'inflight' ? 'bold' : 'normal' }
-                    }
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-            
-            {canAccessAdmin && (
-              <>
-                <Divider sx={{ my: 1 }} />
+            {accessibleNavigationItems.map((item, index) => (
+              <Box key={item.view}>
+                {item.access === "admin" && index > 0 && <Divider sx={{ my: 1 }} />}
                 <ListItem disablePadding>
                   <ListItemButton 
-                    selected={currentView === "admin"}
+                    selected={activeView === item.view}
                     onClick={() => {
-                      setCurrentView("admin");
+                      setCurrentView(item.view);
                       setMobileMenuOpen(false);
                     }}
                   >
                     <ListItemIcon>
-                      <SettingsIcon color={currentView === "admin" ? "secondary" : "inherit"} />
+                      <Box sx={{ color: activeView === item.view ? 'primary.main' : 'inherit', display: 'flex' }}>
+                        {item.icon}
+                      </Box>
                     </ListItemIcon>
                     <ListItemText 
-                      primary="Admin Dashboard" 
-                      secondary="Passenger and service management"
+                      primary={item.mobileLabel} 
+                      secondary={item.description}
                       slotProps={{
                         primary: {
                           sx: { 
-                            fontWeight: currentView === 'admin' ? 'bold' : 'normal',
-                            color: currentView === 'admin' ? 'secondary.main' : 'inherit'
+                            fontWeight: activeView === item.view ? 'bold' : 'normal',
+                            color: activeView === item.view && item.access === 'admin' ? 'secondary.main' : 'inherit'
                           }
                         }
                       }}
                     />
                   </ListItemButton>
                 </ListItem>
-              </>
-            )}
+              </Box>
+            ))}
           </List>
         </Drawer>
 
@@ -343,10 +299,10 @@ export default function HomeClient() {
           )}
           
           <Suspense fallback={<LoadingFallback />}>
-            {currentView === "search" && <FlightSearch />}
-            {currentView === "checkin" && <StaffCheckIn />}
-            {currentView === "inflight" && <InFlight />}
-            {currentView === "admin" && canAccessAdmin && <AdminDashboard />}
+            {activeView === "search" && <FlightSearch />}
+            {activeView === "checkin" && <StaffCheckIn />}
+            {activeView === "inflight" && <InFlight />}
+            {activeView === "admin" && canAccessAdmin && <AdminDashboard />}
           </Suspense>
         </Box>
       </Box>
