@@ -656,22 +656,13 @@ const useDataStore = create<DataStore>()(
           shopCategories: state.shopCategories,
         }),
         onRehydrateStorage: () => (state) => {
-          // After rehydration, check if we need to sync with source data
           if (state) {
-            const storedFlights = state.flights.length;
-            const storedPassengers = state.passengers.length;
-            
-            // If counts don't match, trigger initial fetch
-            if (storedFlights !== initialFlights.length || 
-                storedPassengers !== initialPassengers.length) {
-              console.log('Data structure changed, syncing from source...');
-              state.flights = initialFlights;
-              state.passengers = initialPassengers;
-              state.ancillaryServices = defaultAncillaryServices;
-              state.mealOptions = defaultMealOptions;
-              state.shopItems = defaultShopItems;
-              state.shopCategories = defaultShopCategories;
-            }
+            state.flights = state.flights.length > 0 ? state.flights : initialFlights;
+            state.passengers = state.passengers.length > 0 ? state.passengers : initialPassengers;
+            state.ancillaryServices = state.ancillaryServices.length > 0 ? state.ancillaryServices : defaultAncillaryServices;
+            state.mealOptions = state.mealOptions.length > 0 ? state.mealOptions : defaultMealOptions;
+            state.shopItems = state.shopItems.length > 0 ? state.shopItems : defaultShopItems;
+            state.shopCategories = state.shopCategories.length > 0 ? state.shopCategories : defaultShopCategories;
           }
         },
       }

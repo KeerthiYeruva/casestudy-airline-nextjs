@@ -76,12 +76,12 @@ export default function PassengerPortal() {
   const hasFetchedRef = useRef(false);
 
   useEffect(() => {
-    if (!hasFetchedRef.current && (flights.length === 0 || passengers.length === 0)) {
+    if (!hasFetchedRef.current) {
       fetchFlights();
       fetchPassengers();
       hasFetchedRef.current = true;
     }
-  }, [fetchFlights, fetchPassengers, flights.length, passengers.length]);
+  }, [fetchFlights, fetchPassengers]);
 
   const trips = useMemo<PassengerTrip[]>(() => {
     if (!submittedSearch) return [];
