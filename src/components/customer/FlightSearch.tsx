@@ -24,6 +24,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import useDataStore from "@/stores/useDataStore";
+import BookingDialog from "./BookingDialog";
 import StatusChip from "../ui/StatusChip";
 import type { Flight } from "@/types/flight";
 
@@ -62,17 +63,19 @@ const getRoute = (flight: Flight) => ({
 });
 
 export default function FlightSearch() {
-  const { flights, fetchFlights } = useDataStore();
+  const { flights, passengers, fetchFlights, fetchPassengers, addPassenger } = useDataStore();
   const [filters, setFilters] = useState<FlightSearchFilters>(defaultFilters);
   const [hasSearched, setHasSearched] = useState(false);
+  const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
   const hasFetchedRef = useRef(false);
 
   useEffect(() => {
     if (!hasFetchedRef.current && flights.length === 0) {
       fetchFlights();
+      fetchPassengers();
       hasFetchedRef.current = true;
     }
-  }, [fetchFlights, flights.length]);
+  }, [fetchFlights, fetchPassengers, flights.length]);
 
   const availableOrigins = useMemo(
     () => Array.from(new Set(flights.map((flight) => getRoute(flight).origin))).sort(),
@@ -291,7 +294,7 @@ export default function FlightSearch() {
                         </Stack>
                       </CardContent>
                       <CardActions sx={{ px: 2, pb: 2 }}>
-                        <Button variant="outlined" fullWidth disabled>
+                        <Button variant="outlined" fullWidth onClick={() => setSelectedFlight(flight)}>
                           Select Flight
                         </Button>
                       </CardActions>
@@ -303,6 +306,21 @@ export default function FlightSearch() {
           )}
         </Stack>
       </Stack>
+      <BookingDialog
+        open={!!selectedFlight}
+        flight={selectedFlight}
+        cabinClass={filters.cabinClass}
+        passengerCount={filters.passengers}
+        passengers={passengers}
+        onClose={() => setSelectedFlight(null)}
+        onCreateBooking={async (passenger) => {
+          const createdPassenger = await addPassenger(passenger);
+          if (createdPassenger) {
+            await fetchPassengers();
+          }
+          return createdPassenger;
+        }}
+      />
     </Container>
   );
 }
