@@ -4,7 +4,7 @@
 
 ### Code Changes
 - [x] Updated `.env.local` with your Firebase credentials
-  - API Key: AIzaSyBC6PRQDDBxg76RFd_EXDEgxiZHfYh7y6s
+  - API Key: stored locally as `NEXT_PUBLIC_FIREBASE_API_KEY` and never committed
   - Project: nextjs-airline
   - Auth Domain: nextjs-airline.firebaseapp.com
 
