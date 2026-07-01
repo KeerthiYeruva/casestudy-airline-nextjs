@@ -7,7 +7,7 @@ import type { Flight } from "@/types/flight";
 import type { Passenger } from "@/types/passenger";
 import PassengerFilters from "./PassengerFilters";
 import PassengerTable from "./PassengerTable";
-import PassengerDialog from "./PassengerDialog";
+import PassengerDialog from "@/components/admin/PassengerDialog";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import useToastStore from "@/stores/useToastStore";
 
@@ -161,13 +161,12 @@ const PassengerManagement: React.FC<PassengerManagementProps> = ({
     setPassengerDialog(true);
   };
 
-  const handleSavePassenger = async () => {
-    // Validation is now handled in the dialog component
+  const handleSavePassenger = async (formData: PassengerFormData) => {
     if (editMode) {
-      const result = await onUpdatePassenger(passengerForm.id, passengerForm);
+      const result = await onUpdatePassenger(formData.id, formData);
       if (result) {
         showToast(
-          `Passenger ${passengerForm.name} updated successfully`,
+          `Passenger ${formData.name} updated successfully`,
           "success"
         );
         setPassengerDialog(false);
@@ -177,10 +176,10 @@ const PassengerManagement: React.FC<PassengerManagementProps> = ({
         showToast(errorMsg, "error");
       }
     } else {
-      const result = await onAddPassenger(passengerForm);
+      const result = await onAddPassenger(formData);
       if (result) {
         showToast(
-          `Passenger ${passengerForm.name} added successfully`,
+          `Passenger ${formData.name} added successfully`,
           "success"
         );
         setPassengerDialog(false);

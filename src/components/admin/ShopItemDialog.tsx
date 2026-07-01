@@ -1,6 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogTitle,
@@ -13,7 +16,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  SelectChangeEvent,
+  FormHelperText,
 } from "@mui/material";
 import { SHOP_CATEGORIES } from "@/constants/appConstants";
 
@@ -30,20 +33,44 @@ interface ShopItemDialogProps {
   onClose: () => void;
   editMode: boolean;
   shopItemForm: ShopItemFormData;
-  onFormChange: (form: ShopItemFormData) => void;
-  onSave: () => void;
+  onSave: (form: ShopItemFormData) => void;
 }
+
+const shopItemDialogSchema = z.object({
+  id: z.string(),
+  name: z.string().trim().min(1, "Item name is required"),
+  category: z.string().min(1, "Category is required"),
+  price: z.number().positive("Item price must be greater than 0"),
+  currency: z.string().trim().min(1, "Currency is required"),
+});
 
 const ShopItemDialog: React.FC<ShopItemDialogProps> = ({
   open,
   onClose,
   editMode,
   shopItemForm,
-  onFormChange,
   onSave,
 }) => {
+  const {
+    control,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ShopItemFormData, unknown, ShopItemFormData>({
+    resolver: zodResolver(shopItemDialogSchema),
+    defaultValues: shopItemForm,
+    mode: "onBlur",
+  });
+
+  useEffect(() => {
+    if (open) {
+      reset(shopItemForm);
+    }
+  }, [open, reset, shopItemForm]);
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} component="form" onSubmit={handleSubmit(onSave)}>
       <DialogTitle>{editMode ? "Edit Shop Item" : "Add Shop Item"}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -51,31 +78,28 @@ const ShopItemDialog: React.FC<ShopItemDialogProps> = ({
             <TextField
               fullWidth
               label="Item Name"
-              value={shopItemForm.name}
-              onChange={(e) =>
-                onFormChange({ ...shopItemForm, name: e.target.value })
-              }
+              {...register("name")}
+              error={!!errors.name}
+              helperText={errors.name?.message}
             />
           </Grid>
           <Grid size={12}>
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors.category}>
               <InputLabel>Category</InputLabel>
-              <Select
-                value={shopItemForm.category}
-                label="Category"
-                onChange={(e: SelectChangeEvent) =>
-                  onFormChange({
-                    ...shopItemForm,
-                    category: e.target.value,
-                  })
-                }
-              >
-                {SHOP_CATEGORIES.map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category}
-                  </MenuItem>
-                ))}
-              </Select>
+              <Controller
+                name="category"
+                control={control}
+                render={({ field }) => (
+                  <Select {...field} label="Category">
+                    {SHOP_CATEGORIES.map((category) => (
+                      <MenuItem key={category} value={category}>
+                        {category}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+              {errors.category && <FormHelperText>{errors.category.message}</FormHelperText>}
             </FormControl>
           </Grid>
           <Grid size={8}>
@@ -83,30 +107,26 @@ const ShopItemDialog: React.FC<ShopItemDialogProps> = ({
               fullWidth
               label="Price"
               type="number"
-              value={shopItemForm.price}
-              onChange={(e) =>
-                onFormChange({
-                  ...shopItemForm,
-                  price: parseFloat(e.target.value),
-                })
-              }
+              slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+              {...register("price", { valueAsNumber: true })}
+              error={!!errors.price}
+              helperText={errors.price?.message}
             />
           </Grid>
           <Grid size={4}>
             <TextField
               fullWidth
               label="Currency"
-              value={shopItemForm.currency}
-              onChange={(e) =>
-                onFormChange({ ...shopItemForm, currency: e.target.value })
-              }
+              {...register("currency")}
+              error={!!errors.currency}
+              helperText={errors.currency?.message}
             />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onSave} variant="contained">
+        <Button type="submit" variant="contained">
           {editMode ? "Update" : "Add"}
         </Button>
       </DialogActions>

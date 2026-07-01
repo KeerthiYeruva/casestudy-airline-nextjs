@@ -211,27 +211,19 @@ const AdminDashboard: React.FC = () => {
     setShopItemDialog(true);
   };
 
-  const handleSaveShopItem = () => {
-    if (!shopItemForm.name || !shopItemForm.name.trim()) {
-      showToast("Item name is required", "error");
-      return;
-    }
-    if (!shopItemForm.price || shopItemForm.price <= 0) {
-      showToast("Item price must be greater than 0", "error");
-      return;
-    }
+  const handleSaveShopItem = (formData: ShopItemFormData) => {
     if (editMode) {
       const updated = shopItems.map((item) =>
-        item.id === shopItemForm.id ? shopItemForm : item
+        item.id === formData.id ? formData : item
       );
       setShopItems(updated);
-      showToast(`${shopItemForm.name} updated successfully`, "success");
+      showToast(`${formData.name} updated successfully`, "success");
     } else {
       setShopItems([
         ...shopItems,
-        { ...shopItemForm, id: `SHOP${Date.now()}` },
+        { ...formData, id: `SHOP${Date.now()}` },
       ]);
-      showToast(`${shopItemForm.name} added successfully`, "success");
+      showToast(`${formData.name} added successfully`, "success");
     }
     setShopItemDialog(false);
   };
@@ -384,7 +376,6 @@ const AdminDashboard: React.FC = () => {
         onClose={() => setShopItemDialog(false)}
         editMode={editMode}
         shopItemForm={shopItemForm}
-        onFormChange={setShopItemForm}
         onSave={handleSaveShopItem}
       />
 
