@@ -3,6 +3,7 @@
 // Zustand store for authentication
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import { normalizeUserRole, UserRole } from '@/types/auth';
 import type { AuthStore, User } from '@/types/auth';
 
 const useAuthStore = create<AuthStore>()(
@@ -19,12 +20,12 @@ const useAuthStore = create<AuthStore>()(
         // Actions
         loginStart: () => set({ loading: true, error: null }),
 
-        loginSuccess: (userData: { user: User; role?: 'admin' | 'staff' }) =>
+        loginSuccess: (userData: { user: User; role?: UserRole }) =>
           set({
             loading: false,
             isAuthenticated: true,
             user: userData.user,
-            role: userData.role || 'staff',
+            role: normalizeUserRole(userData.role),
             error: null,
           }),
 
@@ -48,7 +49,7 @@ const useAuthStore = create<AuthStore>()(
 
         setUser: (user: User) => set({ user, isAuthenticated: !!user }),
 
-        setRole: (role: 'admin' | 'staff') => set({ role }),
+        setRole: (role: UserRole) => set({ role }),
 
         clearError: () => set({ error: null }),
 
@@ -62,7 +63,7 @@ const useAuthStore = create<AuthStore>()(
               loading: false,
               isAuthenticated: true,
               user: userData,
-              role: userData.role || 'staff',
+              role: normalizeUserRole(userData.role),
               error: null,
             });
           } catch (error) {

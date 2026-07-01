@@ -39,7 +39,7 @@ describe('Auth Component', () => {
   test('renders login screen when not authenticated', () => {
     render(<Auth />);
 
-    expect(screen.getByText(/Airline Management System/i)).toBeInTheDocument();
+    expect(screen.getByText(/Airline Management/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Sign in with Google/i })).toBeInTheDocument();
   });
 
@@ -59,7 +59,7 @@ describe('Auth Component', () => {
         photoURL: 'https://example.com/photo.jpg'
       },
       isAuthenticated: true,
-      role: 'staff',
+      role: 'CHECKIN_AGENT',
       loading: false,
       error: null,
       loginStart: jest.fn(),
@@ -81,7 +81,7 @@ describe('Auth Component', () => {
         email: 'admin@example.com'
       },
       isAuthenticated: true,
-      role: 'admin',
+      role: 'ADMIN',
       loading: false,
       error: null,
       loginStart: jest.fn(),
@@ -92,7 +92,7 @@ describe('Auth Component', () => {
 
     render(<Auth />);
 
-    expect(screen.getByText('Administrator')).toBeInTheDocument();
+    expect(screen.getAllByText('Airline Administrator').length).toBeGreaterThan(0);
   });
 
   test('role chip displays correct role for staff', () => {
@@ -102,7 +102,7 @@ describe('Auth Component', () => {
         email: 'staff@example.com'
       },
       isAuthenticated: true,
-      role: 'staff',
+      role: 'CHECKIN_AGENT',
       loading: false,
       error: null,
       loginStart: jest.fn(),
@@ -113,10 +113,9 @@ describe('Auth Component', () => {
 
     render(<Auth />);
 
-    // Check for the Staff chip (it appears twice - in chip and select, so use getAllByText)
-    const staffElements = screen.getAllByText('Staff');
-    expect(staffElements.length).toBeGreaterThan(0);
-    expect(staffElements[0]).toBeInTheDocument();
+    const checkInAgentElements = screen.getAllByText('Check-In Agent');
+    expect(checkInAgentElements.length).toBeGreaterThan(0);
+    expect(checkInAgentElements[0]).toBeInTheDocument();
   });
 
   test('role select dropdown is present when authenticated', () => {
@@ -126,7 +125,7 @@ describe('Auth Component', () => {
         email: 'staff@example.com'
       },
       isAuthenticated: true,
-      role: 'staff',
+      role: 'CHECKIN_AGENT',
       loading: false,
       error: null,
       loginStart: jest.fn(),
@@ -140,7 +139,7 @@ describe('Auth Component', () => {
     // The select element is accessible by role combobox
     const roleSelect = screen.getByRole('combobox');
     expect(roleSelect).toBeInTheDocument();
-    expect(roleSelect).toHaveTextContent('Staff');
+    expect(roleSelect).toHaveTextContent('Check-In Agent');
   });
 
   test('displays loading state with disabled button', () => {
@@ -188,7 +187,7 @@ describe('Auth Component', () => {
         email: 'test@example.com'
       },
       isAuthenticated: true,
-      role: 'staff',
+      role: 'CHECKIN_AGENT',
       loading: false,
       error: null,
       loginStart: jest.fn(),

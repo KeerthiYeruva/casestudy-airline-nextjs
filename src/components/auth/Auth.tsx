@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import useAuthStore from '@/stores/useAuthStore';
+import { UserRole, normalizeUserRole, roleDescriptions, roleLabels, staffRoleOptions } from '@/types/auth';
 import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/lib/firebaseConfig';
 import { isFirebaseConfigured } from '@/lib/firestoreService';
 import {
@@ -54,9 +55,10 @@ const MOCK_USERS = [
 const Auth: React.FC = () => {
   const { user, role, loading, error, isAuthenticated, loginStart, loginSuccess, loginFailure, logout, setRole } = useAuthStore();
   const [roleDialog, setRoleDialog] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<'staff' | 'admin'>('staff');
+  const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.CHECKIN_AGENT);
   const [selectedMockUser, setSelectedMockUser] = useState(0);
   const firebaseEnabled = isFirebaseConfigured();
+  const currentRole = normalizeUserRole(role);
 
   useEffect(() => {
     if (!firebaseEnabled) return;
@@ -129,7 +131,7 @@ const Auth: React.FC = () => {
     }
   };
 
-  const handleRoleChange = (newRole: 'staff' | 'admin') => {
+  const handleRoleChange = (newRole: UserRole) => {
     setRole(newRole);
   };
 
@@ -261,24 +263,18 @@ const Auth: React.FC = () => {
               <Select
                 value={selectedRole}
                 label="Select Role"
-                onChange={(e) => setSelectedRole(e.target.value as 'staff' | 'admin')}
+                onChange={(e) => setSelectedRole(e.target.value as UserRole)}
               >
-                <MenuItem value="staff">
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: 'medium' }}>Airline Staff</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Access Check-In and In-Flight services
-                    </Typography>
-                  </Box>
-                </MenuItem>
-                <MenuItem value="admin">
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: 'medium' }}>Administrator</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Full access including passenger management
-                    </Typography>
-                  </Box>
-                </MenuItem>
+                {staffRoleOptions.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    <Box>
+                      <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{roleLabels[option]}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {roleDescriptions[option]}
+                      </Typography>
+                    </Box>
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </DialogContent>
@@ -321,9 +317,9 @@ const Auth: React.FC = () => {
             {user?.displayName}
           </Typography>
           <Chip
-            label={role === 'admin' ? 'Admin' : 'Staff'}
+            label={roleLabels[currentRole]}
             size="small"
-            color={role === 'admin' ? 'secondary' : 'primary'}
+            color={currentRole === UserRole.ADMIN || currentRole === UserRole.SUPER_ADMIN ? 'secondary' : 'primary'}
             sx={{ fontSize: '0.65rem', height: 18, mt: 0.25 }}
           />
         </Box>
@@ -352,8 +348,8 @@ const Auth: React.FC = () => {
         }}
       >
         <Select
-          value={role || 'staff'}
-          onChange={(e) => handleRoleChange(e.target.value as 'staff' | 'admin')}
+          value={currentRole}
+          onChange={(e) => handleRoleChange(e.target.value as UserRole)}
           displayEmpty
           aria-label="Change role"
           sx={{ 
@@ -361,12 +357,11 @@ const Auth: React.FC = () => {
             height: { sm: 36, md: 40 },
           }}
         >
-          <MenuItem value="staff" sx={{ fontSize: { sm: '0.8rem', md: '0.875rem' } }}>
-            Staff
-          </MenuItem>
-          <MenuItem value="admin" sx={{ fontSize: { sm: '0.8rem', md: '0.875rem' } }}>
-            Admin
-          </MenuItem>
+          {staffRoleOptions.map((option) => (
+            <MenuItem key={option} value={option} sx={{ fontSize: { sm: '0.8rem', md: '0.875rem' } }}>
+              {roleLabels[option]}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
       

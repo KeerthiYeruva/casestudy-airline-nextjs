@@ -2,6 +2,7 @@
 
 import { useState, lazy, Suspense, type ReactNode } from "react";
 import useAuthStore from "@/stores/useAuthStore";
+import { UserRole, normalizeUserRole, roleLabels, rolePermissions } from "@/types/auth";
 import Auth from "@/components/auth/Auth";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { 
@@ -39,8 +40,7 @@ const InFlight = lazy(() => import("@/components/inflight/InFlight"));
 const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
 
 type ViewKey = "search" | "trips" | "status" | "signin" | "checkin" | "inflight" | "admin";
-type UserRole = "admin" | "staff" | null;
-type AccessLevel = "public" | "staff" | "admin";
+type AccessLevel = "public" | "checkin" | "cabin" | "admin";
 
 interface NavigationItem {
   view: Exclude<ViewKey, "signin">;
@@ -82,7 +82,7 @@ const navigationItems: NavigationItem[] = [
     mobileLabel: "Check-In",
     description: "Passenger check-in and boarding",
     icon: <AirlineSeatReclineExtraIcon />,
-    access: "staff",
+    access: "checkin",
   },
   {
     view: "inflight",
@@ -90,7 +90,7 @@ const navigationItems: NavigationItem[] = [
     mobileLabel: "In-Flight Services",
     description: "Meals, shop, and services",
     icon: <FlightTakeoffIcon />,
-    access: "staff",
+    access: "cabin",
   },
   {
     view: "admin",
@@ -102,14 +102,18 @@ const navigationItems: NavigationItem[] = [
   },
 ];
 
-const canAccessLevel = (access: AccessLevel, role: UserRole, isAuthenticated: boolean) => {
+const canAccessLevel = (access: AccessLevel, role: UserRole | null, isAuthenticated: boolean) => {
   if (access === "public") return true;
   if (!isAuthenticated) return false;
-  if (access === "staff") return role === "staff" || role === "admin";
-  return role === "admin";
+  if (!role) return false;
+
+  const permissions = rolePermissions[normalizeUserRole(role)];
+  if (access === "checkin") return permissions.canUseCheckIn;
+  if (access === "cabin") return permissions.canUseInFlightServices;
+  return permissions.canAccessAdminDashboard;
 };
 
-const canAccessNavigationItem = (item: NavigationItem, role: UserRole, isAuthenticated: boolean) => {
+const canAccessNavigationItem = (item: NavigationItem, role: UserRole | null, isAuthenticated: boolean) => {
   return canAccessLevel(item.access, role, isAuthenticated);
 };
 
@@ -135,12 +139,13 @@ export default function HomeClient() {
   const [currentView, setCurrentView] = useState<ViewKey>("search");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, role } = useAuthStore();
+  const currentRole = role ? normalizeUserRole(role) : null;
 
-  const canAccessAdmin = isAuthenticated && role === "admin";
-  const accessibleNavigationItems = navigationItems.filter((item) => canAccessNavigationItem(item, role, isAuthenticated));
+  const canAccessAdmin = isAuthenticated && !!currentRole && rolePermissions[currentRole].canAccessAdminDashboard;
+  const accessibleNavigationItems = navigationItems.filter((item) => canAccessNavigationItem(item, currentRole, isAuthenticated));
   const canAccessCurrentView = currentView === "signin"
     ? !isAuthenticated
-    : navigationItems.some((item) => item.view === currentView && canAccessNavigationItem(item, role, isAuthenticated));
+    : navigationItems.some((item) => item.view === currentView && canAccessNavigationItem(item, currentRole, isAuthenticated));
   const activeView: ViewKey = canAccessCurrentView ? currentView : "search";
 
   return (
@@ -264,27 +269,52 @@ export default function HomeClient() {
                 <Typography variant="caption" color="text.secondary" sx={{ minWidth: 40 }}>
                   Role:
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
-                  <Button
-                    variant={role === 'staff' ? 'contained' : 'outlined'}
-                    size="small"
-                    onClick={() => useAuthStore.getState().setRole('staff')}
-                    fullWidth
-                    sx={{ fontSize: '0.75rem', py: 0.5 }}
-                  >
-                    Staff
-                  </Button>
-                  <Button
-                    variant={role === 'admin' ? 'contained' : 'outlined'}
-                    size="small"
-                    color="secondary"
-                    onClick={() => useAuthStore.getState().setRole('admin')}
-                    fullWidth
-                    sx={{ fontSize: '0.75rem', py: 0.5 }}
-                  >
-                    Admin
-                  </Button>
-                </Box>
+                {currentRole && (
+                  <Typography variant="caption" sx={{ flex: 1, fontWeight: 700 }}>
+                    {roleLabels[currentRole]}
+                  </Typography>
+                )}
+              </Box>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  variant={currentRole === UserRole.CHECKIN_AGENT ? 'contained' : 'outlined'}
+                  size="small"
+                  onClick={() => useAuthStore.getState().setRole(UserRole.CHECKIN_AGENT)}
+                  fullWidth
+                  sx={{ fontSize: '0.75rem', py: 0.5 }}
+                >
+                  Check-In
+                </Button>
+                <Button
+                  variant={currentRole === UserRole.CABIN_CREW ? 'contained' : 'outlined'}
+                  size="small"
+                  onClick={() => useAuthStore.getState().setRole(UserRole.CABIN_CREW)}
+                  fullWidth
+                  sx={{ fontSize: '0.75rem', py: 0.5 }}
+                >
+                  Cabin
+                </Button>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                <Button
+                  variant={currentRole === UserRole.OPERATIONS ? 'contained' : 'outlined'}
+                  size="small"
+                  onClick={() => useAuthStore.getState().setRole(UserRole.OPERATIONS)}
+                  fullWidth
+                  sx={{ fontSize: '0.75rem', py: 0.5 }}
+                >
+                  Ops
+                </Button>
+                <Button
+                  variant={currentRole === UserRole.ADMIN ? 'contained' : 'outlined'}
+                  size="small"
+                  color="secondary"
+                  onClick={() => useAuthStore.getState().setRole(UserRole.ADMIN)}
+                  fullWidth
+                  sx={{ fontSize: '0.75rem', py: 0.5 }}
+                >
+                  Admin
+                </Button>
               </Box>
             </Box>
           ) : (
