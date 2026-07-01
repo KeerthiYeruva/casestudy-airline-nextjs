@@ -3,7 +3,6 @@
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Dialog,
   DialogTitle,
@@ -19,30 +18,15 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { SHOP_CATEGORIES } from "@/constants/appConstants";
-
-interface ShopItemFormData {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  currency: string;
-}
+import { ShopItemDialogSchema, type ShopItemDialogFormData } from "@/lib/validationSchemas";
 
 interface ShopItemDialogProps {
   open: boolean;
   onClose: () => void;
   editMode: boolean;
-  shopItemForm: ShopItemFormData;
-  onSave: (form: ShopItemFormData) => void;
+  shopItemForm: ShopItemDialogFormData;
+  onSave: (form: ShopItemDialogFormData) => void;
 }
-
-const shopItemDialogSchema = z.object({
-  id: z.string(),
-  name: z.string().trim().min(1, "Item name is required"),
-  category: z.string().min(1, "Category is required"),
-  price: z.number().positive("Item price must be greater than 0"),
-  currency: z.string().trim().min(1, "Currency is required"),
-});
 
 const ShopItemDialog: React.FC<ShopItemDialogProps> = ({
   open,
@@ -57,8 +41,8 @@ const ShopItemDialog: React.FC<ShopItemDialogProps> = ({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ShopItemFormData, unknown, ShopItemFormData>({
-    resolver: zodResolver(shopItemDialogSchema),
+  } = useForm<ShopItemDialogFormData, unknown, ShopItemDialogFormData>({
+    resolver: zodResolver(ShopItemDialogSchema),
     defaultValues: shopItemForm,
     mode: "onBlur",
   });

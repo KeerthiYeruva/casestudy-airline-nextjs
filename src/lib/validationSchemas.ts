@@ -1,5 +1,6 @@
 // Validation schemas using Zod for type-safe API validation
 import { z } from 'zod';
+import type { FamilySeating, GroupSeating, SeatPreferences } from '@/types/seat';
 
 /**
  * Validation schema for Passport information
@@ -25,6 +26,102 @@ export const ShopRequestSchema = z.object({
   price: z.number().positive('Price must be positive'),
   currency: z.string().length(3, 'Currency must be 3 characters (e.g., USD)'),
 });
+
+/**
+ * Validation schema for the Admin Passenger dialog form.
+ * This is stricter than partial passenger updates because the dialog requires
+ * operational fields before allowing seat selection and save.
+ */
+export const PassengerDialogSchema = z.object({
+  id: z.string(),
+  name: z.string().trim().min(1, 'Passenger name is required'),
+  seat: z.string().trim().min(1, 'Seat number is required'),
+  flightId: z.string().min(1, 'Flight selection is required'),
+  passport: z.object({
+    number: z.string().trim().min(1, 'Passport number is required'),
+    expiryDate: z.string(),
+    country: z.string(),
+  }),
+  address: z.string().trim().min(1, 'Address is required'),
+  dateOfBirth: z.string()
+    .min(1, 'Date of birth is required')
+    .refine((value) => {
+      const selectedDate = new Date(`${value}T00:00:00`);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return selectedDate <= today;
+    }, 'Date of birth cannot be in the future'),
+  ancillaryServices: z.array(z.string()),
+  specialMeal: z.string(),
+  wheelchair: z.boolean(),
+  infant: z.boolean(),
+  checkedIn: z.boolean(),
+  bookingReference: z.string()
+    .regex(/^[A-Z]{3}[0-9]{3,7}$/, 'Invalid booking reference format (e.g., ABC123)')
+    .or(z.literal('')),
+  shopRequests: z.array(ShopRequestSchema),
+  seatPreferences: z.custom<SeatPreferences>().optional(),
+  groupSeating: z.custom<GroupSeating>().optional(),
+  familySeating: z.custom<FamilySeating>().optional(),
+  premiumUpgrade: z.boolean().optional(),
+});
+
+export type PassengerDialogFormData = z.infer<typeof PassengerDialogSchema>;
+
+/**
+ * Validation schema for the Admin Shop Item dialog form.
+ */
+export const ShopItemDialogSchema = z.object({
+  id: z.string(),
+  name: z.string().trim().min(1, 'Item name is required'),
+  category: z.string().min(1, 'Category is required'),
+  price: z.number().positive('Item price must be greater than 0'),
+  currency: z.string().trim().min(1, 'Currency is required'),
+});
+
+export type ShopItemDialogFormData = z.infer<typeof ShopItemDialogSchema>;
+
+/**
+ * Validation schema for the Seat Preferences dialog form.
+ */
+export const SeatPreferencesDialogSchema = z.object({
+  position: z.array(z.enum(['window', 'aisle', 'middle', 'front', 'back', 'exitRow'])),
+  type: z.enum(['standard', 'premium', 'exit', 'bulkhead']),
+  nearFamily: z.boolean(),
+});
+
+export type SeatPreferencesDialogFormData = z.infer<typeof SeatPreferencesDialogSchema>;
+
+/**
+ * Validation schema for the Group Seating dialog form.
+ */
+export const GroupSeatingDialogSchema = z.object({
+  groupName: z.string(),
+  keepTogether: z.boolean(),
+});
+
+export type GroupSeatingDialogFormData = z.infer<typeof GroupSeatingDialogSchema>;
+
+/**
+ * Validation schema for the Family Seating dialog form.
+ */
+export const FamilySeatingDialogSchema = z.object({
+  adults: z.number().int().min(1).max(10),
+  children: z.number().int().min(0).max(10),
+  infants: z.number().int().min(0).max(5),
+  selectedPassengers: z.array(z.string()),
+});
+
+export type FamilySeatingDialogFormData = z.infer<typeof FamilySeatingDialogSchema>;
+
+/**
+ * Validation schema for the Premium Seat Upsell dialog form.
+ */
+export const PremiumSeatUpsellDialogSchema = z.object({
+  selectedSeat: z.string().nullable(),
+});
+
+export type PremiumSeatUpsellDialogFormData = z.infer<typeof PremiumSeatUpsellDialogSchema>;
 
 /**
  * Validation schema for creating a new Passenger

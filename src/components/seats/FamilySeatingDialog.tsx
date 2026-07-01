@@ -5,7 +5,9 @@
  * Automatically allocates seats for families with children and infants
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogTitle,
@@ -25,6 +27,7 @@ import { FamilyRestroom as FamilyIcon } from '@mui/icons-material';
 import type { Passenger } from '@/types/passenger';
 import type { FamilySeating } from '@/types/seat';
 import useToastStore from '@/stores/useToastStore';
+import { FamilySeatingDialogSchema, type FamilySeatingDialogFormData } from '@/lib/validationSchemas';
 
 interface FamilySeatingDialogProps {
   open: boolean;
@@ -41,7 +44,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
   passengers,
   flightId
 }) => {
-  const { adults: defaultAdults, children: defaultChildren, infants: defaultInfants, selectedPassengers: defaultSelectedPassengers } = (() => {
+  const defaultFormValues = useMemo(() => {
     const infantPassengers = passengers.filter(
       p => p.infant && p.flightId === flightId && !p.familySeating
     );
@@ -62,12 +65,24 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
         ...nonInfantPassengers.slice(0, detectedAdults + detectedChildren).map(p => p.id)
       ]
     };
-  })();
+  }, [flightId, passengers]);
 
-  const [adults, setAdults] = useState<number>(defaultAdults);
-  const [children, setChildren] = useState<number>(defaultChildren);
-  const [infants, setInfants] = useState<number>(defaultInfants);
-  const [selectedPassengers, setSelectedPassengers] = useState<string[]>(defaultSelectedPassengers);
+  const { control, handleSubmit, reset, setValue } = useForm<FamilySeatingDialogFormData>({
+    resolver: zodResolver(FamilySeatingDialogSchema),
+    defaultValues: defaultFormValues,
+  });
+
+  useEffect(() => {
+    if (open) {
+      reset(defaultFormValues);
+    }
+  }, [defaultFormValues, open, reset]);
+
+  const watchedForm = useWatch({ control });
+  const adults = watchedForm.adults ?? defaultFormValues.adults;
+  const children = watchedForm.children ?? defaultFormValues.children;
+  const infants = watchedForm.infants ?? defaultFormValues.infants;
+  const selectedPassengers = watchedForm.selectedPassengers ?? defaultFormValues.selectedPassengers;
   const { showToast } = useToastStore();
 
   const totalMembers = adults + children + infants;
@@ -85,7 +100,24 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
   
   const compositionValid = selectedInfants === infants && selectedNonInfants === expectedNonInfants;
 
-  const handleAllocate = () => {
+  const handleTogglePassenger = (passengerId: string) => {
+    const updatedPassengers = selectedPassengers.includes(passengerId)
+      ? selectedPassengers.filter(id => id !== passengerId)
+      : [...selectedPassengers, passengerId];
+
+    setValue('selectedPassengers', updatedPassengers, { shouldDirty: true, shouldValidate: true });
+  };
+
+  const handleClose = () => {
+    reset(defaultFormValues);
+    onClose();
+  };
+
+  const handleAllocate = (formData: FamilySeatingDialogFormData) => {
+    const { adults, children, infants, selectedPassengers } = formData;
+    const totalMembers = adults + children + infants;
+    const seatsNeeded = adults + children;
+
     if (totalMembers < 2) {
       return;
     }
@@ -169,7 +201,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
       return;
     }
 
-    const familyId = `family_${Date.now()}`;
+    const familyId = `family_${selectedPassengers.join('_')}`;
 
     const familySeating: FamilySeating = {
       familyId,
@@ -204,11 +236,11 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
     });
     
     onAllocate(familySeating, selectedPassengers, orderedSeats);
-    onClose();
+    handleClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <FamilyIcon />
@@ -228,36 +260,54 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
             </Typography>
             <Grid container spacing={2} sx={{ mt: 1 }}>
               <Grid size={{ xs: 4 }}>
-                <TextField
-                  label="Adults"
-                  type="number"
-                  value={adults}
-                  onChange={(e) => setAdults(Math.max(1, parseInt(e.target.value) || 1))}
-                  slotProps={{ htmlInput: { min: 1, max: 10 } }}
-                  fullWidth
-                  size="small"
+                <Controller
+                  name="adults"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      label="Adults"
+                      type="number"
+                      value={field.value}
+                      onChange={(event) => field.onChange(Math.max(1, parseInt(event.target.value) || 1))}
+                      slotProps={{ htmlInput: { min: 1, max: 10 } }}
+                      fullWidth
+                      size="small"
+                    />
+                  )}
                 />
               </Grid>
               <Grid size={{ xs: 4 }}>
-                <TextField
-                  label="Children"
-                  type="number"
-                  value={children}
-                  onChange={(e) => setChildren(Math.max(0, parseInt(e.target.value) || 0))}
-                  slotProps={{ htmlInput: { min: 0, max: 10 } }}
-                  fullWidth
-                  size="small"
+                <Controller
+                  name="children"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      label="Children"
+                      type="number"
+                      value={field.value}
+                      onChange={(event) => field.onChange(Math.max(0, parseInt(event.target.value) || 0))}
+                      slotProps={{ htmlInput: { min: 0, max: 10 } }}
+                      fullWidth
+                      size="small"
+                    />
+                  )}
                 />
               </Grid>
               <Grid size={{ xs: 4 }}>
-                <TextField
-                  label="Infants"
-                  type="number"
-                  value={infants}
-                  onChange={(e) => setInfants(Math.max(0, parseInt(e.target.value) || 0))}
-                  slotProps={{ htmlInput: { min: 0, max: 5 } }}
-                  fullWidth
-                  size="small"
+                <Controller
+                  name="infants"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      label="Infants"
+                      type="number"
+                      value={field.value}
+                      onChange={(event) => field.onChange(Math.max(0, parseInt(event.target.value) || 0))}
+                      slotProps={{ htmlInput: { min: 0, max: 5 } }}
+                      fullWidth
+                      size="small"
+                    />
+                  )}
                 />
               </Grid>
             </Grid>
@@ -304,13 +354,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                           bgcolor: 'secondary.50',
                         }
                       }}
-                      onClick={() => {
-                        setSelectedPassengers(prev => 
-                          prev.includes(passenger.id)
-                            ? prev.filter(id => id !== passenger.id)
-                            : [...prev, passenger.id]
-                        );
-                      }}
+                      onClick={() => handleTogglePassenger(passenger.id)}
                     >
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Checkbox
@@ -406,9 +450,9 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button
-          onClick={handleAllocate}
+          onClick={handleSubmit(handleAllocate)}
           variant="contained"
           color="primary"
           disabled={

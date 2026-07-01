@@ -5,7 +5,9 @@
  * Allows staff to allocate seats for groups of passengers
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogTitle,
@@ -27,6 +29,7 @@ import {
 import { Group as GroupIcon } from '@mui/icons-material';
 import type { Passenger } from '@/types/passenger';
 import type { GroupSeating } from '@/types/seat';
+import { GroupSeatingDialogSchema, type GroupSeatingDialogFormData } from '@/lib/validationSchemas';
 
 interface GroupSeatingDialogProps {
   open: boolean;
@@ -44,8 +47,25 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
   flightId
 }) => {
   const [selectedPassengers, setSelectedPassengers] = useState<string[]>([]);
-  const [keepTogether, setKeepTogether] = useState(true);
-  const [groupName, setGroupName] = useState('');
+  const { control, handleSubmit, register, reset } = useForm<GroupSeatingDialogFormData>({
+    resolver: zodResolver(GroupSeatingDialogSchema),
+    defaultValues: {
+      groupName: '',
+      keepTogether: true,
+    },
+  });
+
+  useEffect(() => {
+    if (open) {
+      reset({ groupName: '', keepTogether: true });
+    }
+  }, [open, reset]);
+
+  const handleClose = () => {
+    reset({ groupName: '', keepTogether: true });
+    setSelectedPassengers([]);
+    onClose();
+  };
 
   const availablePassengers = passengers.filter(
     p => !p.groupSeating && p.flightId === flightId && !p.checkedIn
@@ -59,27 +79,28 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
     );
   };
 
-  const handleAllocate = () => {
+  const handleAllocate = (formData: GroupSeatingDialogFormData) => {
     if (selectedPassengers.length < 2) {
       return;
     }
 
-    const groupId = `group_${Date.now()}`;
+    const normalizedGroupName = formData.groupName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    const groupId = normalizedGroupName || `group_${selectedPassengers.join('_')}`;
     const leadPassengerId = selectedPassengers[0];
 
     const groupSeating: GroupSeating = {
       groupId,
       size: selectedPassengers.length,
-      keepTogether,
+      keepTogether: formData.keepTogether,
       leadPassengerId
     };
 
     onAllocate(groupSeating, selectedPassengers);
-    onClose();
+    handleClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <GroupIcon />
@@ -90,27 +111,32 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
           <TextField
             label="Group Name (Optional)"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
             placeholder="e.g., Corporate Group, Tour Group"
             fullWidth
+            {...register('groupName')}
           />
 
-          <FormControlLabel
-            control={
-              <Switch
-                checked={keepTogether}
-                onChange={(e) => setKeepTogether(e.target.checked)}
+          <Controller
+            name="keepTogether"
+            control={control}
+            render={({ field }) => (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={field.value}
+                    onChange={(event) => field.onChange(event.target.checked)}
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography variant="body1">Keep group together</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Attempt to allocate all seats in the same row or adjacent rows
+                    </Typography>
+                  </Box>
+                }
               />
-            }
-            label={
-              <Box>
-                <Typography variant="body1">Keep group together</Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Attempt to allocate all seats in the same row or adjacent rows
-                </Typography>
-              </Box>
-            }
+            )}
           />
 
           <Box>
@@ -184,9 +210,9 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button
-          onClick={handleAllocate}
+          onClick={handleSubmit(handleAllocate)}
           variant="contained"
           color="primary"
           disabled={selectedPassengers.length < 2}

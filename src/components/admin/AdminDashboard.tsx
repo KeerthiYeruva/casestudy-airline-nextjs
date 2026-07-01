@@ -13,6 +13,7 @@ import SeatManagementTab from "@/components/admin/tabs/SeatManagementTab";
 import AdminMetrics from "@/components/admin/AdminMetrics";
 import ShopItemDialog from "@/components/admin/ShopItemDialog";
 import PageHeader from "@/components/ui/PageHeader";
+import type { ShopItemDialogFormData } from "@/lib/validationSchemas";
 import type { ShopItem } from "@/types/services";
 import {
   Container,
@@ -23,14 +24,6 @@ import {
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
-
-interface ShopItemFormData {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  currency: string;
-}
 
 interface ConfirmDialogState {
   open: boolean;
@@ -97,7 +90,7 @@ const AdminDashboard: React.FC = () => {
   const [editingService, setEditingService] = useState("");
   const [mealForm, setMealForm] = useState("");
   const [editingMeal, setEditingMeal] = useState("");
-  const [shopItemForm, setShopItemForm] = useState<ShopItemFormData>({
+  const [shopItemForm, setShopItemForm] = useState<ShopItemDialogFormData>({
     id: "",
     name: "",
     category: "Perfumes & Cosmetics",
@@ -211,7 +204,7 @@ const AdminDashboard: React.FC = () => {
     setShopItemDialog(true);
   };
 
-  const handleSaveShopItem = (formData: ShopItemFormData) => {
+  const handleSaveShopItem = (formData: ShopItemDialogFormData) => {
     if (editMode) {
       const updated = shopItems.map((item) =>
         item.id === formData.id ? formData : item
