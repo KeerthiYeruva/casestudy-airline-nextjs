@@ -127,6 +127,7 @@ const LocaleSelector: React.FC = () => {
         variant="outlined"
         size="small"
         color="inherit"
+        aria-label={`Change language, current language ${currentLanguage.name}`}
         sx={{ 
           minWidth: 'auto',
           px: 1,
@@ -163,6 +164,9 @@ const LocaleSelector: React.FC = () => {
         startIcon={<CurrencyIcon />}
         variant="outlined"
         size="small"
+        color="inherit"
+        aria-label={`Regional settings, current currency ${currency}`}
+        sx={{ fontSize: '0.75rem', px: 1 }}
       >
         {currency}
       </Button>

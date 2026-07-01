@@ -21,6 +21,7 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  ListSubheader,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -50,6 +51,13 @@ interface NavigationItem {
   icon: ReactNode;
   access: AccessLevel;
 }
+
+interface NavigationSection {
+  title: string;
+  views: NavigationItem["view"][];
+}
+
+const staffDrawerWidth = 280;
 
 const navigationItems: NavigationItem[] = [
   {
@@ -124,6 +132,86 @@ const canAccessNavigationItem = (item: NavigationItem, role: UserRole | null, is
   return canAccessLevel(item.access, role, isAuthenticated);
 };
 
+const publicNavigationViews: NavigationItem["view"][] = ["search", "status"];
+const customerNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
+const checkInNavigationViews: NavigationItem["view"][] = ["checkin", "status"];
+const cabinNavigationViews: NavigationItem["view"][] = ["inflight", "status"];
+const operationsNavigationViews: NavigationItem["view"][] = ["checkin", "inflight", "status"];
+const adminNavigationViews: NavigationItem["view"][] = ["admin", "checkin", "inflight", "status"];
+
+const checkInNavigationSections: NavigationSection[] = [
+  { title: "Operations", views: ["checkin", "status"] },
+];
+
+const cabinNavigationSections: NavigationSection[] = [
+  { title: "Cabin", views: ["inflight", "status"] },
+];
+
+const operationsNavigationSections: NavigationSection[] = [
+  { title: "Operations", views: ["checkin", "inflight", "status"] },
+];
+
+const adminNavigationSections: NavigationSection[] = [
+  { title: "Dashboard", views: ["admin"] },
+  { title: "Operations", views: ["checkin", "inflight", "status"] },
+];
+
+const getNavigationViewsForRole = (role: UserRole | null, isAuthenticated: boolean) => {
+  if (!isAuthenticated) return publicNavigationViews;
+  if (!role) return publicNavigationViews;
+
+  switch (role) {
+    case UserRole.PASSENGER:
+      return customerNavigationViews;
+    case UserRole.CHECKIN_AGENT:
+      return checkInNavigationViews;
+    case UserRole.CABIN_CREW:
+      return cabinNavigationViews;
+    case UserRole.OPERATIONS:
+      return operationsNavigationViews;
+    case UserRole.ADMIN:
+    case UserRole.SUPER_ADMIN:
+      return adminNavigationViews;
+    default:
+      return publicNavigationViews;
+  }
+};
+
+const getNavigationItemsForContext = (role: UserRole | null, isAuthenticated: boolean) => {
+  return getNavigationViewsForRole(role, isAuthenticated)
+    .map((view) => navigationItems.find((item) => item.view === view))
+    .filter((item): item is NavigationItem => !!item && canAccessNavigationItem(item, role, isAuthenticated));
+};
+
+const getNavigationSectionsForContext = (role: UserRole | null, isAuthenticated: boolean) => {
+  if (!isAuthenticated || !role || role === UserRole.PASSENGER) return [];
+
+  const sections = (() => {
+    switch (role) {
+      case UserRole.CHECKIN_AGENT:
+        return checkInNavigationSections;
+      case UserRole.CABIN_CREW:
+        return cabinNavigationSections;
+      case UserRole.OPERATIONS:
+        return operationsNavigationSections;
+      case UserRole.ADMIN:
+      case UserRole.SUPER_ADMIN:
+        return adminNavigationSections;
+      default:
+        return [];
+    }
+  })();
+
+  return sections
+    .map((section) => ({
+      ...section,
+      items: section.views
+        .map((view) => navigationItems.find((item) => item.view === view))
+        .filter((item): item is NavigationItem => !!item && canAccessNavigationItem(item, role, isAuthenticated)),
+    }))
+    .filter((section) => section.items.length > 0);
+};
+
 const LoadingFallback = () => (
   <Box className="loading-container" role="status" aria-live="polite">
     <CircularProgress aria-label="Loading content" />
@@ -149,11 +237,14 @@ export default function HomeClient() {
   const currentRole = normalizeUserRole(role);
 
   const canAccessAdmin = isAuthenticated && !!currentRole && rolePermissions[currentRole].canAccessAdminDashboard;
-  const accessibleNavigationItems = navigationItems.filter((item) => canAccessNavigationItem(item, currentRole, isAuthenticated));
+  const accessibleNavigationItems = getNavigationItemsForContext(currentRole, isAuthenticated);
+  const isStaffExperience = isAuthenticated && !!currentRole && currentRole !== UserRole.PASSENGER;
+  const staffNavigationSections = getNavigationSectionsForContext(currentRole, isAuthenticated);
   const canAccessCurrentView = currentView === "signin"
     ? !isAuthenticated
-    : navigationItems.some((item) => item.view === currentView && canAccessNavigationItem(item, currentRole, isAuthenticated));
-  const activeView: ViewKey = canAccessCurrentView ? currentView : "search";
+    : accessibleNavigationItems.some((item) => item.view === currentView);
+  const fallbackView = accessibleNavigationItems[0]?.view || "search";
+  const activeView: ViewKey = canAccessCurrentView ? currentView : fallbackView;
 
   return (
     <ErrorBoundary>
@@ -184,32 +275,34 @@ export default function HomeClient() {
                   mr: { xs: 0, md: 2 }
                 }}
               >
-                Airline Management
+                {isStaffExperience ? "Airline Operations" : "Airline Management"}
               </Typography>
             </Box>
             
             {/* Desktop Navigation - Hidden on Mobile */}
-            <Box sx={{ 
-              display: { xs: 'none', md: 'flex' }, 
-              gap: 1.5, 
-              alignItems: "center"
-            }}>
-              {accessibleNavigationItems.map((item) => (
-                <Button
-                  key={item.view}
-                  color="inherit"
-                  startIcon={item.icon}
-                  onClick={() => setCurrentView(item.view)}
-                  variant={activeView === item.view ? "outlined" : "text"}
-                  aria-label={`Navigate to ${item.mobileLabel}`}
-                  aria-current={activeView === item.view ? "page" : undefined}
-                  size="small"
-                  sx={{ fontSize: '0.875rem', px: 2 }}
-                >
-                  {item.label}
-                </Button>
-              ))}
-            </Box>
+            {!isStaffExperience && (
+              <Box sx={{ 
+                display: { xs: 'none', md: 'flex' }, 
+                gap: 1.5, 
+                alignItems: "center"
+              }}>
+                {accessibleNavigationItems.map((item) => (
+                  <Button
+                    key={item.view}
+                    color="inherit"
+                    startIcon={item.icon}
+                    onClick={() => setCurrentView(item.view)}
+                    variant={activeView === item.view ? "outlined" : "text"}
+                    aria-label={`Navigate to ${item.mobileLabel}`}
+                    aria-current={activeView === item.view ? "page" : undefined}
+                    size="small"
+                    sx={{ fontSize: '0.875rem', px: 2 }}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+              </Box>
+            )}
             
             {/* Locale Selector - Always visible */}
             <Box sx={{ display: 'flex', mr: 1 }}>
@@ -353,6 +446,8 @@ export default function HomeClient() {
                 <ListItem disablePadding>
                   <ListItemButton 
                     selected={activeView === item.view}
+                    aria-label={`Navigate to ${item.mobileLabel}`}
+                    aria-current={activeView === item.view ? "page" : undefined}
                     onClick={() => {
                       setCurrentView(item.view);
                       setMobileMenuOpen(false);
@@ -382,22 +477,97 @@ export default function HomeClient() {
           </List>
         </Drawer>
 
-        <Box component="main" id="main-content" sx={{ mt: 3, mb: 3 }} role="main">
-          {isAuthenticated && !canAccessAdmin && currentView === "admin" && (
-            <Alert severity="error" sx={{ m: 2 }}>
-              Access Denied: Admin privileges required. Please switch to Admin role.
-            </Alert>
+        <Box sx={{ display: 'flex', minHeight: isStaffExperience ? { md: 'calc(100vh - 64px)' } : undefined }}>
+          {isStaffExperience && (
+            <Box component="nav" aria-label="Operations navigation" sx={{ display: { xs: 'none', md: 'block' } }}>
+              <Drawer
+                variant="permanent"
+                sx={{
+                  width: staffDrawerWidth,
+                  flexShrink: 0,
+                  '& .MuiDrawer-paper': {
+                    width: staffDrawerWidth,
+                    boxSizing: 'border-box',
+                    position: 'relative',
+                    height: '100%',
+                    borderRight: '1px solid',
+                    borderColor: 'divider',
+                  },
+                }}
+              >
+                <Box sx={{ px: 2.5, py: 2 }}>
+                  <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0 }}>
+                    Airline Operations
+                  </Typography>
+                  {currentRole && (
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
+                      {roleLabels[currentRole]}
+                    </Typography>
+                  )}
+                </Box>
+                <Divider />
+                {staffNavigationSections.map((section) => (
+                  <List
+                    key={section.title}
+                    subheader={
+                      <ListSubheader component="div" sx={{ bgcolor: 'background.paper', fontWeight: 700 }}>
+                        {section.title}
+                      </ListSubheader>
+                    }
+                  >
+                    {section.items.map((item) => (
+                      <ListItem key={item.view} disablePadding sx={{ px: 1 }}>
+                        <ListItemButton
+                          selected={activeView === item.view}
+                          aria-label={`Navigate to ${item.mobileLabel}`}
+                          aria-current={activeView === item.view ? "page" : undefined}
+                          onClick={() => setCurrentView(item.view)}
+                          sx={{ borderRadius: 1 }}
+                        >
+                          <ListItemIcon>
+                            <Box sx={{ color: activeView === item.view ? 'primary.main' : 'inherit', display: 'flex' }}>
+                              {item.icon}
+                            </Box>
+                          </ListItemIcon>
+                          <ListItemText primary={item.mobileLabel} secondary={item.description} />
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                ))}
+              </Drawer>
+            </Box>
           )}
-          
-          <Suspense fallback={<LoadingFallback />}>
-            {activeView === "search" && <FlightSearch />}
-            {activeView === "trips" && <PassengerPortal />}
-            {activeView === "status" && <FlightStatusDashboard />}
-            {activeView === "signin" && <Auth />}
-            {activeView === "checkin" && <StaffCheckIn />}
-            {activeView === "inflight" && <InFlight />}
-            {activeView === "admin" && canAccessAdmin && <AdminDashboard />}
-          </Suspense>
+
+          <Box
+            component="main"
+            id="main-content"
+            sx={{
+              flexGrow: 1,
+              minWidth: 0,
+              mt: isStaffExperience ? { xs: 3, md: 0 } : 3,
+              mb: 3,
+              p: isStaffExperience ? { xs: 0, md: 3 } : 0,
+              bgcolor: isStaffExperience ? { md: 'grey.50' } : 'transparent',
+            }}
+            role="main"
+          >
+            {isAuthenticated && !canAccessAdmin && currentView === "admin" && (
+              <Alert severity="error" sx={{ m: 2 }}>
+                Access Denied: Admin privileges required. Please switch to Admin role.
+              </Alert>
+            )}
+            
+            <Suspense fallback={<LoadingFallback />}>
+              {activeView === "search" && <FlightSearch />}
+              {activeView === "trips" && <PassengerPortal />}
+              {activeView === "status" && <FlightStatusDashboard />}
+              {activeView === "signin" && <Auth />}
+              {activeView === "checkin" && <StaffCheckIn />}
+              {activeView === "inflight" && <InFlight />}
+              {activeView === "admin" && canAccessAdmin && <AdminDashboard />}
+            </Suspense>
+          </Box>
         </Box>
       </Box>
     </ErrorBoundary>

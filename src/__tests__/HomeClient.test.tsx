@@ -33,22 +33,52 @@ jest.mock('@/components/admin/AdminDashboard', () => function MockAdminDashboard
 const mockedUseAuthStore = useAuthStore as unknown as jest.Mock & { getState: jest.Mock };
 
 describe('HomeClient navigation', () => {
-  beforeEach(() => {
+  const setAuthRole = (role: UserRole) => {
     const authState = {
-      user: { displayName: 'Admin User', email: 'admin@example.com' },
+      user: { displayName: 'Test User', email: 'test@example.com' },
       isAuthenticated: true,
-      role: UserRole.ADMIN,
+      role,
       setRole: jest.fn(),
     };
 
     mockedUseAuthStore.mockReturnValue(authState);
     mockedUseAuthStore.getState = jest.fn(() => authState);
+  };
+
+  beforeEach(() => {
+    setAuthRole(UserRole.ADMIN);
   });
 
   it('hides My Trips for authenticated admin users', async () => {
     render(<HomeClient />);
 
     expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to flight search/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to admin dashboard/i })).toBeInTheDocument();
+    expect(await screen.findByText('Admin Dashboard View')).toBeInTheDocument();
+  });
+
+  it('shows check-in navigation without customer trips for check-in agents', async () => {
+    setAuthRole(UserRole.CHECKIN_AGENT);
+
+    render(<HomeClient />);
+
+    expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to flight search/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to check-in/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to flight status/i })).toBeInTheDocument();
+    expect(await screen.findByText('Staff Check-In View')).toBeInTheDocument();
+  });
+
+  it('shows in-flight navigation without customer trips for cabin crew', async () => {
+    setAuthRole(UserRole.CABIN_CREW);
+
+    render(<HomeClient />);
+
+    expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to flight search/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to in-flight services/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to flight status/i })).toBeInTheDocument();
+    expect(await screen.findByText('In-Flight View')).toBeInTheDocument();
   });
 });

@@ -5,12 +5,14 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
+  FormControlLabel,
   Grid,
   MenuItem,
   Paper,
@@ -20,6 +22,7 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
+import { DEFAULT_ANCILLARY_SERVICES } from "@/constants/appConstants";
 import type { Flight } from "@/types/flight";
 import type { Passenger } from "@/types/passenger";
 
@@ -65,6 +68,18 @@ const defaultPaymentForm: PaymentForm = {
 
 const seatLetters = ["A", "B", "C", "D", "E", "F"];
 const mealOptions = ["Regular", "Vegetarian", "Vegan", "Gluten-Free", "Kosher", "Halal"];
+const addOnPrices: Record<string, number> = {
+  "Priority Boarding": 29,
+  "Extra Baggage": 65,
+  "Wheelchair Assistance": 0,
+  "Infant Care Kit": 24,
+  "Wi-Fi Access": 14,
+  "Extra Legroom": 49,
+  "Lounge Access": 89,
+  "Fast Track Security": 39,
+  "Pet Care": 95,
+  "Sports Equipment": 75,
+};
 
 const getOccupiedSeats = (flight: Flight, passengers: Passenger[]) => {
   return new Set(passengers.filter((passenger) => passenger.flightId === flight.id).map((passenger) => passenger.seat));
@@ -215,21 +230,27 @@ export default function BookingDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmation, setConfirmation] = useState<Passenger | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const [selectedSeat, setSelectedSeat] = useState<string | null>(() => {
+    if (flight) {
+      const occupied = getOccupiedSeats(flight, passengers);
+      return getFirstAvailableSeat(flight, occupied);
+    }
+    return null;
+  });
   const [paymentForm, setPaymentForm] = useState<PaymentForm>(defaultPaymentForm);
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
 
   const occupiedSeats = useMemo(() => (flight ? getOccupiedSeats(flight, passengers) : new Set<string>()), [flight, passengers]);
   const suggestedSeat = useMemo(() => (flight ? getFirstAvailableSeat(flight, occupiedSeats) : null), [flight, occupiedSeats]);
-  const totalPrice = getCabinPrice(cabinClass) * passengerCount;
+  const includedCabinServices = cabinClass === "Business" || cabinClass === "First" ? ["Priority Boarding"] : [];
+  const paidAddOns = selectedAddOns.filter((service) => !includedCabinServices.includes(service));
+  const addOnsTotal = paidAddOns.reduce((sum, service) => sum + (addOnPrices[service] ?? 0), 0) * passengerCount;
+  const totalPrice = getCabinPrice(cabinClass) * passengerCount + addOnsTotal;
   const isPaymentComplete =
     paymentForm.cardholderName.trim().length > 0 &&
     paymentForm.cardNumber.replace(/\s/g, "").length === 16 &&
     /^\d{2}\/\d{2}$/.test(paymentForm.expiryDate) &&
     paymentForm.securityCode.length >= 3;
-
-  useEffect(() => {
-    setSelectedSeat(suggestedSeat);
-  }, [suggestedSeat]);
 
   const resetAndClose = () => {
     setForm(defaultForm);
@@ -238,6 +259,7 @@ export default function BookingDialog({
     setIsSubmitting(false);
     setSelectedSeat(null);
     setPaymentForm(defaultPaymentForm);
+    setSelectedAddOns([]);
     onClose();
   };
 
@@ -247,6 +269,14 @@ export default function BookingDialog({
 
   const updatePaymentForm = <Key extends keyof PaymentForm>(key: Key, value: PaymentForm[Key]) => {
     setPaymentForm((currentForm) => ({ ...currentForm, [key]: value }));
+  };
+
+  const toggleAddOn = (service: string) => {
+    setSelectedAddOns((currentServices) =>
+      currentServices.includes(service)
+        ? currentServices.filter((currentService) => currentService !== service)
+        : [...currentServices, service]
+    );
   };
 
   const handleCreateBooking = async () => {
@@ -277,7 +307,7 @@ export default function BookingDialog({
       passport: { number: "", expiryDate: "", country: "" },
       address: form.address.trim(),
       dateOfBirth: form.dateOfBirth,
-      ancillaryServices: cabinClass === "Business" || cabinClass === "First" ? ["Priority Boarding"] : [],
+      ancillaryServices: Array.from(new Set([...includedCabinServices, ...selectedAddOns])),
       specialMeal: form.specialMeal,
       wheelchair: false,
       infant: false,
@@ -325,6 +355,16 @@ export default function BookingDialog({
                   <Typography variant="caption" color="text.secondary">Paid</Typography>
                   <Typography variant="h6" sx={{ fontWeight: 800 }}>${totalPrice.toLocaleString()}</Typography>
                 </Grid>
+                {confirmation.ancillaryServices.length > 0 && (
+                  <Grid size={{ xs: 12 }}>
+                    <Typography variant="caption" color="text.secondary">Add-ons</Typography>
+                    <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1, mt: 0.5 }}>
+                      {confirmation.ancillaryServices.map((service) => (
+                        <Chip key={service} label={service} size="small" />
+                      ))}
+                    </Stack>
+                  </Grid>
+                )}
               </Grid>
             </Paper>
           </Stack>
@@ -404,6 +444,41 @@ export default function BookingDialog({
                 </TextField>
               </Grid>
             </Grid>
+
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Stack spacing={2}>
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+                    Booking Add-ons
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Add baggage, lounge access, and other services to this booking.
+                  </Typography>
+                </Box>
+                <Grid container spacing={1}>
+                  {DEFAULT_ANCILLARY_SERVICES.map((service) => {
+                    const included = includedCabinServices.includes(service);
+                    const checked = selectedAddOns.includes(service) || included;
+                    const price = addOnPrices[service] ?? 0;
+
+                    return (
+                      <Grid key={service} size={{ xs: 12, sm: 6 }}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={checked}
+                              disabled={included}
+                              onChange={() => toggleAddOn(service)}
+                            />
+                          }
+                          label={`${service} ${included ? "Included" : `$${price}`}`}
+                        />
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </Stack>
+            </Paper>
 
             <Paper variant="outlined" sx={{ p: 2 }}>
               <Stack spacing={2}>

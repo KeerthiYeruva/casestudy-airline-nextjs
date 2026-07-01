@@ -24,7 +24,7 @@ The application supports multiple languages, currencies, and timezones:
 ```
 src/
 ├── i18n.ts                     # i18n configuration
-├── middleware.ts               # Locale routing middleware
+├── proxy.ts                    # Locale routing proxy
 ├── lib/
 │   └── i18nUtils.ts           # Currency, timezone utilities
 ├── components/
@@ -203,7 +203,7 @@ Features:
 
 ## URL-based Locale Routing
 
-The middleware automatically handles locale-based routing:
+The proxy automatically handles locale-based routing:
 
 ```
 / → /en (default locale)
@@ -247,9 +247,9 @@ const languages = [
 ];
 ```
 
-### 4. Update Middleware
+### 4. Update Proxy
 
-The middleware will automatically handle the new locale.
+The proxy will automatically handle the new locale.
 
 ## Best Practices
 

@@ -91,6 +91,12 @@ const fillPaymentDetails = () => {
   fireEvent.change(screen.getByLabelText(/security code/i), { target: { value: '123' } });
 };
 
+const confirmBooking = async () => {
+  const confirmButton = screen.getByRole('button', { name: /confirm booking/i });
+  await waitFor(() => expect(confirmButton).toBeEnabled());
+  fireEvent.click(confirmButton);
+};
+
 describe('FlightSearch', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -140,8 +146,8 @@ describe('FlightSearch', () => {
     expect(await screen.findByRole('dialog', { name: /book aa101/i })).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText(/passenger name/i), { target: { value: 'Maya Patel' } });
-  fillPaymentDetails();
-    fireEvent.click(screen.getByRole('button', { name: /confirm booking/i }));
+    fillPaymentDetails();
+    await confirmBooking();
 
     await waitFor(() => {
       expect(mockAddPassenger).toHaveBeenCalledWith(expect.objectContaining({
@@ -166,13 +172,32 @@ describe('FlightSearch', () => {
     fireEvent.click(screen.getByRole('button', { name: /seat 2a/i }));
     fireEvent.change(screen.getByLabelText(/passenger name/i), { target: { value: 'Maya Patel' } });
     fillPaymentDetails();
-    fireEvent.click(screen.getByRole('button', { name: /confirm booking/i }));
+    await confirmBooking();
 
     await waitFor(() => {
       expect(mockAddPassenger).toHaveBeenCalledWith(expect.objectContaining({
         name: 'Maya Patel',
         flightId: 'FL001',
         seat: '2A',
+      }));
+    });
+  });
+
+  it('saves selected booking add-ons with the passenger', async () => {
+    render(<FlightSearch />);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /select flight/i })[0]);
+    expect(await screen.findByRole('dialog', { name: /book aa101/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText(/extra baggage \$65/i));
+    fireEvent.click(screen.getByLabelText(/lounge access \$89/i));
+    fireEvent.change(screen.getByLabelText(/passenger name/i), { target: { value: 'Maya Patel' } });
+    fillPaymentDetails();
+    await confirmBooking();
+
+    await waitFor(() => {
+      expect(mockAddPassenger).toHaveBeenCalledWith(expect.objectContaining({
+        ancillaryServices: expect.arrayContaining(['Extra Baggage', 'Lounge Access']),
       }));
     });
   });
