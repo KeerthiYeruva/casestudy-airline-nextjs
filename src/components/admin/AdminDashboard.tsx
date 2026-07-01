@@ -10,6 +10,7 @@ import ConfirmDialog from "@/components/common/ConfirmDialog";
 import PassengerTab from "@/components/admin/tabs/PassengerTab";
 import ServicesMenuTab from "@/components/admin/tabs/ServicesMenuTab";
 import SeatManagementTab from "@/components/admin/tabs/SeatManagementTab";
+import FlightOpsTab from "@/components/admin/tabs/FlightOpsTab";
 import AdminMetrics from "@/components/admin/AdminMetrics";
 import ShopItemDialog from "@/components/admin/ShopItemDialog";
 import PageHeader from "@/components/ui/PageHeader";
@@ -24,6 +25,7 @@ import {
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 
 interface ConfirmDialogState {
   open: boolean;
@@ -44,6 +46,7 @@ const AdminDashboard: React.FC = () => {
     fetchFlights,
     fetchPassengers,
     addPassenger,
+    updateFlight,
     updatePassenger,
     deletePassenger,
     setAncillaryServices,
@@ -265,6 +268,11 @@ const AdminDashboard: React.FC = () => {
             icon={<AirlineSeatReclineExtraIcon />}
             iconPosition="start"
           />
+          <Tab
+            label="Flight Ops"
+            icon={<FlightTakeoffIcon />}
+            iconPosition="start"
+          />
         </Tabs>
 
         {activeTab === 0 && (
@@ -335,6 +343,25 @@ const AdminDashboard: React.FC = () => {
             onFetchPassengers={fetchPassengers}
             onShowToast={showToast}
             onConfirm={(config) => setConfirmDialog({ open: true, ...config })}
+          />
+        )}
+
+        {activeTab === 3 && (
+          <FlightOpsTab
+            flights={flights}
+            onUpdateFlight={async (id, updates) => {
+              const result = await updateFlight(id, updates);
+              if (result) {
+                if (selectedFlight?.id === id) {
+                  selectFlight(result);
+                }
+                await fetchFlights();
+                showToast(`${result.flightNumber} updated successfully`, "success");
+              } else {
+                showToast("Failed to update flight", "error");
+              }
+              return !!result;
+            }}
           />
         )}
       </Paper>

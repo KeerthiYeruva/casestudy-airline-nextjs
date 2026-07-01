@@ -222,7 +222,7 @@ export const CreateFlightSchema = z.object({
   date: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (use YYYY-MM-DD)'),
   
-  status: z.enum(['On Time', 'Delayed', 'Boarding', 'Departed', 'Cancelled']),
+  status: z.enum(['On Time', 'Delayed', 'Boarding', 'Departed', 'Arrived', 'Cancelled']),
   
   aircraft: z.string().min(1, 'Aircraft type is required'),
   
