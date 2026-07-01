@@ -247,15 +247,15 @@ export default function BookingDialog({
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
 
   useEffect(() => {
-    if (open) {
+    if (open && typeof fetchCatalog === "function") {
       fetchCatalog();
     }
   }, [open, fetchCatalog]);
 
   const occupiedSeats = useMemo(() => (flight ? getOccupiedSeats(flight, passengers) : new Set<string>()), [flight, passengers]);
   const suggestedSeat = useMemo(() => (flight ? getFirstAvailableSeat(flight, occupiedSeats) : null), [flight, occupiedSeats]);
-  const availableMealOptions = mealOptions.length > 0 ? mealOptions : defaultMealOptions;
-  const availableAddOns = ancillaryServices.length > 0 ? ancillaryServices : DEFAULT_ANCILLARY_SERVICES;
+  const availableMealOptions = Array.isArray(mealOptions) && mealOptions.length > 0 ? mealOptions : defaultMealOptions;
+  const availableAddOns = Array.isArray(ancillaryServices) && ancillaryServices.length > 0 ? ancillaryServices : DEFAULT_ANCILLARY_SERVICES;
   const includedCabinServices = cabinClass === "Business" || cabinClass === "First" ? ["Priority Boarding"] : [];
   const paidAddOns = selectedAddOns.filter((service) => !includedCabinServices.includes(service));
   const addOnsTotal = paidAddOns.reduce((sum, service) => sum + (addOnPrices[service] ?? 0), 0) * passengerCount;

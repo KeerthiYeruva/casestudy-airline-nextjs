@@ -33,7 +33,7 @@ Opens at: http://localhost:3000
 2. Select a mock user:
    - **John Doe** (john.doe@airline.com)
    - **Jane Smith** (jane.smith@airline.com)
-3. Choose role: **Admin** or **Staff**
+3. Choose a staff role: **Check-In Agent**, **Cabin Crew**, **Operations Staff**, **Airline Administrator**, or **Super Admin**
 4. Access granted!
 
 ### Mock Users
@@ -43,11 +43,11 @@ Both users work identically - pick either one:
 - Works with all features
 
 ### Role Permissions
-| Feature | Admin | Staff |
-|---------|-------|-------|
-| Check-In Module | ✅ | ✅ |
-| In-Flight Services | ✅ | ✅ |
-| Admin Dashboard | ✅ | ❌ |
+| Feature | Check-In Agent | Cabin Crew | Operations | Admin | Super Admin |
+|---------|----------------|------------|------------|-------|-------------|
+| Check-In Module | ✅ | ❌ | ✅ | ✅ | ✅ |
+| In-Flight Services | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Admin Dashboard | ❌ | ❌ | ❌ | ✅ | ✅ |
 
 ---
 
@@ -106,20 +106,28 @@ npm start
 ## 📊 Sample Data
 
 ### Included Flights
-- **AI101**: Mumbai → Delhi (8:00 AM)
-- **AI202**: Delhi → Bangalore (2:00 PM) - Delayed
-- **AI303**: Bangalore → Chennai (6:00 PM)
+- **AA101**: Hyderabad (HYD) → Delhi (DEL), Aug 14 2026, On Time
+- **BB202**: Bengaluru (BLR) → Mumbai (BOM), Aug 14 2026, Boarding
+- **CC303**: Chennai (MAA) → Singapore (SIN), Aug 15 2026, On Time
+- **DD404**: Delhi (DEL) → London (LHR), Aug 15 2026, Delayed
+- **EE505**: Mumbai (BOM) → Dubai (DXB), Aug 16 2026, On Time
+- **HH808**: New York (JFK) → Hyderabad (HYD), Aug 17 2026, On Time
 
 ### Sample Passengers
-- 20+ passengers with complete data
+- 40+ passengers with complete and edge-case data
 - Mix of wheelchair/infant requirements
 - Various check-in statuses
 - Different meal preferences
+- Public My Trips demo lookups:
+    - **TRP001 + Reddy**: upcoming assisted-travel booking
+    - **FAM777 + Raman**: family/group booking
+    - **VIP202 + Meyer**: premium-seat booking
+    - **MED404 + Okafor**: special-assistance booking
 
 ### Catalog Items
-- **Meals**: 10 options (Veg, Non-Veg, Vegan, etc.)
-- **Services**: 10 ancillary services ($20-$100)
-- **Shop**: 24 items in 6 categories ($5-$300)
+- **Meals**: India-aware and global options, including South Indian Vegetarian, North Indian Thali, Jain, Halal, Kosher, and medical meals
+- **Services**: Priority boarding, baggage, accessibility, lounge, fast track, meet-and-assist, wellness, pet, and sports equipment services
+- **Shop**: 24 duty-free/onboard retail items across cosmetics, electronics, fashion, Indian sweets/tea/coffee, travel essentials, and gifts
 
 ---
 
