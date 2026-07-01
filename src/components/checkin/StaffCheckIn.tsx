@@ -145,16 +145,16 @@ const StaffCheckIn: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
+    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 }, minWidth: 0 }}>
       <PageHeader
         title="Staff Check-In"
         isConnected={isConnected}
         selectedFlightNumber={selectedFlight?.flightNumber}
       />
 
-      <Grid container spacing={{ xs: 2, sm: 3 }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ minWidth: 0 }}>
         {/* Flight Selection */}
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid size={{ xs: 12, md: 3 }} sx={{ minWidth: 0 }}>
           <FlightSelectionPanel
             flights={flights}
             selectedFlightId={selectedFlight?.id}
@@ -164,14 +164,14 @@ const StaffCheckIn: React.FC = () => {
         </Grid>
 
         {/* Main Content */}
-        <Grid size={{ xs: 12, md: 9 }}>
+        <Grid size={{ xs: 12, md: 9 }} sx={{ minWidth: 0 }}>
           {selectedFlight ? (
             <>
               {/* Flight Details */}
               <FlightInfoGrid flight={selectedFlight} />
 
               {/* Group & Family Seating Actions */}
-              <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+              <Stack direction="row" spacing={2} sx={{ mb: 2, flexWrap: 'wrap', rowGap: 1 }}>
                 <Button
                   variant="outlined"
                   startIcon={<GroupIcon />}
@@ -204,9 +204,9 @@ const StaffCheckIn: React.FC = () => {
                 onClearFilters={handleClearFilters}
               />
 
-              <Grid container spacing={2}>
+              <Grid container spacing={2} sx={{ minWidth: 0 }}>
                 {/* Seat Map */}
-                <Grid size={{ xs: 12, lg: 7 }}>
+                <Grid size={{ xs: 12, lg: 7 }} sx={{ minWidth: 0 }}>
                   <SeatMapVisual
                     passengers={flightPassengers}
                     onSeatClick={handleSeatClick}
@@ -215,7 +215,7 @@ const StaffCheckIn: React.FC = () => {
                 </Grid>
 
                 {/* Passenger List */}
-                <Grid size={{ xs: 12, lg: 5 }}>
+                <Grid size={{ xs: 12, lg: 5 }} sx={{ minWidth: 0 }}>
                   <PassengerListPanel
                     passengers={filteredPassengers}
                     selectedPassengerId={selectedPassenger?.id}

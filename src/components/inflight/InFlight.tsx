@@ -217,15 +217,15 @@ const InFlight: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
+    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 }, minWidth: 0 }}>
       <PageHeader
         title="In-Flight Services"
         isConnected={isConnected}
         selectedFlightNumber={selectedFlight?.flightNumber}
       />
 
-      <Grid container spacing={{ xs: 2, sm: 3 }}>
-        <Grid size={{ xs: 12, md: 3 }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ minWidth: 0 }}>
+        <Grid size={{ xs: 12, md: 3 }} sx={{ minWidth: 0 }}>
           <InFlightFlightList
             flights={flights}
             selectedFlightId={selectedFlight?.id}
@@ -233,13 +233,13 @@ const InFlight: React.FC = () => {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 9 }}>
+        <Grid size={{ xs: 12, md: 9 }} sx={{ minWidth: 0 }}>
           {selectedFlight ? (
             <>
               <FlightInfoGrid flight={selectedFlight} />
 
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12, lg: 7 }}>
+              <Grid container spacing={2} sx={{ minWidth: 0 }}>
+                <Grid size={{ xs: 12, lg: 7 }} sx={{ minWidth: 0 }}>
                   <SeatMapVisual
                     passengers={flightPassengers}
                     onSeatClick={handleSeatClick}
@@ -247,7 +247,7 @@ const InFlight: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid size={{ xs: 12, lg: 5 }}>
+                <Grid size={{ xs: 12, lg: 5 }} sx={{ minWidth: 0 }}>
                   <InFlightPassengerList
                     passengers={flightPassengers}
                     selectedPassengerId={selectedPassenger?.id}

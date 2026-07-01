@@ -26,6 +26,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
 }) => {
   const rows = 10;
   const seatsPerRow = ["A", "B", "C", "D", "E", "F"];
+  const cabinMinWidth = { xs: 330, sm: 430, md: 450 };
 
   const getSeatInfo = (seat: string) => {
     const passenger = passengers.find((p) => p.seat === seat);
@@ -320,46 +321,56 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
 
       {renderLegend()}
 
-      {/* Cabin Header */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: { xs: 0.75, sm: 1 },
-          px: { xs: 2.5, sm: 3, md: 4 },
-          color: "text.secondary",
-          fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.85rem" },
-          fontWeight: "medium",
+          overflowX: "auto",
+          overflowY: "hidden",
+          pb: 0.5,
+          maxWidth: "100%",
         }}
       >
-        <Box sx={{ display: "flex", gap: { xs: 2.2, sm: 3.2, md: 4.5 } }}>
-          <span>A</span>
-          <span>B</span>
-          <span>C</span>
+        {/* Cabin Header */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            mb: { xs: 0.75, sm: 1 },
+            px: { xs: 2.5, sm: 3, md: 4 },
+            color: "text.secondary",
+            fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.85rem" },
+            fontWeight: "medium",
+            minWidth: cabinMinWidth,
+          }}
+        >
+          <Box sx={{ display: "flex", gap: { xs: 2.2, sm: 3.2, md: 4.5 } }}>
+            <span>A</span>
+            <span>B</span>
+            <span>C</span>
+          </Box>
+          <Box sx={{ display: "flex", gap: { xs: 2.2, sm: 3.2, md: 4.5 } }}>
+            <span>D</span>
+            <span>E</span>
+            <span>F</span>
+          </Box>
         </Box>
-        <Box sx={{ display: "flex", gap: { xs: 2.2, sm: 3.2, md: 4.5 } }}>
-          <span>D</span>
-          <span>E</span>
-          <span>F</span>
-        </Box>
-      </Box>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: { xs: 0.4, sm: 0.75, md: 1 },
-          px: { xs: 0.75, sm: 1, md: 1.25 },
-          py: { xs: 1.25, sm: 1.75, md: 2 },
-          bgcolor: "white",
-          borderRadius: 2,
-          border: "2px solid",
-          borderColor: "primary.light",
-          maxHeight: { xs: 380, sm: 500, md: 600 },
-          overflowY: "auto",
-          overflowX: "hidden",
-        }}
-      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: { xs: 0.4, sm: 0.75, md: 1 },
+            px: { xs: 0.75, sm: 1, md: 1.25 },
+            py: { xs: 1.25, sm: 1.75, md: 2 },
+            bgcolor: "white",
+            borderRadius: 2,
+            border: "2px solid",
+            borderColor: "primary.light",
+            maxHeight: { xs: 380, sm: 500, md: 600 },
+            minWidth: cabinMinWidth,
+            overflowY: "auto",
+            overflowX: "visible",
+          }}
+        >
         {Array.from({ length: rows }, (_, rowIndex) => (
           <Box
             key={rowIndex}
@@ -791,6 +802,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             </Typography>
           </Box>
         ))}
+        </Box>
       </Box>
 
       {/* Footer info */}

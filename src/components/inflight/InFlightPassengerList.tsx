@@ -33,11 +33,11 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
   onPassengerSelect,
 }) => {
   return (
-    <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
       <Typography variant="h6" gutterBottom>
         Passengers ({passengers.length})
       </Typography>
-      <List sx={{ pt: 0, overflow: 'auto', flex: 1 }}>
+      <List sx={{ pt: 0, overflowY: 'auto', overflowX: 'hidden', flex: 1, minWidth: 0 }}>
         {passengers.map((passenger, index) => (
           <React.Fragment key={passenger.id}>
             <ListItem disablePadding sx={{ mb: 1 }}>
@@ -51,13 +51,14 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                   '&:hover': {
                     borderColor: 'primary.light',
                   },
-                  px: 2,
+                  px: { xs: 1.25, sm: 2 },
                   py: 1.5,
+                  minWidth: 0,
                 }}
               >
-                <Box sx={{ width: "100%" }}>
-                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
+                <Box sx={{ width: "100%", minWidth: 0 }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1, gap: 1, flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 }, flex: '1 1 160px', minWidth: 0 }}>
                       <Avatar sx={{ width: 36, height: 36, bgcolor: 'primary.main' }}>
                         <PersonIcon fontSize="small" />
                       </Avatar>
@@ -68,7 +69,7 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                         <Chip label={passenger.seat} size="small" sx={{ height: 20, fontSize: '0.7rem', mt: 0.5 }} />
                       </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    <Box sx={{ display: 'flex', gap: 0.5, flex: '0 1 auto', flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0 }}>
                       {passenger.premiumUpgrade && (
                         <StarIcon fontSize="small" sx={{ color: 'warning.main' }} />
                       )}
@@ -91,8 +92,8 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                     </Box>
                   </Box>
                   
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1, minWidth: 0 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
                       <RestaurantIcon sx={{ fontSize: 14 }} />
                       {passenger.specialMeal || 'No meal'}
                     </Typography>
