@@ -1,10 +1,13 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import FlightSearch from '@/components/customer/FlightSearch';
 import type { Flight } from '@/types/flight';
+import type { Passenger } from '@/types/passenger';
 
 const mockFetchFlights = jest.fn();
+const mockFetchPassengers = jest.fn();
+const mockAddPassenger = jest.fn();
 
 const mockFlights: Flight[] = [
   {
@@ -54,17 +57,49 @@ const mockFlights: Flight[] = [
   },
 ];
 
+const mockPassengers: Passenger[] = [
+  {
+    id: 'P001',
+    name: 'Existing Passenger',
+    seat: '1A',
+    flightId: 'FL001',
+    ancillaryServices: [],
+    specialMeal: 'Regular',
+    wheelchair: false,
+    infant: false,
+    checkedIn: false,
+    bookingReference: 'EXI101',
+    shopRequests: [],
+  },
+];
+
 jest.mock('@/stores/useDataStore', () => ({
   __esModule: true,
   default: () => ({
     flights: mockFlights,
+    passengers: mockPassengers,
     fetchFlights: mockFetchFlights,
+    fetchPassengers: mockFetchPassengers,
+    addPassenger: mockAddPassenger,
   }),
 }));
 
 describe('FlightSearch', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAddPassenger.mockResolvedValue({
+      id: 'P100',
+      name: 'Maya Patel',
+      seat: '1B',
+      flightId: 'FL001',
+      ancillaryServices: [],
+      specialMeal: 'Regular',
+      wheelchair: false,
+      infant: false,
+      checkedIn: false,
+      bookingReference: 'MAY1012',
+      shopRequests: [],
+    });
   });
 
   it('renders search controls and featured flights', () => {
@@ -89,5 +124,28 @@ describe('FlightSearch', () => {
     expect(screen.getByText('AA101')).toBeInTheDocument();
     expect(screen.queryByText('BB202')).not.toBeInTheDocument();
     expect(screen.queryByText('CC303')).not.toBeInTheDocument();
+  });
+
+  it('creates a booking from a selected flight', async () => {
+    render(<FlightSearch />);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /select flight/i })[0]);
+    expect(await screen.findByRole('dialog', { name: /book aa101/i })).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText(/passenger name/i), { target: { value: 'Maya Patel' } });
+    fireEvent.click(screen.getByRole('button', { name: /confirm booking/i }));
+
+    await waitFor(() => {
+      expect(mockAddPassenger).toHaveBeenCalledWith(expect.objectContaining({
+        name: 'Maya Patel',
+        flightId: 'FL001',
+        seat: '1B',
+        checkedIn: false,
+        specialMeal: 'Regular',
+      }));
+    });
+
+    expect(await screen.findByText(/booking created for maya patel/i)).toBeInTheDocument();
+    expect(screen.getByText('MAY1012')).toBeInTheDocument();
   });
 });
