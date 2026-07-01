@@ -5,7 +5,9 @@
  * Allows passengers to set their seat preferences
  */
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogTitle,
@@ -27,6 +29,7 @@ import {
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import type { SeatPreferences, SeatPreference, SeatType } from '@/types/seat';
+import { SeatPreferencesDialogSchema, type SeatPreferencesDialogFormData } from '@/lib/validationSchemas';
 
 interface SeatPreferencesDialogProps {
   open: boolean;
@@ -43,13 +46,26 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
   currentPreferences,
   passengerName
 }) => {
-  const [preferences, setPreferences] = useState<SeatPreferences>(
-    currentPreferences || {
-      position: [],
-      type: 'standard',
-      nearFamily: false
+  const { control, handleSubmit, reset, setValue } = useForm<SeatPreferencesDialogFormData>({
+    resolver: zodResolver(SeatPreferencesDialogSchema),
+    defaultValues: {
+      position: currentPreferences?.position || [],
+      type: currentPreferences?.type || 'standard',
+      nearFamily: currentPreferences?.nearFamily || false,
+    },
+  });
+
+  useEffect(() => {
+    if (open) {
+      reset({
+        position: currentPreferences?.position || [],
+        type: currentPreferences?.type || 'standard',
+        nearFamily: currentPreferences?.nearFamily || false,
+      });
     }
-  );
+  }, [currentPreferences, open, reset]);
+
+  const preferences = useWatch({ control });
 
   const positionOptions: { value: SeatPreference; label: string; icon: string }[] = [
     { value: 'window', label: 'Window', icon: '🪟' },
@@ -61,23 +77,16 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
   ];
 
   const handlePositionToggle = (position: SeatPreference) => {
-    setPreferences(prev => ({
-      ...prev,
-      position: prev.position?.includes(position)
-        ? prev.position.filter(p => p !== position)
-        : [...(prev.position || []), position]
-    }));
+    const currentPositions = preferences.position || [];
+    const updatedPositions = currentPositions.includes(position)
+      ? currentPositions.filter((selectedPosition) => selectedPosition !== position)
+      : [...currentPositions, position];
+
+    setValue('position', updatedPositions, { shouldDirty: true, shouldValidate: true });
   };
 
-  const handleTypeChange = (type: SeatType) => {
-    setPreferences(prev => ({ ...prev, type }));
-  };
-
-  const handleNearFamilyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPreferences(prev => ({ ...prev, nearFamily: event.target.checked }));
-  };
-
-  const handleSave = () => {
+  const handleSave = (formData: SeatPreferencesDialogFormData) => {
+    const preferences: SeatPreferences = formData;
     onSave(preferences);
     onClose();
   };
@@ -154,7 +163,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
             </Typography>
             <RadioGroup
               value={preferences.type}
-              onChange={(e) => handleTypeChange(e.target.value as SeatType)}
+              onChange={(e) => setValue('type', e.target.value as SeatType, { shouldDirty: true, shouldValidate: true })}
             >
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Box 
@@ -167,7 +176,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                     transition: 'all 0.2s',
                     cursor: 'pointer'
                   }}
-                  onClick={() => handleTypeChange('standard')}
+                  onClick={() => setValue('type', 'standard', { shouldDirty: true, shouldValidate: true })}
                 >
                   <FormControlLabel
                     value="standard"
@@ -194,7 +203,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                     transition: 'all 0.2s',
                     cursor: 'pointer'
                   }}
-                  onClick={() => handleTypeChange('premium')}
+                  onClick={() => setValue('type', 'premium', { shouldDirty: true, shouldValidate: true })}
                 >
                   <FormControlLabel
                     value="premium"
@@ -221,7 +230,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                     transition: 'all 0.2s',
                     cursor: 'pointer'
                   }}
-                  onClick={() => handleTypeChange('exit')}
+                  onClick={() => setValue('type', 'exit', { shouldDirty: true, shouldValidate: true })}
                 >
                   <FormControlLabel
                     value="exit"
@@ -248,7 +257,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
                     transition: 'all 0.2s',
                     cursor: 'pointer'
                   }}
-                  onClick={() => handleTypeChange('bulkhead')}
+                  onClick={() => setValue('type', 'bulkhead', { shouldDirty: true, shouldValidate: true })}
                 >
                   <FormControlLabel
                     value="bulkhead"
@@ -282,27 +291,33 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
               transition: 'all 0.2s'
             }}
           >
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={preferences.nearFamily}
-                    onChange={handleNearFamilyChange}
-                    color="secondary"
+            <Controller
+              name="nearFamily"
+              control={control}
+              render={({ field }) => (
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={field.value}
+                        onChange={(event) => field.onChange(event.target.checked)}
+                        color="secondary"
+                      />
+                    }
+                    label={
+                      <Box>
+                        <Typography variant="body1" sx={{ fontWeight: preferences.nearFamily ? 'bold' : 'normal' }}>
+                          Seat near family members
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Try to allocate seats close to other family members
+                        </Typography>
+                      </Box>
+                    }
                   />
-                }
-                label={
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: preferences.nearFamily ? 'bold' : 'normal' }}>
-                      Seat near family members
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Try to allocate seats close to other family members
-                    </Typography>
-                  </Box>
-                }
-              />
-            </FormGroup>
+                </FormGroup>
+              )}
+            />
           </Box>
 
           {hasSelections && (
@@ -317,7 +332,7 @@ const SeatPreferencesDialog: React.FC<SeatPreferencesDialogProps> = ({
       <DialogActions sx={{ px: 3, py: 2, bgcolor: 'grey.50' }}>
         <Button onClick={onClose} size="large">Cancel</Button>
         <Button 
-          onClick={handleSave} 
+          onClick={handleSubmit(handleSave)} 
           variant="contained" 
           color="primary"
           size="large"

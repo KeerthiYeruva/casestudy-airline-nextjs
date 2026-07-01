@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Dialog,
   DialogTitle,
@@ -27,16 +26,11 @@ import {
 import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
 import type { Flight } from "@/types/flight";
 import type { Passenger } from "@/types/passenger";
+import { PassengerDialogSchema, type PassengerDialogFormData } from "@/lib/validationSchemas";
 import SeatSelectionDialog from "./SeatSelectionDialog";
 
 interface PassengerFormData extends Omit<Passenger, "id"> {
   id: string;
-}
-
-interface PassengerDialogFormData extends Omit<PassengerFormData, "passport" | "address" | "dateOfBirth"> {
-  passport: NonNullable<PassengerFormData["passport"]>;
-  address: string;
-  dateOfBirth: string;
 }
 
 interface PassengerDialogProps {
@@ -49,49 +43,6 @@ interface PassengerDialogProps {
   flights: Flight[];
   allPassengers: Passenger[];
 }
-
-const shopRequestSchema = z.object({
-  itemId: z.string(),
-  itemName: z.string(),
-  category: z.string(),
-  price: z.number(),
-  quantity: z.number(),
-  currency: z.string(),
-});
-
-const passengerDialogSchema = z.object({
-  id: z.string(),
-  name: z.string().trim().min(1, "Passenger name is required"),
-  seat: z.string().trim().min(1, "Seat number is required"),
-  flightId: z.string().min(1, "Flight selection is required"),
-  passport: z.object({
-    number: z.string().trim().min(1, "Passport number is required"),
-    expiryDate: z.string(),
-    country: z.string(),
-  }),
-  address: z.string().trim().min(1, "Address is required"),
-  dateOfBirth: z.string()
-    .min(1, "Date of birth is required")
-    .refine((value) => {
-      const selectedDate = new Date(`${value}T00:00:00`);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return selectedDate <= today;
-    }, "Date of birth cannot be in the future"),
-  ancillaryServices: z.array(z.string()),
-  specialMeal: z.string(),
-  wheelchair: z.boolean(),
-  infant: z.boolean(),
-  checkedIn: z.boolean(),
-  bookingReference: z.string()
-    .regex(/^[A-Z]{3}[0-9]{3,7}$/, "Invalid booking reference format (e.g., ABC123)")
-    .or(z.literal("")),
-  shopRequests: z.array(shopRequestSchema),
-  seatPreferences: z.custom<PassengerFormData["seatPreferences"]>().optional(),
-  groupSeating: z.custom<PassengerFormData["groupSeating"]>().optional(),
-  familySeating: z.custom<PassengerFormData["familySeating"]>().optional(),
-  premiumUpgrade: z.boolean().optional(),
-});
 
 const requiredSeatFields = [
   "name",
@@ -128,7 +79,7 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
     trigger,
     formState: { errors },
   } = useForm<PassengerDialogFormData, unknown, PassengerDialogFormData>({
-    resolver: zodResolver(passengerDialogSchema),
+    resolver: zodResolver(PassengerDialogSchema),
     defaultValues: normalizePassengerForm(passengerForm),
     mode: "onBlur",
   });

@@ -5,7 +5,9 @@
  * Offers passengers premium seat upgrades with enhanced features
  */
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogTitle,
@@ -36,6 +38,7 @@ import {
 import type { Passenger } from '@/types/passenger';
 import type { PremiumSeatUpsell } from '@/types/seat';
 import { formatCurrency } from '@/lib/i18nUtils';
+import { PremiumSeatUpsellDialogSchema, type PremiumSeatUpsellDialogFormData } from '@/lib/validationSchemas';
 
 interface PremiumSeatUpsellDialogProps {
   open: boolean;
@@ -56,7 +59,19 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
   currency = 'USD',
   locale = 'en'
 }) => {
-  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const { handleSubmit, reset, setValue, control } = useForm<PremiumSeatUpsellDialogFormData>({
+    resolver: zodResolver(PremiumSeatUpsellDialogSchema),
+    defaultValues: {
+      selectedSeat: null,
+    },
+  });
+  const selectedSeat = useWatch({ control, name: 'selectedSeat' });
+
+  useEffect(() => {
+    if (open) {
+      reset({ selectedSeat: null });
+    }
+  }, [open, reset]);
 
   const featureIcons: Record<string, React.ReactElement> = {
     'Extra Legroom': <ComfortIcon />,
@@ -65,17 +80,22 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
     'Power Outlets': <PowerIcon />
   };
 
-  const handleUpgrade = () => {
-    if (selectedSeat) {
-      onUpgrade(selectedSeat);
-      onClose();
+  const handleClose = () => {
+    reset({ selectedSeat: null });
+    onClose();
+  };
+
+  const handleUpgrade = (formData: PremiumSeatUpsellDialogFormData) => {
+    if (formData.selectedSeat) {
+      onUpgrade(formData.selectedSeat);
+      handleClose();
     }
   };
 
   const selectedUpgrade = availableUpgrades.find(u => u.seatNumber === selectedSeat);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <StarIcon color="warning" />
@@ -116,7 +136,7 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
                           boxShadow: 3
                         } : {}
                       }}
-                      onClick={() => upgrade.available && setSelectedSeat(upgrade.seatNumber)}
+                      onClick={() => upgrade.available && setValue('selectedSeat', upgrade.seatNumber, { shouldDirty: true, shouldValidate: true })}
                     >
                       <CardContent>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -209,9 +229,9 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Maybe Later</Button>
+        <Button onClick={handleClose}>Maybe Later</Button>
         <Button
-          onClick={handleUpgrade}
+          onClick={handleSubmit(handleUpgrade)}
           variant="contained"
           color="primary"
           disabled={!selectedSeat}
