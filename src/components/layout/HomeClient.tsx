@@ -24,10 +24,12 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import SearchIcon from "@mui/icons-material/Search";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LocaleSelector from "@/components/common/LocaleSelector";
 
+const FlightSearch = lazy(() => import("@/components/customer/FlightSearch"));
 const StaffCheckIn = lazy(() => import("@/components/checkin/StaffCheckIn"));
 const InFlight = lazy(() => import("@/components/inflight/InFlight"));
 const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
@@ -51,7 +53,7 @@ const LoadingFallback = () => (
  * - Mobile responsive menu
  */
 export default function HomeClient() {
-  const [currentView, setCurrentView] = useState("checkin");
+  const [currentView, setCurrentView] = useState("search");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, role } = useAuthStore();
 
@@ -100,6 +102,18 @@ export default function HomeClient() {
               gap: 1.5, 
               alignItems: "center"
             }}>
+              <Button
+                color="inherit"
+                startIcon={<SearchIcon />}
+                onClick={() => setCurrentView("search")}
+                variant={currentView === "search" ? "outlined" : "text"}
+                aria-label="Navigate to Flight Search"
+                aria-current={currentView === "search" ? "page" : undefined}
+                size="small"
+                sx={{ fontSize: '0.875rem', px: 2 }}
+              >
+                Flights
+              </Button>
               <Button
                 color="inherit"
                 startIcon={<AirlineSeatReclineExtraIcon />}
@@ -221,6 +235,29 @@ export default function HomeClient() {
           <List>
             <ListItem disablePadding>
               <ListItemButton 
+                selected={currentView === "search"}
+                onClick={() => {
+                  setCurrentView("search");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <ListItemIcon>
+                  <SearchIcon color={currentView === "search" ? "primary" : "inherit"} />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Flight Search" 
+                  secondary="Find available routes and dates"
+                  slotProps={{
+                    primary: {
+                      sx: { fontWeight: currentView === 'search' ? 'bold' : 'normal' }
+                    }
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton 
                 selected={currentView === "checkin"}
                 onClick={() => {
                   setCurrentView("checkin");
@@ -306,6 +343,7 @@ export default function HomeClient() {
           )}
           
           <Suspense fallback={<LoadingFallback />}>
+            {currentView === "search" && <FlightSearch />}
             {currentView === "checkin" && <StaffCheckIn />}
             {currentView === "inflight" && <InFlight />}
             {currentView === "admin" && canAccessAdmin && <AdminDashboard />}
