@@ -46,7 +46,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
   calculateShopTotal,
 }) => {
   return (
-    <Paper elevation={3} sx={{ mt: 2, p: 3 }}>
+    <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, height: '100%' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
         <Avatar sx={{ width: 56, height: 56, bgcolor: 'primary.main' }}>
