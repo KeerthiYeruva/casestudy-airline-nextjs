@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
@@ -21,6 +21,7 @@ import {
   Typography,
   Box,
   Alert,
+  Paper,
   List,
   ListItem,
   ListItemText,
@@ -42,6 +43,14 @@ interface GroupSeatingDialogProps {
 
 const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
 
+interface GroupSeatRecommendation {
+  seats: string[];
+  score: number;
+  cohesion: number;
+  confidence: 'High' | 'Medium' | 'Low';
+  reasons: string[];
+}
+
 function getSeatRow(seat: string) {
   return Number.parseInt(seat.match(/^\d+/)?.[0] ?? '0', 10);
 }
@@ -52,12 +61,49 @@ function getAvailableSeatsForRow(row: number, occupiedSeats: Set<string>) {
     .filter((seat) => !occupiedSeats.has(seat));
 }
 
-function findGroupSeatBlock(seatsNeeded: number, keepTogether: boolean, occupiedSeats: Set<string>) {
+function getConfidence(score: number): GroupSeatRecommendation['confidence'] {
+  if (score >= 90) return 'High';
+  if (score >= 70) return 'Medium';
+  return 'Low';
+}
+
+function buildGroupRecommendation(seats: string[], keepTogether: boolean): GroupSeatRecommendation {
+  const rows = Array.from(new Set(seats.map(getSeatRow))).filter((row) => row > 0);
+  const rowSpan = rows.length > 0 ? Math.max(...rows) - Math.min(...rows) + 1 : 0;
+  const sameRow = rows.length === 1;
+  const adjacentRows = rowSpan <= 2;
+  const cohesion = sameRow ? 100 : adjacentRows ? 92 : Math.max(45, 100 - (rowSpan - 1) * 12);
+  let score = cohesion;
+  const reasons = sameRow
+    ? ['Group seated together in one row']
+    : adjacentRows
+      ? ['Group seated across adjacent rows']
+      : ['Group seated in the closest available cabin section'];
+
+  if (keepTogether && adjacentRows) {
+    score += 4;
+    reasons.push('Keep together preference satisfied');
+  }
+
+  const normalizedScore = Math.min(score, 100);
+
+  return {
+    seats,
+    score: normalizedScore,
+    cohesion,
+    confidence: getConfidence(normalizedScore),
+    reasons,
+  };
+}
+
+function findGroupSeatRecommendation(seatsNeeded: number, keepTogether: boolean, occupiedSeats: Set<string>) {
+  const recommendations: GroupSeatRecommendation[] = [];
+
   if (keepTogether) {
     for (let row = 1; row <= 10; row++) {
       const availableSeats = getAvailableSeatsForRow(row, occupiedSeats);
       if (availableSeats.length >= seatsNeeded) {
-        return availableSeats.slice(0, seatsNeeded);
+        recommendations.push(buildGroupRecommendation(availableSeats.slice(0, seatsNeeded), keepTogether));
       }
     }
 
@@ -68,7 +114,7 @@ function findGroupSeatBlock(seatsNeeded: number, keepTogether: boolean, occupied
       ];
 
       if (availableSeats.length >= seatsNeeded) {
-        return availableSeats.slice(0, seatsNeeded);
+        recommendations.push(buildGroupRecommendation(availableSeats.slice(0, seatsNeeded), keepTogether));
       }
     }
   }
@@ -82,11 +128,11 @@ function findGroupSeatBlock(seatsNeeded: number, keepTogether: boolean, occupied
   for (const rows of cabinSections) {
     const availableSeats = rows.flatMap((row) => getAvailableSeatsForRow(row, occupiedSeats));
     if (availableSeats.length >= seatsNeeded) {
-      return availableSeats.slice(0, seatsNeeded);
+      recommendations.push(buildGroupRecommendation(availableSeats.slice(0, seatsNeeded), keepTogether));
     }
   }
 
-  return [];
+  return recommendations.sort((a, b) => b.score - a.score)[0] ?? null;
 }
 
 const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
@@ -106,11 +152,11 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
       priority: 'NORMAL',
     },
   });
+  const keepTogether = useWatch({ control, name: 'keepTogether' }) ?? true;
 
   useEffect(() => {
     if (open) {
       reset({ groupName: '', keepTogether: true, priority: 'NORMAL' });
-      setAllocationError('');
     }
   }, [open, reset]);
 
@@ -124,6 +170,20 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
   const availablePassengers = passengers.filter(
     p => !p.groupSeating && p.flightId === flightId && !p.checkedIn
   );
+
+  const groupRecommendation = React.useMemo(() => {
+    if (selectedPassengers.length < 2) {
+      return null;
+    }
+
+    const occupiedSeats = new Set(
+      passengers
+        .filter(passenger => passenger.seat && !selectedPassengers.includes(passenger.id))
+        .map(passenger => passenger.seat)
+    );
+
+    return findGroupSeatRecommendation(selectedPassengers.length, keepTogether, occupiedSeats);
+  }, [keepTogether, passengers, selectedPassengers]);
 
   const handleTogglePassenger = (passengerId: string) => {
     setAllocationError('');
@@ -147,7 +207,8 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
         .filter(passenger => passenger.seat && !selectedPassengers.includes(passenger.id))
         .map(passenger => passenger.seat)
     );
-    const allocatedSeats = findGroupSeatBlock(selectedPassengers.length, formData.keepTogether, occupiedSeats);
+    const recommendation = findGroupSeatRecommendation(selectedPassengers.length, formData.keepTogether, occupiedSeats);
+    const allocatedSeats = recommendation?.seats ?? [];
 
     if (allocatedSeats.length !== selectedPassengers.length) {
       setAllocationError('Unable to find enough nearby seats for this group. Try disabling keep together or free up seats first.');
@@ -294,6 +355,30 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
               {allocationError}
             </Alert>
           )}
+
+          {groupRecommendation && (
+            <Paper elevation={0} sx={{ p: 2, border: '1px solid', borderColor: 'primary.main', bgcolor: 'primary.50' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                  Recommended Allocation
+                </Typography>
+                <Chip label={`${groupRecommendation.confidence} confidence`} color="primary" size="small" />
+              </Box>
+              <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                Seats: {groupRecommendation.seats.join(', ')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                Group cohesion: {groupRecommendation.cohesion}% | Smart seating score: {groupRecommendation.score}%
+              </Typography>
+              <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                {groupRecommendation.reasons.map((reason) => (
+                  <Typography key={reason} component="li" variant="caption" color="text.secondary">
+                    {reason}
+                  </Typography>
+                ))}
+              </Box>
+            </Paper>
+          )}
         </Box>
       </DialogContent>
       <DialogActions>
@@ -302,9 +387,9 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
           onClick={handleSubmit(handleAllocate)}
           variant="contained"
           color="primary"
-          disabled={selectedPassengers.length < 2}
+          disabled={selectedPassengers.length < 2 || !groupRecommendation}
         >
-          Allocate Group ({selectedPassengers.length} passengers)
+          Apply Recommendation ({selectedPassengers.length} passengers)
         </Button>
       </DialogActions>
     </Dialog>

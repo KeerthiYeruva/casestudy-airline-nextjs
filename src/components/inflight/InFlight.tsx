@@ -238,7 +238,7 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
   };
 
   return (
-    <Container maxWidth={false} sx={{ py: { xs: 2, sm: 3 }, px: { xs: 2, md: 0 }, minWidth: 0 }}>
+    <Container className="inflight" maxWidth={false} sx={{ py: { xs: 2, sm: 3 }, px: { xs: 2, md: 0 }, minWidth: 0 }}>
       <PageHeader
         title="In-Flight Services"
         isConnected={isConnected}

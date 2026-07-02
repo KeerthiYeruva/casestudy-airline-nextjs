@@ -145,7 +145,7 @@ const StaffCheckIn: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 }, minWidth: 0 }}>
+    <Container className="staff-checkin" maxWidth="xl" sx={{ py: { xs: 2, sm: 3 }, minWidth: 0 }}>
       <PageHeader
         title="Staff Check-In"
         isConnected={isConnected}

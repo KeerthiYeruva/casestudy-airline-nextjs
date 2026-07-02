@@ -37,6 +37,91 @@ interface FamilySeatingDialogProps {
   flightId: string;
 }
 
+interface SeatingRecommendation {
+  seats: string[];
+  score: number;
+  confidence: 'High' | 'Medium' | 'Low';
+  reasons: string[];
+}
+
+const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+function getSeatRow(seat: string) {
+  return Number.parseInt(seat.match(/^\d+/)?.[0] ?? '0', 10);
+}
+
+function getConfidence(score: number): SeatingRecommendation['confidence'] {
+  if (score >= 90) return 'High';
+  if (score >= 70) return 'Medium';
+  return 'Low';
+}
+
+function getAvailableSeatsForRow(row: number, occupiedSeats: Set<string>) {
+  return seatLetters
+    .map((letter) => `${row}${letter}`)
+    .filter((seat) => !occupiedSeats.has(seat));
+}
+
+function buildFamilyRecommendation(seats: string[], seatsNeeded: number, infants: number): SeatingRecommendation {
+  const rows = Array.from(new Set(seats.map(getSeatRow))).filter((row) => row > 0);
+  const sameRow = rows.length === 1;
+  const adjacentRows = rows.length === 2 && Math.abs(rows[0] - rows[1]) === 1;
+  let score = sameRow ? 100 : adjacentRows ? 82 : 55;
+  const reasons = sameRow
+    ? ['Family seated together in one row']
+    : adjacentRows
+      ? ['Family split across adjacent rows']
+      : ['Family kept as close as available seats allow'];
+
+  if (infants > 0 && rows.includes(1)) {
+    score += 6;
+    reasons.push('Bulkhead row prioritized for infant travel');
+  }
+
+  if (seats.length === seatsNeeded) {
+    score += 4;
+    reasons.push('Every seated family member has an assigned seat');
+  }
+
+  const normalizedScore = Math.min(score, 100);
+
+  return {
+    seats,
+    score: normalizedScore,
+    confidence: getConfidence(normalizedScore),
+    reasons,
+  };
+}
+
+function findFamilySeatRecommendation(seatsNeeded: number, infants: number, occupiedSeats: Set<string>) {
+  const recommendations: SeatingRecommendation[] = [];
+
+  for (let row = 1; row <= 10; row++) {
+    for (let startIndex = 0; startIndex <= seatLetters.length - seatsNeeded; startIndex++) {
+      const seats = seatLetters
+        .slice(startIndex, startIndex + seatsNeeded)
+        .map((letter) => `${row}${letter}`);
+
+      if (seats.every((seat) => !occupiedSeats.has(seat))) {
+        recommendations.push(buildFamilyRecommendation(seats, seatsNeeded, infants));
+      }
+    }
+  }
+
+  for (let startRow = 1; startRow <= 9; startRow++) {
+    const seats = [
+      ...getAvailableSeatsForRow(startRow, occupiedSeats),
+      ...getAvailableSeatsForRow(startRow + 1, occupiedSeats),
+    ].slice(0, seatsNeeded);
+
+    if (seats.length === seatsNeeded) {
+      recommendations.push(buildFamilyRecommendation(seats, seatsNeeded, infants));
+    }
+  }
+
+  return recommendations.sort((a, b) => b.score - a.score)[0] ?? null;
+}
+
 const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
   open,
   onClose,
@@ -100,6 +185,20 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
   
   const compositionValid = selectedInfants === infants && selectedNonInfants === expectedNonInfants;
 
+  const familyRecommendation = useMemo(() => {
+    if (totalMembers < 2 || selectedPassengers.length !== totalMembers || !compositionValid || infants > adults) {
+      return null;
+    }
+
+    const occupiedSeats = new Set(
+      passengers
+        .filter((passenger) => passenger.seat && !selectedPassengers.includes(passenger.id))
+        .map((passenger) => passenger.seat)
+    );
+
+    return findFamilySeatRecommendation(seatsNeeded, infants, occupiedSeats);
+  }, [adults, compositionValid, infants, passengers, seatsNeeded, selectedPassengers, totalMembers]);
+
   const handleTogglePassenger = (passengerId: string) => {
     const updatedPassengers = selectedPassengers.includes(passengerId)
       ? selectedPassengers.filter(id => id !== passengerId)
@@ -146,55 +245,14 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
       return;
     }
 
-    // Find consecutive seats in the same row (e.g., 5A, 5B, 5C)
     const occupiedSeats = new Set(
       passengers
         .filter(p => p.seat && !selectedPassengers.includes(p.id))
         .map(p => p.seat)
     );
 
-    const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
-    let allocatedSeats: string[] = [];
-    let foundRow = false;
-
-    // Try to find a row with enough consecutive available seats (only for adults + children)
-    for (let row = 1; row <= 10 && !foundRow; row++) {
-      // Check for consecutive seats starting from each position
-      for (let startIdx = 0; startIdx <= seatLetters.length - seatsNeeded && !foundRow; startIdx++) {
-        const consecutiveSeats = [];
-        let allAvailable = true;
-        
-        for (let i = 0; i < seatsNeeded; i++) {
-          const seat = `${row}${seatLetters[startIdx + i]}`;
-          if (occupiedSeats.has(seat)) {
-            allAvailable = false;
-            break;
-          }
-          consecutiveSeats.push(seat);
-        }
-        
-        if (allAvailable && consecutiveSeats.length === seatsNeeded) {
-          allocatedSeats = consecutiveSeats;
-          foundRow = true;
-        }
-      }
-    }
-
-    // If can't fit in one row, try to find consecutive rows as fallback
-    if (!foundRow) {
-      for (let startRow = 1; startRow <= 9 && !foundRow; startRow++) {
-        const row1Seats = seatLetters.map(letter => `${startRow}${letter}`);
-        const row2Seats = seatLetters.map(letter => `${startRow + 1}${letter}`);
-        
-        const available1 = row1Seats.filter(seat => !occupiedSeats.has(seat));
-        const available2 = row2Seats.filter(seat => !occupiedSeats.has(seat));
-        
-        if (available1.length + available2.length >= seatsNeeded) {
-          allocatedSeats = [...available1, ...available2].slice(0, seatsNeeded);
-          foundRow = true;
-        }
-      }
-    }
+    const recommendation = findFamilySeatRecommendation(seatsNeeded, infants, occupiedSeats);
+    const allocatedSeats = recommendation?.seats ?? [];
 
     if (allocatedSeats.length !== seatsNeeded) {
       showToast(`Unable to find ${seatsNeeded} consecutive seats for family seating. Please try manual seat selection.`, 'error');
@@ -211,28 +269,17 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
       autoAllocate: true
     };
 
-    // Assign seats: adults and children get seats, infants share with adults (same seat number)
-    const seatAssignments: string[] = [];
-    
-    // First, assign seats to non-infant passengers (adults + children)
-    for (let i = 0; i < nonInfantPassengers.length; i++) {
-      seatAssignments.push(allocatedSeats[i]);
-    }
-    
-    // Infants share seats with adults (assign first adult's seat to each infant)
-    for (let i = 0; i < infantPassengers.length; i++) {
-      // Assign infant to same seat as an adult (lap infant)
-      const adultSeatIndex = Math.min(i, adults - 1); // Distribute infants among adults
-      seatAssignments.push(allocatedSeats[adultSeatIndex]);
-    }
+    const orderedSeats = selectedPassengers.map((passengerId) => {
+      const passenger = selectedPassengerObjects.find((selectedPassenger) => selectedPassenger.id === passengerId);
+      if (!passenger) return allocatedSeats[0];
 
-    // Pass both familySeating metadata and actual seat assignments (in correct passenger order)
-    const orderedSeats = selectedPassengers.map((passengerId, index) => {
-      const passenger = selectedPassengerObjects[index];
-      const seatIndex = passenger.infant 
-        ? nonInfantPassengers.length + infantPassengers.findIndex(p => p.id === passengerId)
-        : nonInfantPassengers.findIndex(p => p.id === passengerId);
-      return seatAssignments[seatIndex];
+      if (passenger.infant) {
+        const infantIndex = infantPassengers.findIndex((infantPassenger) => infantPassenger.id === passengerId);
+        return allocatedSeats[Math.min(infantIndex, adults - 1)];
+      }
+
+      const seatIndex = nonInfantPassengers.findIndex((nonInfantPassenger) => nonInfantPassenger.id === passengerId);
+      return allocatedSeats[seatIndex];
     });
     
     onAllocate(familySeating, selectedPassengers, orderedSeats);
@@ -425,6 +472,30 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
             </Alert>
           )}
 
+          {familyRecommendation && (
+            <Paper elevation={0} sx={{ p: 2, border: '1px solid', borderColor: 'success.main', bgcolor: 'success.50' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                  Recommended Allocation
+                </Typography>
+                <Chip label={`${familyRecommendation.confidence} confidence`} color="success" size="small" />
+              </Box>
+              <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                Seats: {familyRecommendation.seats.join(', ')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                Smart seating score: {familyRecommendation.score}%
+              </Typography>
+              <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                {familyRecommendation.reasons.map((reason) => (
+                  <Typography key={reason} component="li" variant="caption" color="text.secondary">
+                    {reason}
+                  </Typography>
+                ))}
+              </Box>
+            </Paper>
+          )}
+
           <Box sx={{ p: 2, bgcolor: 'info.50', borderRadius: 1 }}>
             <Typography variant="caption" color="text.secondary">
               <strong>Note:</strong> Family seating will prioritize:
@@ -460,10 +531,11 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
             selectedPassengers.length !== totalMembers || 
             availablePassengers.length < totalMembers ||
             !compositionValid ||
-            infants > adults
+            infants > adults ||
+            !familyRecommendation
           }
         >
-          Allocate Family Seating
+          Apply Recommended Allocation
         </Button>
       </DialogActions>
     </Dialog>
