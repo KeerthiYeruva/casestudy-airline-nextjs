@@ -46,7 +46,7 @@ function getTodayIsoDate() {
 
 function getTopAncillaryService(passengers: Passenger[]) {
   const serviceCounts = passengers.reduce<Record<string, number>>((counts, passenger) => {
-    passenger.ancillaryServices.forEach((service) => {
+    (passenger.ancillaryServices ?? []).forEach((service) => {
       counts[service] = (counts[service] || 0) + 1;
     });
 
@@ -116,7 +116,7 @@ export default function AdminMetrics({ flights, passengers }: AdminMetricsProps)
   const premiumSeatRevenue = premiumPassengers * PREMIUM_SEAT_REVENUE;
   const { topService, topCount } = getTopAncillaryService(passengers);
   const ancillaryRevenue = passengers.reduce((total, passenger) => {
-    const passengerTotal = passenger.shopRequests.reduce((subtotal, request) => {
+    const passengerTotal = (passenger.shopRequests ?? []).reduce((subtotal, request) => {
       return subtotal + request.price * request.quantity;
     }, 0);
 

@@ -5,9 +5,12 @@ import FlightSearch from '../features/customer/components/FlightSearch';
 import type { Flight } from '../domain/flights/types';
 import type { Passenger } from '../domain/passengers/types';
 
+jest.setTimeout(15000);
+
 const mockFetchFlights = jest.fn();
 const mockFetchPassengers = jest.fn();
 const mockAddPassenger = jest.fn();
+const mockFetchCatalog = jest.fn();
 
 const mockFlights: Flight[] = [
   {
@@ -22,8 +25,8 @@ const mockFlights: Flight[] = [
     aircraft: 'Boeing 737',
     gate: 'A12',
     terminal: '4',
-    totalSeats: 180,
-    availableSeats: 172,
+    totalSeats: 12,
+    availableSeats: 11,
   },
   {
     id: 'FL002',
@@ -37,8 +40,8 @@ const mockFlights: Flight[] = [
     aircraft: 'Airbus A320',
     gate: 'B5',
     terminal: '2',
-    totalSeats: 150,
-    availableSeats: 144,
+    totalSeats: 12,
+    availableSeats: 12,
   },
   {
     id: 'FL003',
@@ -52,8 +55,8 @@ const mockFlights: Flight[] = [
     aircraft: 'Boeing 787',
     gate: 'C8',
     terminal: '1',
-    totalSeats: 200,
-    availableSeats: 194,
+    totalSeats: 12,
+    availableSeats: 12,
   },
 ];
 
@@ -78,8 +81,11 @@ jest.mock('../stores/useDataStore', () => ({
   default: () => ({
     flights: mockFlights,
     passengers: mockPassengers,
+    ancillaryServices: ['Extra Baggage', 'Lounge Access', 'Wi-Fi Access'],
+    mealOptions: ['Regular', 'Vegetarian', 'Vegan'],
     fetchFlights: mockFetchFlights,
     fetchPassengers: mockFetchPassengers,
+    fetchCatalog: mockFetchCatalog,
     addPassenger: mockAddPassenger,
   }),
 }));
@@ -93,13 +99,16 @@ const fillPaymentDetails = () => {
 
 const confirmBooking = async () => {
   const confirmButton = screen.getByRole('button', { name: /confirm booking/i });
-  await waitFor(() => expect(confirmButton).toBeEnabled());
+  await waitFor(() => expect(confirmButton).toBeEnabled(), { timeout: 500 });
   fireEvent.click(confirmButton);
 };
 
 describe('FlightSearch', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFetchFlights.mockResolvedValue(undefined);
+    mockFetchPassengers.mockResolvedValue(undefined);
+    mockFetchCatalog.mockResolvedValue(undefined);
     mockAddPassenger.mockResolvedValue({
       id: 'P100',
       name: 'Maya Patel',

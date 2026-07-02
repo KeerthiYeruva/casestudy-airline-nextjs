@@ -252,6 +252,13 @@ export default function BookingDialog({
     }
   }, [open, fetchCatalog]);
 
+  useEffect(() => {
+    if (!open || !flight || confirmation) return;
+
+    const occupied = getOccupiedSeats(flight, passengers);
+    setSelectedSeat(getFirstAvailableSeat(flight, occupied));
+  }, [confirmation, flight, open, passengers]);
+
   const occupiedSeats = useMemo(() => (flight ? getOccupiedSeats(flight, passengers) : new Set<string>()), [flight, passengers]);
   const suggestedSeat = useMemo(() => (flight ? getFirstAvailableSeat(flight, occupiedSeats) : null), [flight, occupiedSeats]);
   const availableMealOptions = Array.isArray(mealOptions) && mealOptions.length > 0 ? mealOptions : defaultMealOptions;
@@ -341,7 +348,7 @@ export default function BookingDialog({
   };
 
   return (
-    <Dialog open={open} onClose={resetAndClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={resetAndClose} fullWidth maxWidth="md" transitionDuration={0}>
       <DialogTitle>{confirmation ? "Booking Confirmed" : `Book ${flight?.flightNumber || "Flight"}`}</DialogTitle>
       <DialogContent dividers>
         {!flight ? (

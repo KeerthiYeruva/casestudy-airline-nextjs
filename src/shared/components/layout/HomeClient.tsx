@@ -4,6 +4,7 @@ import { useState, lazy, Suspense, type ReactNode } from "react";
 import useAuthStore from "../../../stores/useAuthStore";
 import { UserRole, normalizeUserRole, roleLabels, rolePermissions } from "../../../domain/auth/types";
 import Auth from "../../../features/auth/components/Auth";
+import InFlight from "../../../features/cabin/components/InFlight";
 import ErrorBoundary from "../common/ErrorBoundary";
 import { 
   AppBar, 
@@ -37,7 +38,6 @@ const FlightSearch = lazy(() => import("../../../features/customer/components/Fl
 const PassengerPortal = lazy(() => import("../../../features/customer/components/PassengerPortal"));
 const FlightStatusDashboard = lazy(() => import("../../../features/customer/components/FlightStatusDashboard"));
 const StaffCheckIn = lazy(() => import("../../../features/check-in/components/StaffCheckIn"));
-const InFlight = lazy(() => import("../../../features/cabin/components/InFlight"));
 const AdminDashboard = lazy(() => import("../../../features/admin/components/AdminDashboard"));
 const OperationalSeatMap = lazy(() => import("../../../features/seating/components/OperationalSeatMap"));
 const OperationalDashboard = lazy(() => import("../../../features/operations/components/OperationalDashboard"));
@@ -163,7 +163,7 @@ const customerNavigationViews: NavigationItem["view"][] = ["search", "trips", "s
 const checkInNavigationViews: NavigationItem["view"][] = ["opsDashboard", "checkin", "seatMap", "status"];
 const cabinNavigationViews: NavigationItem["view"][] = ["opsDashboard", "inflight", "seatMap", "status"];
 const operationsNavigationViews: NavigationItem["view"][] = ["opsDashboard", "checkin", "inflight", "seatMap", "status"];
-const adminNavigationViews: NavigationItem["view"][] = ["admin"];
+const adminNavigationViews: NavigationItem["view"][] = ["admin", "opsDashboard", "checkin", "inflight", "seatMap", "status"];
 
 const checkInNavigationSections: NavigationSection[] = [
   { title: "Overview", views: ["opsDashboard"] },
@@ -182,6 +182,7 @@ const operationsNavigationSections: NavigationSection[] = [
 
 const adminNavigationSections: NavigationSection[] = [
   { title: "Dashboard", views: ["admin"] },
+  { title: "Operations", views: ["opsDashboard", "checkin", "inflight", "seatMap", "status"] },
 ];
 
 const getNavigationViewsForRole = (role: UserRole | null, isAuthenticated: boolean) => {

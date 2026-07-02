@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SeatManagementTab from '../../features/admin/components/tabs/SeatManagementTab';
 
@@ -193,7 +193,7 @@ describe('SeatManagementTab', () => {
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     });
 
-    it('should open seat preferences dialog after passenger selection', () => {
+    it('should open seat preferences dialog after passenger selection', async () => {
       render(<SeatManagementTab {...defaultProps} />);
       
       const button = screen.getByText('Set Seat Preferences');
@@ -203,7 +203,9 @@ describe('SeatManagementTab', () => {
       fireEvent.click(johnDoe);
       
       // Should close selection dialog and open preferences dialog
-      expect(screen.queryByText('Select Passenger for Seat Preferences')).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.queryByText('Select Passenger for Seat Preferences')).not.toBeInTheDocument();
+      });
     });
   });
 

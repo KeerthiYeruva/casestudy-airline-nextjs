@@ -48,6 +48,8 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
   const [premiumSelectionDialog, setPremiumSelectionDialog] = useState(false);
   const [selectedPassengerForSeat, setSelectedPassengerForSeat] = useState<string | null>(null);
 
+  const selectedPassenger = passengers.find(p => p.id === selectedPassengerForSeat) ?? null;
+
 
 
   const handleClearAllPreferences = () => {
@@ -428,6 +430,7 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
         passengers={passengers}
         onSelect={(passengerId) => {
           setSelectedPassengerForSeat(passengerId);
+          setPassengerSelectionDialog(false);
           setSeatPreferencesDialog(true);
         }}
         title="Select Passenger for Seat Preferences"
@@ -439,6 +442,7 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
         passengers={passengers}
         onSelect={(passengerId) => {
           setSelectedPassengerForSeat(passengerId);
+          setPremiumSelectionDialog(false);
           setPremiumSeatDialog(true);
         }}
         title="Select Passenger for Premium Upgrade"
@@ -484,7 +488,7 @@ const SeatManagementTab: React.FC<SeatManagementTabProps> = ({
           setPremiumSeatDialog(false);
           setSelectedPassengerForSeat(null);
         }}
-        passenger={passengers.find(p => p.id === selectedPassengerForSeat) || passengers[0]}
+        passenger={selectedPassenger}
         availableUpgrades={getAvailablePremiumUpgrades()}
         onUpgrade={handlePremiumUpgrade}
         currency="USD"

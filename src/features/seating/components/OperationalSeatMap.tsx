@@ -6,6 +6,11 @@ import {
   Box,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
   Paper,
   Stack,
   Typography,
@@ -105,7 +110,7 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
     (passenger) => passenger.specialMeal && passenger.specialMeal !== "Regular"
   ).length;
   const serviceRequestPassengers = flightPassengers.filter(
-    (passenger) => passenger.ancillaryServices.length > 0 || (passenger.shopRequests?.length ?? 0) > 0
+    (passenger) => (passenger.ancillaryServices?.length ?? 0) > 0 || (passenger.shopRequests?.length ?? 0) > 0
   ).length;
   const familyPassengers = flightPassengers.filter((passenger) => passenger.familySeating).length;
   const groupPassengers = flightPassengers.filter((passenger) => passenger.groupSeating).length;
@@ -238,9 +243,9 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
                   <Typography variant="body2" color="text.secondary">
                     Meal: {selectedPassengerOnFlight.specialMeal || "Regular"}
                   </Typography>
-                  {selectedPassengerOnFlight.ancillaryServices.length > 0 && (
+                  {(selectedPassengerOnFlight.ancillaryServices?.length ?? 0) > 0 && (
                     <Typography variant="body2" color="text.secondary">
-                      Services: {selectedPassengerOnFlight.ancillaryServices.join(", ")}
+                      Services: {selectedPassengerOnFlight.ancillaryServices?.join(", ")}
                     </Typography>
                   )}
                 </Box>
@@ -260,6 +265,76 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
       )}
     >
       <SeatMapVisual passengers={flightPassengers} onSeatClick={handleSeatClick} mode={mode} />
+
+      <Dialog
+        open={!!selectedPassengerOnFlight}
+        onClose={() => setSelectedPassenger(null)}
+        maxWidth="xs"
+        fullWidth
+        aria-labelledby="seat-passenger-dialog-title"
+      >
+        <DialogTitle id="seat-passenger-dialog-title">Passenger Details</DialogTitle>
+        {selectedPassengerOnFlight && (
+          <DialogContent dividers>
+            <Stack spacing={2}>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                  {selectedPassengerOnFlight.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Seat {selectedPassengerOnFlight.seat} · {selectedPassengerOnFlight.flightId}
+                </Typography>
+              </Box>
+
+              <Divider />
+
+              <Stack spacing={1}>
+                <Typography variant="body2">
+                  Booking: <strong>{selectedPassengerOnFlight.bookingReference || "Not assigned"}</strong>
+                </Typography>
+                <Typography variant="body2">
+                  Status: <strong>{selectedPassengerOnFlight.checkedIn ? "Checked in" : "Not checked in"}</strong>
+                </Typography>
+                <Typography variant="body2">
+                  Meal: <strong>{selectedPassengerOnFlight.specialMeal || "Regular"}</strong>
+                </Typography>
+                {selectedPassengerOnFlight.premiumUpgrade && <Chip label="Premium seat" color="warning" size="small" />}
+              </Stack>
+
+              {(selectedPassengerOnFlight.ancillaryServices?.length ?? 0) > 0 && (
+                <Box>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Services
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
+                    {selectedPassengerOnFlight.ancillaryServices?.map((service) => (
+                      <Chip key={service} label={service} size="small" variant="outlined" />
+                    ))}
+                  </Stack>
+                </Box>
+              )}
+
+              {(selectedPassengerOnFlight.shopRequests?.length ?? 0) > 0 && (
+                <Box>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Shop Requests
+                  </Typography>
+                  <Stack spacing={0.75}>
+                    {selectedPassengerOnFlight.shopRequests?.map((request) => (
+                      <Typography key={request.itemName} variant="body2" color="text.secondary">
+                        {request.itemName} x{request.quantity}
+                      </Typography>
+                    ))}
+                  </Stack>
+                </Box>
+              )}
+            </Stack>
+          </DialogContent>
+        )}
+        <DialogActions>
+          <Button onClick={() => setSelectedPassenger(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </OperationalWorkspace>
   );
 };

@@ -44,7 +44,7 @@ interface PremiumSeatUpsellDialogProps {
   open: boolean;
   onClose: () => void;
   onUpgrade: (seatNumber: string) => void;
-  passenger: Passenger;
+  passenger: Passenger | null;
   availableUpgrades: PremiumSeatUpsell[];
   currency?: string;
   locale?: string;
@@ -93,6 +93,10 @@ const PremiumSeatUpsellDialog: React.FC<PremiumSeatUpsellDialogProps> = ({
   };
 
   const selectedUpgrade = availableUpgrades.find(u => u.seatNumber === selectedSeat);
+
+  if (!passenger) {
+    return null;
+  }
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>

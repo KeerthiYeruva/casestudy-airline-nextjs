@@ -77,6 +77,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
                     <IconButton
                       edge="end"
                       size="small"
+                      aria-label={`Edit ${service}`}
                       onClick={() => onEditService(service)}
                     >
                       <EditIcon />
@@ -84,6 +85,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
                     <IconButton
                       edge="end"
                       size="small"
+                      aria-label={`Delete ${service}`}
                       onClick={() => onDeleteService(service)}
                     >
                       <DeleteIcon />
@@ -127,6 +129,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
                     <IconButton
                       edge="end"
                       size="small"
+                      aria-label={`Edit ${meal}`}
                       onClick={() => onEditMeal(meal)}
                     >
                       <EditIcon />
@@ -134,6 +137,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
                     <IconButton
                       edge="end"
                       size="small"
+                      aria-label={`Delete ${meal}`}
                       onClick={() => onDeleteMeal(meal)}
                     >
                       <DeleteIcon />
@@ -177,6 +181,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
                     <IconButton
                       edge="end"
                       size="small"
+                      aria-label={`Edit ${item.name}`}
                       onClick={() => onEditShopItem(item)}
                     >
                       <EditIcon />
@@ -184,6 +189,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
                     <IconButton
                       edge="end"
                       size="small"
+                      aria-label={`Delete ${item.name}`}
                       onClick={() => onDeleteShopItem(item.id)}
                     >
                       <DeleteIcon />

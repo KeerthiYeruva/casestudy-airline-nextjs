@@ -76,15 +76,16 @@ describe('HomeClient navigation', () => {
     expect(await screen.findByText('Flight Search View')).toBeInTheDocument();
   });
 
-  it('hides My Trips for authenticated admin users', async () => {
+  it('shows admin dashboard and operations navigation for authenticated admin users', async () => {
     render(<HomeClient />);
 
     expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /navigate to flight search/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to admin dashboard/i })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /navigate to passengers/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /navigate to flights/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /navigate to seat operations/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to operations overview/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to check-in/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to in-flight services/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to seat operations/i })).toBeInTheDocument();
     expect(await screen.findByText('Admin Dashboard View')).toBeInTheDocument();
   });
 
@@ -142,17 +143,17 @@ describe('HomeClient navigation', () => {
     expect(await screen.findByText('Operations Overview View')).toBeInTheDocument();
   });
 
-  it('keeps super admin on admin navigation', async () => {
+  it('shows admin dashboard and operations navigation for super admin', async () => {
     setAuthRole(UserRole.SUPER_ADMIN);
 
     render(<HomeClient />);
 
     expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /navigate to operations overview/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to admin dashboard/i })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /navigate to passengers/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /navigate to flights/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /navigate to seat operations/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to operations overview/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to check-in/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to in-flight services/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to seat operations/i })).toBeInTheDocument();
     expect(await screen.findByText('Admin Dashboard View')).toBeInTheDocument();
   });
 });

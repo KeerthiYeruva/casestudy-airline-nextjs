@@ -1,34 +1,81 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AdminDashboard from '../features/admin/components/AdminDashboard';
+
+const mockDataStoreState = {
+  flights: [
+    { id: 'AA100', flightNumber: 'AA100', origin: 'JFK', destination: 'LAX', departureTime: '10:00', status: 'On Time', totalSeats: 180 }
+  ],
+  passengers: [
+    {
+      id: 'P1',
+      name: 'John Doe',
+      flightId: 'AA100',
+      seat: '12A',
+      passportNumber: 'ABC123',
+      dateOfBirth: '1990-01-01',
+      address: '123 Main St',
+      ancillaryServices: [],
+      shopRequests: [],
+    }
+  ],
+  ancillaryServices: ['WiFi', 'Extra Legroom'],
+  mealOptions: ['Vegetarian', 'Non-Vegetarian'],
+  shopItems: [
+    { id: 'SHOP1', name: 'Perfume', category: 'Perfumes & Cosmetics', price: 50, currency: 'USD' }
+  ],
+  shopCategories: ['Perfumes & Cosmetics'],
+  loading: false,
+  error: null,
+  fetchFlights: jest.fn(() => Promise.resolve()),
+  fetchPassengers: jest.fn(() => Promise.resolve()),
+  fetchCatalog: jest.fn(() => Promise.resolve()),
+  addFlight: jest.fn(() => Promise.resolve({ id: 'AA101', flightNumber: 'AA101' })),
+  updateFlight: jest.fn((id, updates) => Promise.resolve({ id, flightNumber: 'AA100', ...updates })),
+  deleteFlight: jest.fn((id) => Promise.resolve({ id, flightNumber: 'AA100' })),
+  addPassenger: jest.fn((passenger) => Promise.resolve({ id: 'P2', ...passenger })),
+  updatePassenger: jest.fn((id, updates) => Promise.resolve({ id, ...updates })),
+  deletePassenger: jest.fn((id) => Promise.resolve({ id })),
+  checkInPassenger: jest.fn(() => Promise.resolve(null)),
+  undoCheckIn: jest.fn(() => Promise.resolve(null)),
+  changeSeat: jest.fn(() => Promise.resolve(null)),
+  addAncillaryService: jest.fn((service) => Promise.resolve(service)),
+  updateAncillaryService: jest.fn((_, service) => Promise.resolve(service)),
+  deleteAncillaryService: jest.fn((service) => Promise.resolve(service)),
+  addMealOption: jest.fn((meal) => Promise.resolve(meal)),
+  updateMealOption: jest.fn((_, meal) => Promise.resolve(meal)),
+  deleteMealOption: jest.fn((meal) => Promise.resolve(meal)),
+  addShopItem: jest.fn((item) => Promise.resolve(item)),
+  updateShopItem: jest.fn((id, updates) => Promise.resolve({ id, ...updates })),
+  deleteShopItem: jest.fn((id) => Promise.resolve({ id })),
+  setFlights: jest.fn(),
+  setPassengers: jest.fn(),
+  setAncillaryServices: jest.fn(),
+  setMealOptions: jest.fn(),
+  setShopItems: jest.fn(),
+  setShopCategories: jest.fn(),
+  resetToInitialData: jest.fn(() => Promise.resolve()),
+  addAncillaryServiceToPassenger: jest.fn(() => Promise.resolve()),
+  removeAncillaryServiceFromPassenger: jest.fn(() => Promise.resolve()),
+  changeMealPreference: jest.fn(() => Promise.resolve()),
+  addShopRequest: jest.fn(() => Promise.resolve()),
+  removeShopRequest: jest.fn(() => Promise.resolve()),
+  updateSeatPreferences: jest.fn(() => Promise.resolve()),
+  allocateGroupSeating: jest.fn(() => Promise.resolve()),
+  allocateFamilySeating: jest.fn(() => Promise.resolve()),
+  upgradeToPremium: jest.fn(() => Promise.resolve()),
+  getPremiumSeatUpsells: jest.fn(() => []),
+};
+
+const mockToastStoreState = {
+  showToast: jest.fn(),
+};
 
 // Mock the stores
 jest.mock('../stores/useDataStore', () => ({
   __esModule: true,
-  default: jest.fn(() => ({
-    flights: [
-      { id: 'AA100', origin: 'JFK', destination: 'LAX', departureTime: '10:00', status: 'On Time' }
-    ],
-    passengers: [
-      { id: 'P1', name: 'John Doe', flightId: 'AA100', seat: '12A', passportNumber: 'ABC123', dateOfBirth: '1990-01-01', address: '123 Main St' }
-    ],
-    ancillaryServices: ['WiFi', 'Extra Legroom'],
-    mealOptions: ['Vegetarian', 'Non-Vegetarian'],
-    shopItems: [
-      { id: 'SHOP1', name: 'Perfume', category: 'Perfumes & Cosmetics', price: 50, currency: 'USD' }
-    ],
-    error: null,
-    fetchFlights: jest.fn(),
-    fetchPassengers: jest.fn(),
-    addPassenger: jest.fn(() => Promise.resolve(true)),
-    updatePassenger: jest.fn(() => Promise.resolve(true)),
-    deletePassenger: jest.fn(() => Promise.resolve(true)),
-    setAncillaryServices: jest.fn(),
-    setMealOptions: jest.fn(),
-    setShopItems: jest.fn(),
-    resetToInitialData: jest.fn(() => Promise.resolve()),
-  })),
+  default: jest.fn(() => mockDataStoreState),
 }));
 
 jest.mock('../stores/useAdminStore', () => ({
@@ -44,9 +91,7 @@ jest.mock('../stores/useAdminStore', () => ({
 
 jest.mock('../stores/useToastStore', () => ({
   __esModule: true,
-  default: jest.fn(() => ({
-    showToast: jest.fn(),
-  })),
+  default: jest.fn(() => mockToastStoreState),
 }));
 
 jest.mock('../hooks/useRealtimeUpdates', () => ({
@@ -59,6 +104,10 @@ jest.mock('../hooks/useRealtimeUpdates', () => ({
 describe('AdminDashboard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    jest.mocked(require('../stores/useDataStore').default).mockReturnValue(mockDataStoreState);
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    jest.mocked(require('../stores/useToastStore').default).mockReturnValue(mockToastStoreState);
   });
 
   describe('Rendering', () => {
@@ -139,13 +188,13 @@ describe('AdminDashboard', () => {
 
   describe('Service Dialog Operations', () => {
     it('should add a new service', async () => {
-      const mockSetServices = jest.fn();
+      const mockAddService = jest.fn(() => Promise.resolve('Priority Boarding'));
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
-      useDataStoreMock.mockReturnValueOnce({
-        ...useDataStoreMock.mock.results[0].value,
+      useDataStoreMock.mockReturnValue({
+        ...mockDataStoreState,
         ancillaryServices: ['WiFi'],
-        setAncillaryServices: mockSetServices,
+        addAncillaryService: mockAddService,
       });
 
       render(<AdminDashboard />);
@@ -163,22 +212,16 @@ describe('AdminDashboard', () => {
       fireEvent.change(input, { target: { value: 'Priority Boarding' } });
       
       // Save
-      const saveButton = screen.getByText(/save/i);
-      fireEvent.click(saveButton);
+      const dialog = screen.getByRole('dialog');
+      const addDialogButton = within(dialog).getByRole('button', { name: /add/i });
+      fireEvent.click(addDialogButton);
       
       await waitFor(() => {
-        expect(mockSetServices).toHaveBeenCalledWith(['WiFi', 'Priority Boarding']);
+        expect(mockAddService).toHaveBeenCalledWith('Priority Boarding');
       });
     });
 
     it('should not add empty service', async () => {
-      const mockShowToast = jest.fn();
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useToastStoreMock = jest.mocked(require('../stores/useToastStore').default);
-      useToastStoreMock.mockReturnValueOnce({
-        showToast: mockShowToast,
-      });
-
       render(<AdminDashboard />);
       
       const servicesTab = screen.getByText('Services & Menu');
@@ -187,22 +230,23 @@ describe('AdminDashboard', () => {
       const addButton = screen.getAllByText(/add/i)[0];
       fireEvent.click(addButton);
       
-      const saveButton = screen.getByText(/save/i);
-      fireEvent.click(saveButton);
+      const dialog = screen.getByRole('dialog');
+      const addDialogButton = within(dialog).getByRole('button', { name: /add/i });
+      fireEvent.click(addDialogButton);
       
-      expect(mockShowToast).toHaveBeenCalledWith('Service name cannot be empty', 'error');
+      expect(mockToastStoreState.showToast).toHaveBeenCalledWith('Service name cannot be empty', 'error');
     });
   });
 
   describe('Meal Dialog Operations', () => {
     it('should add a new meal option', async () => {
-      const mockSetMeals = jest.fn();
+      const mockAddMeal = jest.fn(() => Promise.resolve('Vegan'));
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
-      useDataStoreMock.mockReturnValueOnce({
-        ...useDataStoreMock.mock.results[0].value,
+      useDataStoreMock.mockReturnValue({
+        ...mockDataStoreState,
         mealOptions: ['Vegetarian'],
-        setMealOptions: mockSetMeals,
+        addMealOption: mockAddMeal,
       });
 
       render(<AdminDashboard />);
@@ -217,22 +261,16 @@ describe('AdminDashboard', () => {
       const input = screen.getByLabelText(/meal name/i);
       fireEvent.change(input, { target: { value: 'Vegan' } });
       
-      const saveButton = screen.getByText(/save/i);
-      fireEvent.click(saveButton);
+      const dialog = screen.getByRole('dialog');
+      const addDialogButton = within(dialog).getByRole('button', { name: /add/i });
+      fireEvent.click(addDialogButton);
       
       await waitFor(() => {
-        expect(mockSetMeals).toHaveBeenCalledWith(['Vegetarian', 'Vegan']);
+        expect(mockAddMeal).toHaveBeenCalledWith('Vegan');
       });
     });
 
     it('should not add empty meal option', async () => {
-      const mockShowToast = jest.fn();
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useToastStoreMock = jest.mocked(require('../stores/useToastStore').default);
-      useToastStoreMock.mockReturnValueOnce({
-        showToast: mockShowToast,
-      });
-
       render(<AdminDashboard />);
       
       const servicesTab = screen.getByText('Services & Menu');
@@ -241,22 +279,16 @@ describe('AdminDashboard', () => {
       const addButtons = screen.getAllByText(/add/i);
       fireEvent.click(addButtons[1]);
       
-      const saveButton = screen.getByText(/save/i);
-      fireEvent.click(saveButton);
+      const dialog = screen.getByRole('dialog');
+      const addDialogButton = within(dialog).getByRole('button', { name: /add/i });
+      fireEvent.click(addDialogButton);
       
-      expect(mockShowToast).toHaveBeenCalledWith('Meal option name cannot be empty', 'error');
+      expect(mockToastStoreState.showToast).toHaveBeenCalledWith('Meal option name cannot be empty', 'error');
     });
   });
 
   describe('Shop Item Dialog Operations', () => {
     it('should validate shop item form', async () => {
-      const mockShowToast = jest.fn();
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useToastStoreMock = jest.mocked(require('../stores/useToastStore').default);
-      useToastStoreMock.mockReturnValueOnce({
-        showToast: mockShowToast,
-      });
-
       render(<AdminDashboard />);
       
       const servicesTab = screen.getByText('Services & Menu');
@@ -267,10 +299,11 @@ describe('AdminDashboard', () => {
       fireEvent.click(addButtons[2]);
       
       // Try to save without filling required fields
-      const saveButton = screen.getByText(/save/i);
-      fireEvent.click(saveButton);
+      const dialog = screen.getByRole('dialog');
+      const addButton = within(dialog).getByRole('button', { name: /add/i });
+      fireEvent.click(addButton);
       
-      expect(mockShowToast).toHaveBeenCalledWith('Item name is required', 'error');
+      expect(await screen.findByText('Item name is required')).toBeInTheDocument();
     });
   });
 
@@ -286,7 +319,7 @@ describe('AdminDashboard', () => {
       if (deleteButtons.length > 0) {
         fireEvent.click(deleteButtons[0]);
         
-        expect(screen.getByText(/Delete/i)).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Delete Service' })).toBeInTheDocument();
       }
     });
   });
@@ -328,7 +361,7 @@ describe('AdminDashboard', () => {
       const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
       
       useDataStoreMock.mockReturnValueOnce({
-        ...useDataStoreMock.mock.results[0].value,
+        ...mockDataStoreState,
         flights: [],
         passengers: [],
         fetchFlights: mockFetchFlights,
@@ -348,7 +381,7 @@ describe('AdminDashboard', () => {
       const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
       
       useDataStoreMock.mockReturnValueOnce({
-        ...useDataStoreMock.mock.results[0].value,
+        ...mockDataStoreState,
         flights: [{ id: 'AA100' }],
         passengers: [{ id: 'P1' }],
         fetchFlights: mockFetchFlights,
