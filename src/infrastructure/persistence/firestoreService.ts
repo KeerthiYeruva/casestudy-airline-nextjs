@@ -8,8 +8,6 @@ import {
   addDoc, 
   updateDoc, 
   deleteDoc,
-  query,
-  where,
   onSnapshot
 } from '../firebase/firebaseConfig';
 import type { Flight } from '../../domain/flights/types';
@@ -25,6 +23,36 @@ const COLLECTIONS = {
   MEAL_OPTIONS: 'mealOptions',
   SHOP_CATEGORIES: 'shopCategories',
 } as const;
+
+type FirestoreSnapshotDoc = Awaited<ReturnType<typeof getDocs>>['docs'][number];
+
+const normalizeFlightDocs = (docs: FirestoreSnapshotDoc[]): Flight[] => {
+  const flightsBySourceId = docs.reduce<Record<string, Flight>>((flights, flightDoc) => {
+    const flight = flightDoc.data() as Partial<Flight>;
+    const sourceId = flight.id ?? flightDoc.id;
+    flights[sourceId] = { ...flight, id: flightDoc.id } as Flight;
+    return flights;
+  }, {});
+
+  return Object.values(flightsBySourceId);
+};
+
+const getFlightIdMap = async () => {
+  const snapshot = await getDocs(collection(db, COLLECTIONS.FLIGHTS));
+
+  return normalizeFlightDocs(snapshot.docs).reduce<Record<string, string>>((flightIds, flight) => {
+    const sourceFlight = snapshot.docs.find((flightDoc) => flightDoc.id === flight.id)?.data() as Partial<Flight> | undefined;
+    if (sourceFlight?.id) {
+      flightIds[sourceFlight.id] = flight.id;
+    }
+    return flightIds;
+  }, {});
+};
+
+const normalizePassengerFlightId = (passenger: Passenger, flightIds: Record<string, string>): Passenger => ({
+  ...passenger,
+  flightId: flightIds[passenger.flightId] ?? passenger.flightId,
+});
 
 // Check if Firebase is configured
 export function isFirebaseConfigured(): boolean {
@@ -90,7 +118,7 @@ export async function getAllFlights(): Promise<Flight[]> {
 
   try {
     const snapshot = await getDocs(collection(db, COLLECTIONS.FLIGHTS));
-    return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Flight));
+    return normalizeFlightDocs(snapshot.docs);
   } catch (error) {
     console.error('[Firestore] Error fetching flights:', error);
     return initialFlights;
@@ -172,13 +200,12 @@ export async function getAllPassengers(flightId?: string | null): Promise<Passen
   }
 
   try {
-    const collectionRef = collection(db, COLLECTIONS.PASSENGERS);
-    const q = flightId 
-      ? query(collectionRef, where('flightId', '==', flightId))
-      : collectionRef;
-    
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Passenger));
+    const [snapshot, flightIds] = await Promise.all([
+      getDocs(collection(db, COLLECTIONS.PASSENGERS)),
+      getFlightIdMap(),
+    ]);
+    const passengers = snapshot.docs.map(doc => normalizePassengerFlightId({ ...doc.data(), id: doc.id } as Passenger, flightIds));
+    return flightId ? passengers.filter(p => p.flightId === flightId) : passengers;
   } catch (error) {
     console.error('[Firestore] Error fetching passengers:', error);
     return flightId 
@@ -193,7 +220,10 @@ export async function getPassengerById(id: string): Promise<Passenger | null> {
   try {
     const docRef = doc(db, COLLECTIONS.PASSENGERS, id);
     const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? { ...docSnap.data(), id: docSnap.id } as Passenger : null;
+    if (!docSnap.exists()) return null;
+
+    const flightIds = await getFlightIdMap();
+    return normalizePassengerFlightId({ ...docSnap.data(), id: docSnap.id } as Passenger, flightIds);
   } catch (error) {
     console.error('[Firestore] Error fetching passenger:', error);
     return null;
@@ -267,11 +297,7 @@ export function subscribeToFlights(callback: (flights: Flight[]) => void): Unsub
     return onSnapshot(
       collection(db, COLLECTIONS.FLIGHTS),
       (snapshot) => {
-        const flights = snapshot.docs.map(doc => ({ 
-          id: doc.id, 
-          ...doc.data() 
-        } as Flight));
-        callback(flights);
+        callback(normalizeFlightDocs(snapshot.docs));
       },
       (error) => {
         console.error('[Firestore] Error in flights listener:', error);
@@ -299,19 +325,15 @@ export function subscribeToPassengers(
   }
 
   try {
-    const collectionRef = collection(db, COLLECTIONS.PASSENGERS);
-    const q = flightId 
-      ? query(collectionRef, where('flightId', '==', flightId))
-      : collectionRef;
-
     return onSnapshot(
-      q,
-      (snapshot) => {
-        const passengers = snapshot.docs.map(doc => ({ 
-          id: doc.id, 
-          ...doc.data() 
-        } as Passenger));
-        callback(passengers);
+      collection(db, COLLECTIONS.PASSENGERS),
+      async (snapshot) => {
+        const flightIds = await getFlightIdMap();
+        const passengers = snapshot.docs.map(doc => normalizePassengerFlightId({
+          ...doc.data(),
+          id: doc.id,
+        } as Passenger, flightIds));
+        callback(flightId ? passengers.filter(p => p.flightId === flightId) : passengers);
       },
       (error) => {
         console.error('[Firestore] Error in passengers listener:', error);

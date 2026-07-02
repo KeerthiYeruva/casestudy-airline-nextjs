@@ -348,8 +348,8 @@ const Auth: React.FC = () => {
         </Box>
       </Box>
       
-      {/* Mobile/Tablet: Show compact avatar with role badge */}
-      <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 0.5 }}>
+      {/* Tablet: Show compact avatar. Mobile user details live in the drawer. */}
+      <Box sx={{ display: { xs: 'none', sm: 'flex', md: 'none' }, alignItems: 'center', gap: 0.5 }}>
         <Avatar 
           src={user?.photoURL || undefined} 
           alt={user?.displayName || undefined}

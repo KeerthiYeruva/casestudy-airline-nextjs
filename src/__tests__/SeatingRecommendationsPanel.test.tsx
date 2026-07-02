@@ -43,4 +43,27 @@ describe('SeatingRecommendationsPanel', () => {
       suggestedSeats: ['1D'],
     }));
   });
+
+  it('labels inspect-only recommendation actions as passenger details', async () => {
+    const user = userEvent.setup();
+    const onSelectPassenger = jest.fn();
+    const passenger = makePassenger({ id: 'passenger-1', seat: '3F', wheelchair: true });
+    const passengers = [
+      passenger,
+      makePassenger({ id: 'passenger-2', name: 'Aisle Occupant', seat: '1C', wheelchair: false }),
+    ];
+
+    render(
+      <SeatingRecommendationsPanel
+        passengers={passengers}
+        onSelectPassenger={onSelectPassenger}
+      />
+    );
+
+    expect(screen.queryByRole('button', { name: /move to aisle seat/i })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /view passenger details/i }));
+
+    expect(onSelectPassenger).toHaveBeenCalledWith(passenger);
+  });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Grid,
   TextField,
@@ -14,8 +14,12 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
+  Chip,
+  Collapse,
   SelectChangeEvent,
 } from "@mui/material";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import type { Flight } from "../../../domain/flights/types";
 
 interface FilterOptions {
@@ -47,8 +51,27 @@ const PassengerFilters: React.FC<PassengerFiltersProps> = ({
   onClearFilters,
   onResetData,
 }) => {
-  return (
-    <Box sx={{ mb: 3 }}>
+  const [showResponsiveFilters, setShowResponsiveFilters] = useState(false);
+  const selectedFlight = flights.find((flight) => flight.id === selectedFlightId);
+  const missingFilterCount = [filterOptions.missingPassport, filterOptions.missingAddress, filterOptions.missingDOB].filter(Boolean).length;
+  const hasActiveFilterSummary = Boolean(selectedFlight || searchQuery || missingFilterCount > 0);
+
+  const handleFlightSelect = (flightId: string) => {
+    onFlightSelect(flightId);
+    if (flightId) {
+      setShowResponsiveFilters(false);
+    }
+  };
+
+  const handleClearAllFilters = () => {
+    onClearFilters();
+    onSearchChange("");
+    onFlightSelect("");
+    setShowResponsiveFilters(true);
+  };
+
+  const filterControls = (
+    <>
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid size={{ xs: 12, md: 6 }}>
           <TextField
@@ -66,7 +89,7 @@ const PassengerFilters: React.FC<PassengerFiltersProps> = ({
             <Select
               value={selectedFlightId}
               label="Filter by Flight"
-              onChange={(e: SelectChangeEvent) => onFlightSelect(e.target.value)}
+              onChange={(e: SelectChangeEvent) => handleFlightSelect(e.target.value)}
             >
               <MenuItem value="">All Flights</MenuItem>
               {flights.map((flight, flightIndex) => (
@@ -115,12 +138,65 @@ const PassengerFilters: React.FC<PassengerFiltersProps> = ({
             label="DOB"
           />
         </FormGroup>
-        <Button size="small" onClick={onClearFilters}>
+        <Button size="small" onClick={handleClearAllFilters}>
           Clear
         </Button>
         <Button size="small" color="warning" onClick={onResetData}>
           Reset Data
         </Button>
+      </Box>
+    </>
+  );
+
+  return (
+    <Box sx={{ mb: 3 }}>
+      {hasActiveFilterSummary && (
+        <Box
+          sx={{
+            display: { xs: "block", md: "none" },
+            p: 1.25,
+            mb: showResponsiveFilters ? 1.5 : 0,
+            borderRadius: 1,
+            border: "1px solid",
+            borderColor: "primary.light",
+            bgcolor: "primary.50",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
+                {selectedFlight ? selectedFlight.flightNumber : "Passenger filters"}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+                {selectedFlight
+                  ? `${selectedFlight.origin || selectedFlight.from} → ${selectedFlight.destination || selectedFlight.to}`
+                  : "All flights"}
+              </Typography>
+            </Box>
+            <Button
+              size="small"
+              endIcon={showResponsiveFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              onClick={() => setShowResponsiveFilters((open) => !open)}
+              sx={{ whiteSpace: "nowrap" }}
+            >
+              {showResponsiveFilters ? "Hide" : "Change"}
+            </Button>
+          </Box>
+          <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap", mt: 1 }}>
+            {searchQuery && <Chip label={`Search: ${searchQuery}`} size="small" />}
+            {missingFilterCount > 0 && <Chip label={`${missingFilterCount} missing filter${missingFilterCount > 1 ? "s" : ""}`} size="small" color="warning" />}
+          </Box>
+        </Box>
+      )}
+
+      <Box sx={{ display: { xs: "block", md: "none" } }}>
+        <Collapse in={!hasActiveFilterSummary || showResponsiveFilters}>
+          {filterControls}
+        </Collapse>
+      </Box>
+
+      <Box sx={{ display: { xs: "none", md: "block" } }}>
+        {filterControls}
       </Box>
     </Box>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Paper,
@@ -11,6 +11,8 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -46,7 +48,26 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
   onEditShopItem,
   onDeleteShopItem,
 }) => {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("md"));
+  const [showAllServices, setShowAllServices] = useState(false);
+  const [showAllMeals, setShowAllMeals] = useState(false);
+  const [showAllShopItems, setShowAllShopItems] = useState(false);
   const protectedMealOptions = new Set(['Regular']);
+  const previewCount = 4;
+  const visibleServices = isCompact && !showAllServices ? ancillaryServices.slice(0, previewCount) : ancillaryServices;
+  const visibleMeals = isCompact && !showAllMeals ? mealOptions.slice(0, previewCount) : mealOptions;
+  const visibleShopItems = isCompact && !showAllShopItems ? shopItems.slice(0, previewCount) : shopItems;
+
+  const renderShowToggle = (totalCount: number, visibleCount: number, expanded: boolean, onToggle: () => void) => {
+    if (!isCompact || totalCount <= previewCount) return null;
+
+    return (
+      <Button size="small" variant="text" onClick={onToggle} sx={{ mt: 1 }}>
+        {expanded ? "Show fewer" : `Show ${totalCount - visibleCount} more`}
+      </Button>
+    );
+  };
 
   return (
     <Grid container spacing={3}>
@@ -67,13 +88,13 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
               startIcon={<AddIcon />}
               onClick={onAddService}
             >
-              Add
+              Add Service
             </Button>
           </Box>
           <List>
-            {ancillaryServices.map((service) => (
+            {visibleServices.map((service, serviceIndex) => (
               <ListItem
-                key={service}
+                key={`${service}-${serviceIndex}`}
                 secondaryAction={
                   <>
                     <IconButton
@@ -99,6 +120,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
               </ListItem>
             ))}
           </List>
+          {renderShowToggle(ancillaryServices.length, visibleServices.length, showAllServices, () => setShowAllServices((showAll) => !showAll))}
         </Paper>
       </Grid>
 
@@ -119,16 +141,16 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
               startIcon={<AddIcon />}
               onClick={onAddMeal}
             >
-              Add
+              Add Meal
             </Button>
           </Box>
           <List>
-            {mealOptions.map((meal) => {
+            {visibleMeals.map((meal, mealIndex) => {
               const isProtectedMeal = protectedMealOptions.has(meal);
 
               return (
                 <ListItem
-                  key={meal}
+                  key={`${meal}-${mealIndex}`}
                   secondaryAction={
                     isProtectedMeal ? (
                       <Typography variant="caption" color="text.secondary">
@@ -161,6 +183,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
               );
             })}
           </List>
+          {renderShowToggle(mealOptions.length, visibleMeals.length, showAllMeals, () => setShowAllMeals((showAll) => !showAll))}
         </Paper>
       </Grid>
 
@@ -181,13 +204,13 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
               startIcon={<AddIcon />}
               onClick={onAddShopItem}
             >
-              Add
+              Add Shop Item
             </Button>
           </Box>
           <List sx={{ maxHeight: 400, overflow: "auto" }}>
-            {shopItems.map((item) => (
+            {visibleShopItems.map((item, itemIndex) => (
               <ListItem
-                key={item.id}
+                key={`${item.id}-${itemIndex}`}
                 secondaryAction={
                   <>
                     <IconButton
@@ -216,6 +239,7 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
               </ListItem>
             ))}
           </List>
+          {renderShowToggle(shopItems.length, visibleShopItems.length, showAllShopItems, () => setShowAllShopItems((showAll) => !showAll))}
         </Paper>
       </Grid>
     </Grid>

@@ -19,18 +19,25 @@ interface SeatMapVisualProps {
   passengers: Passenger[];
   onSeatClick: (seat: string) => void;
   mode?: SeatMapMode;
+  desktopAlign?: "left" | "center" | "right";
 }
 
 const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
   passengers,
   onSeatClick,
   mode = "checkin",
+  desktopAlign = "center",
 }) => {
   const rows = 10;
   const seatsPerRow = ["A", "B", "C", "D", "E", "F"];
-  const cabinMinWidth = { xs: 330, sm: 430, md: 450 };
+  const cabinMinWidth = { xs: 330, sm: 620, md: 500 };
   const isCabinMode = mode === "cabin" || mode === "inflight";
   const isMonitoringMode = mode === "operations";
+  const desktopMargin = {
+    left: { ml: 0, mr: "auto" },
+    center: { ml: "auto", mr: "auto" },
+    right: { ml: "auto", mr: 0 },
+  }[desktopAlign];
 
   const handleSeatKeyDown = (event: React.KeyboardEvent, seat: string, disabled: boolean) => {
     if (disabled) return;
@@ -386,26 +393,34 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
 
   return (
     <Paper
-      elevation={3}
-      sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, bgcolor: "grey.50", minWidth: 0 }}
+      variant="outlined"
+      sx={{
+        p: { xs: 1, sm: 1.5, md: 1.5 },
+        bgcolor: "background.paper",
+        minWidth: 0,
+        width: { xs: "fit-content", sm: "100%", md: "fit-content" },
+        maxWidth: "100%",
+        ml: { xs: "auto", lg: desktopMargin.ml },
+        mr: { xs: "auto", lg: desktopMargin.mr },
+      }}
     >
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           gap: 1,
-          mb: { xs: 1.5, sm: 2 },
+          mb: { xs: 1, sm: 1.25 },
         }}
       >
         <AirlineSeatReclineExtraIcon
           color="primary"
-          sx={{ fontSize: { xs: 20, sm: 24 } }}
+          sx={{ fontSize: { xs: 18, sm: 24, md: 20 } }}
         />
         <Typography
-          variant="h6"
+          variant="subtitle1"
           sx={{
-            fontWeight: "medium",
-            fontSize: { xs: "1rem", sm: "1.15rem", md: "1.25rem" },
+            fontWeight: 700,
+            fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1rem" },
           }}
         >
           Seat Map
@@ -426,40 +441,49 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: { xs: 0.3, sm: 1, md: 0.65 },
             mb: { xs: 0.75, sm: 1 },
-            px: { xs: 2.5, sm: 3, md: 4 },
+            px: { xs: 0.75, sm: 1, md: 1.25 },
             color: "text.secondary",
-            fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.85rem" },
+            fontSize: { xs: "0.7rem", sm: "0.85rem", md: "0.85rem" },
             fontWeight: "medium",
-            minWidth: cabinMinWidth,
+            width: { xs: "fit-content", sm: "100%", md: "fit-content" },
+            minWidth: { xs: cabinMinWidth.xs, sm: cabinMinWidth.sm, md: "fit-content" },
+            mx: "auto",
           }}
         >
-          <Box sx={{ display: "flex", gap: { xs: 2.2, sm: 3.2, md: 4.5 } }}>
+          <Box sx={{ minWidth: { xs: 24, sm: 36, md: 28 } }} />
+          <Box sx={{ display: "flex", gap: { xs: 0.4, sm: 1.1, md: 0.8 } }}>
             <span>A</span>
             <span>B</span>
             <span>C</span>
           </Box>
-          <Box sx={{ display: "flex", gap: { xs: 2.2, sm: 3.2, md: 4.5 } }}>
+          <Box sx={{ width: { xs: 8, sm: 12, md: 8 }, minWidth: { xs: 8, sm: 12, md: 8 } }} />
+          <Box sx={{ display: "flex", gap: { xs: 0.4, sm: 1.1, md: 0.8 } }}>
             <span>D</span>
             <span>E</span>
             <span>F</span>
           </Box>
+          <Box sx={{ minWidth: { xs: 24, sm: 36, md: 28 } }} />
         </Box>
 
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: { xs: 0.4, sm: 0.75, md: 1 },
-            px: { xs: 0.75, sm: 1, md: 1.25 },
-            py: { xs: 1.25, sm: 1.75, md: 2 },
-            bgcolor: "white",
-            borderRadius: 2,
-            border: "2px solid",
-            borderColor: "primary.light",
-            maxHeight: { xs: 380, sm: 500, md: 600 },
-            minWidth: cabinMinWidth,
+            gap: { xs: 0.3, sm: 0.75, md: 0.6 },
+            px: { xs: 0.5, sm: 1.5, md: 1 },
+            py: { xs: 0.75, sm: 1.5, md: 1.15 },
+            bgcolor: "grey.50",
+            borderRadius: 1.5,
+            border: "1px solid",
+            borderColor: "divider",
+            maxHeight: { xs: 380, sm: 680, md: 600 },
+            width: { xs: "fit-content", sm: "100%", md: "fit-content" },
+            minWidth: { xs: cabinMinWidth.xs, sm: cabinMinWidth.sm, md: "fit-content" },
+            mx: "auto",
             overflowY: "auto",
             overflowX: "visible",
           }}
@@ -470,15 +494,16 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: { xs: 0.4, sm: 0.75, md: 1 },
-              py: { xs: 0.4, sm: 0.6, md: 0.75 },
+              justifyContent: "center",
+              gap: { xs: 0.3, sm: 1, md: 0.65 },
+              py: { xs: 0.25, sm: 0.6, md: 0.45 },
             }}
           >
             {/* Row Number */}
             <Typography
               sx={{
-                minWidth: { xs: 24, sm: 28 },
-                fontSize: { xs: "0.75rem", sm: "0.8rem", md: "0.875rem" },
+                minWidth: { xs: 24, sm: 36, md: 28 },
+                fontSize: { xs: "0.75rem", sm: "0.95rem", md: "0.875rem" },
                 fontWeight: "bold",
                 color: "primary.main",
                 textAlign: "center",
@@ -491,12 +516,13 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             <Box
               sx={{
                 display: "flex",
-                gap: { xs: 0.4, sm: 0.5, md: 0.8 },
-                flex: 1,
-                justifyContent: "space-between",
+                gap: { xs: 0.25, sm: 0.45, md: 0.5 },
+                flex: "0 0 auto",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <Box sx={{ display: "flex", gap: { xs: 0.4, sm: 0.5, md: 0.8 } }}>
+              <Box sx={{ display: "flex", gap: { xs: 0.4, sm: 1.1, md: 0.8 } }}>
                 {seatsPerRow.slice(0, 3).map((seatLetter) => {
                   const seatNumber = `${rowIndex + 1}${seatLetter}`;
                   const seatInfo = getSeatInfo(seatNumber);
@@ -549,9 +575,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                         disabled={isCabinMode && !seatInfo.passenger}
                         aria-label={seatInfo.passenger ? `Seat ${seatNumber}, ${seatInfo.passenger.name}, ${seatInfo.status}` : `Seat ${seatNumber}, available`}
                         sx={{
-                          width: { xs: 34, sm: 42, md: 44 },
-                          height: { xs: 34, sm: 42, md: 44 },
-                          minWidth: { xs: 34, sm: 42, md: 44 },
+                          width: { xs: 34, sm: 58, md: 44 },
+                          height: { xs: 34, sm: 58, md: 44 },
+                          minWidth: { xs: 34, sm: 58, md: 44 },
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -696,8 +722,8 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
               {/* Aisle */}
               <Box
                 sx={{
-                  width: { xs: 20, sm: 16, md: 40 },
-                  minWidth: { xs: 20, sm: 16, md: 40 },
+                  width: { xs: 8, sm: 8, md: 8 },
+                  minWidth: { xs: 8, sm: 8, md: 8 },
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -709,7 +735,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                 |
               </Box>
 
-              <Box sx={{ display: "flex", gap: { xs: 0.4, sm: 0.5, md: 0.8 } }}>
+              <Box sx={{ display: "flex", gap: { xs: 0.4, sm: 1.1, md: 0.8 } }}>
                 {seatsPerRow.slice(3, 6).map((seatLetter) => {
                   const seatNumber = `${rowIndex + 1}${seatLetter}`;
                   const seatInfo = getSeatInfo(seatNumber);
@@ -762,9 +788,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                         disabled={isCabinMode && !seatInfo.passenger}
                         aria-label={seatInfo.passenger ? `Seat ${seatNumber}, ${seatInfo.passenger.name}, ${seatInfo.status}` : `Seat ${seatNumber}, available`}
                         sx={{
-                          width: { xs: 34, sm: 42, md: 44 },
-                          height: { xs: 34, sm: 42, md: 44 },
-                          minWidth: { xs: 34, sm: 42, md: 44 },
+                          width: { xs: 34, sm: 58, md: 44 },
+                          height: { xs: 34, sm: 58, md: 44 },
+                          minWidth: { xs: 34, sm: 58, md: 44 },
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",

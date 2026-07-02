@@ -11,6 +11,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SaveIcon from "@mui/icons-material/Save";
@@ -47,8 +49,14 @@ const toCrewAssignment = (draft: CrewDraft): CrewAssignment => ({
 });
 
 export default function CrewManagementTab({ flights, onUpdateFlight }: CrewManagementTabProps) {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("md"));
   const [drafts, setDrafts] = useState<Record<string, CrewDraft>>({});
   const [savingFlightId, setSavingFlightId] = useState<string | null>(null);
+  const [showAllFlights, setShowAllFlights] = useState(false);
+  const previewCount = 3;
+  const visibleFlights = isCompact && !showAllFlights ? flights.slice(0, previewCount) : flights;
+  const hiddenFlightCount = flights.length - visibleFlights.length;
 
   const getDraft = (flight: Flight) => drafts[flight.id] || getCrewDraft(flight);
 
@@ -95,7 +103,18 @@ export default function CrewManagementTab({ flights, onUpdateFlight }: CrewManag
         </Typography>
       </Box>
 
-      {flights.map((flight, flightIndex) => {
+      {isCompact && flights.length > previewCount && (
+        <Paper variant="outlined" sx={{ p: 1.25, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Crew assignments list</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {showAllFlights ? `Showing all ${flights.length}` : `Showing first ${visibleFlights.length} of ${flights.length}`}
+            </Typography>
+          </Box>
+        </Paper>
+      )}
+
+      {visibleFlights.map((flight, flightIndex) => {
         const draft = getDraft(flight);
         const cabinCrew = parseCabinCrew(draft.cabinCrew);
         const isSaving = savingFlightId === flight.id;
@@ -170,6 +189,12 @@ export default function CrewManagementTab({ flights, onUpdateFlight }: CrewManag
           </Paper>
         );
       })}
+
+      {flights.length > previewCount && (
+        <Button variant="outlined" onClick={() => setShowAllFlights((showAll) => !showAll)}>
+          {showAllFlights ? "Show fewer" : `Show ${hiddenFlightCount} more flights`}
+        </Button>
+      )}
     </Stack>
   );
 }

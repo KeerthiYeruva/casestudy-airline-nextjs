@@ -15,6 +15,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import FlightIcon from "@mui/icons-material/Flight";
 import SaveIcon from "@mui/icons-material/Save";
@@ -56,8 +58,14 @@ const parsePositiveInteger = (value: string) => {
 };
 
 export default function AircraftManagementTab({ flights, onUpdateFlight }: AircraftManagementTabProps) {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("md"));
   const [drafts, setDrafts] = useState<Record<string, AircraftDraft>>({});
   const [savingFlightId, setSavingFlightId] = useState<string | null>(null);
+  const [showAllFlights, setShowAllFlights] = useState(false);
+  const previewCount = 3;
+  const visibleFlights = isCompact && !showAllFlights ? flights.slice(0, previewCount) : flights;
+  const hiddenFlightCount = flights.length - visibleFlights.length;
 
   const getDraft = (flight: Flight) => drafts[flight.id] || getAircraftDraft(flight);
 
@@ -116,7 +124,18 @@ export default function AircraftManagementTab({ flights, onUpdateFlight }: Aircr
         </Typography>
       </Box>
 
-      {flights.map((flight, flightIndex) => {
+      {isCompact && flights.length > previewCount && (
+        <Paper variant="outlined" sx={{ p: 1.25, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Aircraft list</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {showAllFlights ? `Showing all ${flights.length}` : `Showing first ${visibleFlights.length} of ${flights.length}`}
+            </Typography>
+          </Box>
+        </Paper>
+      )}
+
+      {visibleFlights.map((flight, flightIndex) => {
         const draft = getDraft(flight);
         const totalSeats = parsePositiveInteger(draft.totalSeats);
         const availableSeats = parsePositiveInteger(draft.availableSeats);
@@ -221,6 +240,12 @@ export default function AircraftManagementTab({ flights, onUpdateFlight }: Aircr
           </Paper>
         );
       })}
+
+      {flights.length > previewCount && (
+        <Button variant="outlined" onClick={() => setShowAllFlights((showAll) => !showAll)}>
+          {showAllFlights ? "Show fewer" : `Show ${hiddenFlightCount} more flights`}
+        </Button>
+      )}
     </Stack>
   );
 }

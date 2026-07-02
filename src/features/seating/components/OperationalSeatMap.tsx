@@ -25,12 +25,14 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import StarIcon from "@mui/icons-material/Star";
 import useCheckInStore from "../../../stores/useCheckInStore";
 import useDataStore from "../../../stores/useDataStore";
+import useToastStore from "../../../stores/useToastStore";
 import useRealtimeUpdates from "../../../hooks/useRealtimeUpdates";
 import FlightSelectionPanel from "../../check-in/components/FlightSelectionPanel";
 import OperationalWorkspace from "../../../shared/components/layout/OperationalWorkspace";
 import SeatMapVisual, { type SeatMapMode } from "./SeatMapVisual";
 import SeatingRecommendationsPanel from "./SeatingRecommendationsPanel";
 import type { Passenger } from "../../../domain/passengers/types";
+import type { SeatRecommendation } from "../utils/seatRecommendations";
 
 type OperationalSeatMapMode = Extract<SeatMapMode, "checkin" | "cabin" | "operations" | "admin">;
 
@@ -59,13 +61,26 @@ const modeCopy: Record<OperationalSeatMapMode, { title: string; subtitle: string
   },
 };
 
+
+const layoutByMode: Record<OperationalSeatMapMode, { rightRailWidth: { lg: number; xl: number }; seatMapAlign: "left" | "center" | "right" }> = {
+  checkin: { rightRailWidth: { lg: 4.8, xl: 4.8 }, seatMapAlign: "left" },
+  cabin: { rightRailWidth: { lg: 6.2, xl: 5.8 }, seatMapAlign: "left" },
+  operations: { rightRailWidth: { lg: 5.6, xl: 5.4 }, seatMapAlign: "left" },
+  admin: { rightRailWidth: { lg: 6, xl: 5.6 }, seatMapAlign: "left" },
+};
+const accessibleSeats = new Set(["1C", "1D", "2C", "2D"]);
+const aisleSeats = new Set(["C", "D"]);
+const getSeatRow = (seat: string) => Number.parseInt(seat.match(/^\d+/)?.[0] ?? "0", 10);
+const getSeatLetter = (seat: string) => seat.match(/[A-Z]$/)?.[0] ?? "";
+
 const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
   mode,
   onOpenCheckIn,
   onOpenSeatManagement,
 }) => {
-  const { flights, passengers, fetchFlights, fetchPassengers } = useDataStore();
+  const { flights, passengers, fetchFlights, fetchPassengers, updatePassenger } = useDataStore();
   const { selectedFlight, selectFlight } = useCheckInStore();
+  const { showToast } = useToastStore();
   const { isConnected } = useRealtimeUpdates();
   const hasFetchedRef = useRef(false);
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
@@ -75,12 +90,10 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
       if (flights.length === 0) {
         fetchFlights();
       }
-      if (passengers.length === 0) {
-        fetchPassengers();
-      }
+      fetchPassengers();
       hasFetchedRef.current = true;
     }
-  }, [flights.length, passengers.length, fetchFlights, fetchPassengers]);
+  }, [flights.length, fetchFlights, fetchPassengers]);
 
   useEffect(() => {
     if (selectedFlight || flights.length === 0) {
@@ -113,11 +126,20 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
   ).length;
   const familyPassengers = flightPassengers.filter((passenger) => passenger.familySeating).length;
   const groupPassengers = flightPassengers.filter((passenger) => passenger.groupSeating).length;
+  const wheelchairPassengers = flightPassengers.filter((passenger) => passenger.wheelchair);
+  const occupiedAccessibleSeats = flightPassengers.filter((passenger) => accessibleSeats.has(passenger.seat)).length;
+  const unassignedAccessiblePassengers = wheelchairPassengers.filter((passenger) => !passenger.seat).length;
+  const nonOptimalAccessiblePassengers = wheelchairPassengers.filter((passenger) => {
+    if (!passenger.seat) return false;
+    return !aisleSeats.has(getSeatLetter(passenger.seat)) || getSeatRow(passenger.seat) > 5;
+  }).length;
   const occupancyRate = Math.round((occupiedSeats / totalSeats) * 100);
   const boardingRate = flightPassengers.length > 0
     ? Math.round((checkedInPassengers / flightPassengers.length) * 100)
     : 0;
   const copy = modeCopy[mode];
+  const canApplySeatRecommendations = mode === "checkin" || mode === "admin";
+  const layout = layoutByMode[mode];
 
   const handleFlightSelect = (flight: typeof flights[0]) => {
     selectFlight(flight);
@@ -127,6 +149,31 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
   const handleSeatClick = (seat: string) => {
     const passenger = flightPassengers.find((item) => item.seat === seat) ?? null;
     setSelectedPassenger(passenger);
+  };
+
+  const handleRecommendationAction = async (recommendation: SeatRecommendation) => {
+    const passenger = flightPassengers.find((item) => item.id === recommendation.passengerIds[0]);
+    const suggestedSeat = recommendation.suggestedSeats[0];
+
+    if (!passenger) {
+      showToast("Passenger not found for seating recommendation", "error");
+      return;
+    }
+
+    if (!suggestedSeat) {
+      setSelectedPassenger(passenger);
+      showToast("No available suggested seat for this recommendation", "info");
+      return;
+    }
+
+    const result = await updatePassenger(passenger.id, { seat: suggestedSeat });
+    if (result) {
+      showToast(`Moved ${passenger.name} to ${suggestedSeat}`, "success");
+      setSelectedPassenger(null);
+      await fetchPassengers();
+    } else {
+      showToast(`Failed to move ${passenger.name} to ${suggestedSeat}`, "error");
+    }
   };
 
   const renderModeActions = () => {
@@ -201,7 +248,7 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
           passengers={passengers}
         />
       )}
-      rightRailWidth={{ lg: 3.25, xl: 3 }}
+      rightRailWidth={layout.rightRailWidth}
       rightRail={selectedFlight && (
         <Stack spacing={2}>
           <Paper elevation={1} sx={{ p: 2 }}>
@@ -223,6 +270,7 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
             passengers={flightPassengers}
             onReviewFamily={onOpenCheckIn}
             onReviewGroup={onOpenCheckIn}
+            onApplyRecommendation={canApplySeatRecommendations ? handleRecommendationAction : undefined}
             onSelectPassenger={setSelectedPassenger}
           />
 
@@ -243,6 +291,25 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
                 <Typography variant="caption" color="text.secondary">Passenger Groups</Typography>
                 <Typography variant="body2">{familyPassengers} family, {groupPassengers} group</Typography>
               </Box>
+              {mode === "admin" && (
+                <Box sx={{ pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
+                  <Typography variant="subtitle2" gutterBottom>Accessibility Seats</Typography>
+                  <Stack spacing={0.75}>
+                    <Typography variant="body2" color="text.secondary">
+                      Reserved: {accessibleSeats.size} · Occupied: {occupiedAccessibleSeats}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Wheelchair requests: {wheelchairPassengers.length}
+                    </Typography>
+                    <Typography variant="body2" color={nonOptimalAccessiblePassengers > 0 ? "warning.main" : "text.secondary"}>
+                      Needs better accessible seat: {nonOptimalAccessiblePassengers}
+                    </Typography>
+                    <Typography variant="body2" color={unassignedAccessiblePassengers > 0 ? "warning.main" : "text.secondary"}>
+                      Unassigned accessible passengers: {unassignedAccessiblePassengers}
+                    </Typography>
+                  </Stack>
+                </Box>
+              )}
               {selectedPassengerOnFlight && (
                 <Box sx={{ pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
                   <Typography variant="subtitle2">{selectedPassengerOnFlight.name}</Typography>
@@ -271,7 +338,7 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
         </Paper>
       )}
     >
-      <SeatMapVisual passengers={flightPassengers} onSeatClick={handleSeatClick} mode={mode} />
+      <SeatMapVisual passengers={flightPassengers} onSeatClick={handleSeatClick} mode={mode} desktopAlign={layout.seatMapAlign} />
 
       <Dialog
         open={!!selectedPassengerOnFlight}

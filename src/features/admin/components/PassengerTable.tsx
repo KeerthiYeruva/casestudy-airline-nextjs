@@ -9,6 +9,7 @@ import {
   TableRow,
   Chip,
   IconButton,
+  Button,
   Box,
   Typography,
   TableContainer,
@@ -51,6 +52,8 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [showAllResponsiveRows, setShowAllResponsiveRows] = useState(false);
+  const responsivePreviewCount = 4;
 
   const getMissingFields = (passenger: Passenger) => {
     const missing = [];
@@ -71,10 +74,26 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
   };
 
   if (isMobile) {
+    const visiblePassengers = showAllResponsiveRows ? passengers : passengers.slice(0, responsivePreviewCount);
+    const hiddenPassengerCount = Math.max(passengers.length - visiblePassengers.length, 0);
+
     // Mobile Card View
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {passengers.map((passenger, passengerIndex) => {
+        {passengers.length > responsivePreviewCount && (
+          <Paper variant="outlined" sx={{ p: 1.25, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                Passenger list
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {showAllResponsiveRows ? `Showing all ${passengers.length}` : `Showing first ${visiblePassengers.length} of ${passengers.length}`}
+              </Typography>
+            </Box>
+          </Paper>
+        )}
+
+        {visiblePassengers.map((passenger, passengerIndex) => {
           const flight = flights.find((f) => f.id === passenger.flightId);
           const missingFields = getMissingFields(passenger);
           const isExpanded = expandedRows.has(passenger.id);
@@ -241,6 +260,12 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
             </Paper>
           );
         })}
+
+        {passengers.length > responsivePreviewCount && (
+          <Button variant="outlined" onClick={() => setShowAllResponsiveRows((showAll) => !showAll)}>
+            {showAllResponsiveRows ? 'Show fewer' : `Show ${hiddenPassengerCount} more passengers`}
+          </Button>
+        )}
       </Box>
     );
   }

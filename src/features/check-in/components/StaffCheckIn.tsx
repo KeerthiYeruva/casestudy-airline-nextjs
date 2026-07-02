@@ -32,17 +32,14 @@ const StaffCheckIn: React.FC = () => {
   const hasFetchedRef = useRef(false);
 
   useEffect(() => {
-    // Only fetch once on initial mount if store is empty
     if (!hasFetchedRef.current) {
-      if (flights.length === 0) {
-        fetchFlights();
-      }
-      if (passengers.length === 0) {
+        if (flights.length === 0) {
+          fetchFlights();
+        }
         fetchPassengers();
-      }
       hasFetchedRef.current = true;
     }
-  }, [flights.length, passengers.length, fetchFlights, fetchPassengers]);
+    }, [flights.length, fetchFlights, fetchPassengers]);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
   const [changeSeatDialog, setChangeSeatDialog] = useState(false);

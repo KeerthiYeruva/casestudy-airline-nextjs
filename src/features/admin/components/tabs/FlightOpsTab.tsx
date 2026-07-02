@@ -15,6 +15,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -55,10 +57,16 @@ const getFlightDraft = (flight: Flight): FlightOpsDraft => ({
 });
 
 const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onAddFlight, onUpdateFlight, onDeleteFlight }) => {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("md"));
   const [drafts, setDrafts] = useState<Record<string, FlightOpsDraft>>({});
   const [savingFlightId, setSavingFlightId] = useState<string | null>(null);
   const [flightDialogOpen, setFlightDialogOpen] = useState(false);
   const [deletingFlightId, setDeletingFlightId] = useState<string | null>(null);
+  const [showAllFlights, setShowAllFlights] = useState(false);
+  const previewCount = 3;
+  const visibleFlights = isCompact && !showAllFlights ? flights.slice(0, previewCount) : flights;
+  const hiddenFlightCount = flights.length - visibleFlights.length;
 
   const getDraft = (flight: Flight) => drafts[flight.id] || getFlightDraft(flight);
 
@@ -119,7 +127,18 @@ const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onAddFlight, onUpd
 
       {flights.length === 0 && <Alert severity="info">No flights are available to manage.</Alert>}
 
-      {flights.map((flight, flightIndex) => {
+      {isCompact && flights.length > previewCount && (
+        <Paper variant="outlined" sx={{ p: 1.25, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Flight operations list</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {showAllFlights ? `Showing all ${flights.length}` : `Showing first ${visibleFlights.length} of ${flights.length}`}
+            </Typography>
+          </Box>
+        </Paper>
+      )}
+
+      {visibleFlights.map((flight, flightIndex) => {
         const draft = getDraft(flight);
         const isSaving = savingFlightId === flight.id;
         const isDeleting = deletingFlightId === flight.id;
@@ -216,6 +235,12 @@ const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onAddFlight, onUpd
           </Paper>
         );
       })}
+
+      {flights.length > previewCount && (
+        <Button variant="outlined" onClick={() => setShowAllFlights((showAll) => !showAll)}>
+          {showAllFlights ? "Show fewer" : `Show ${hiddenFlightCount} more flights`}
+        </Button>
+      )}
 
       <FlightDialog open={flightDialogOpen} onClose={() => setFlightDialogOpen(false)} onSave={onAddFlight} />
     </Stack>
