@@ -103,6 +103,11 @@ const confirmBooking = async () => {
   fireEvent.click(confirmButton);
 };
 
+const selectRouteOption = (label: string, option: string) => {
+  fireEvent.mouseDown(screen.getByRole('combobox', { name: label }));
+  fireEvent.click(screen.getByRole('option', { name: option }));
+};
+
 describe('FlightSearch', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -137,8 +142,8 @@ describe('FlightSearch', () => {
   it('filters bookable flights by route and date', () => {
     render(<FlightSearch />);
 
-    fireEvent.change(screen.getByLabelText('From'), { target: { value: 'New York' } });
-    fireEvent.change(screen.getByLabelText('To'), { target: { value: 'Los Angeles' } });
+    selectRouteOption('From', 'New York (JFK)');
+    selectRouteOption('To', 'Los Angeles (LAX)');
     fireEvent.change(screen.getByLabelText('Departure Date'), { target: { value: '2025-12-03' } });
     fireEvent.click(screen.getByRole('button', { name: /search flights/i }));
 

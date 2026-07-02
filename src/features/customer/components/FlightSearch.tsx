@@ -12,16 +12,19 @@ import {
   Container,
   FormControl,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Paper,
   Select,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import useDataStore from "../../../stores/useDataStore";
 import BookingDialog from "./BookingDialog";
@@ -62,6 +65,9 @@ const getRoute = (flight: Flight) => ({
   destination: flight.destination || flight.to || "",
 });
 
+const isBookableFlight = (flight: Flight) => flight.status !== "Cancelled" && flight.status !== "Departed" && flight.status !== "Arrived";
+const isBeforeDate = (date: string, comparisonDate: string) => Boolean(date && comparisonDate && date < comparisonDate);
+
 export default function FlightSearch() {
   const { flights, passengers, fetchFlights, fetchPassengers, addPassenger } = useDataStore();
   const [filters, setFilters] = useState<FlightSearchFilters>(defaultFilters);
@@ -78,12 +84,40 @@ export default function FlightSearch() {
   }, [fetchFlights, fetchPassengers, flights.length]);
 
   const availableOrigins = useMemo(
-    () => Array.from(new Set(flights.map((flight) => getRoute(flight).origin))).sort(),
-    [flights]
+    () => Array.from(new Set(
+      flights
+        .filter((flight) => isBookableFlight(flight))
+        .filter((flight) => !filters.to || getRoute(flight).destination === filters.to)
+        .map((flight) => getRoute(flight).origin)
+        .filter(Boolean)
+    )).sort(),
+    [filters.to, flights]
   );
 
   const availableDestinations = useMemo(
-    () => Array.from(new Set(flights.map((flight) => getRoute(flight).destination))).sort(),
+    () => Array.from(new Set(
+      flights
+        .filter((flight) => isBookableFlight(flight))
+        .filter((flight) => !filters.from || getRoute(flight).origin === filters.from)
+        .map((flight) => getRoute(flight).destination)
+        .filter(Boolean)
+    )).sort(),
+    [filters.from, flights]
+  );
+
+  const effectiveFrom = availableOrigins.includes(filters.from) ? filters.from : "";
+  const effectiveTo = availableDestinations.includes(filters.to) ? filters.to : "";
+
+  const routeOptions = useMemo(
+    () => Array.from(new Set(
+      flights
+        .filter((flight) => isBookableFlight(flight))
+        .map((flight) => {
+          const { origin, destination } = getRoute(flight);
+          return origin && destination ? `${origin} -> ${destination}` : "";
+        })
+        .filter(Boolean)
+    )).sort(),
     [flights]
   );
 
@@ -91,22 +125,92 @@ export default function FlightSearch() {
     return flights.filter((flight) => {
       const { origin, destination } = getRoute(flight);
       const hasEnoughSeats = flight.availableSeats >= filters.passengers;
-      const isBookable = flight.status !== "Cancelled" && flight.status !== "Departed" && flight.status !== "Arrived";
 
       return (
-        matchesLocation(origin, filters.from) &&
-        matchesLocation(destination, filters.to) &&
+        matchesLocation(origin, effectiveFrom) &&
+        matchesLocation(destination, effectiveTo) &&
         (!filters.departureDate || flight.date === filters.departureDate) &&
         hasEnoughSeats &&
-        isBookable
+        isBookableFlight(flight)
       );
     });
-  }, [filters, flights]);
+  }, [effectiveFrom, effectiveTo, filters.departureDate, filters.passengers, flights]);
 
-  const visibleFlights = hasSearched ? searchResults : flights.filter((flight) => flight.status !== "Cancelled").slice(0, 4);
+  const visibleFlights = hasSearched ? searchResults : flights.filter((flight) => isBookableFlight(flight)).slice(0, 4);
+  const hasActiveFilters = Boolean(
+    hasSearched ||
+    filters.from ||
+    filters.to ||
+    filters.departureDate ||
+    filters.returnDate ||
+    filters.passengers !== defaultFilters.passengers ||
+    filters.cabinClass !== defaultFilters.cabinClass
+  );
 
   const updateFilter = <Key extends keyof FlightSearchFilters>(key: Key, value: FlightSearchFilters[Key]) => {
-    setFilters((currentFilters) => ({ ...currentFilters, [key]: value }));
+    setFilters((currentFilters) => {
+      if (key === "from") {
+        const nextFrom = value as string;
+        const routeStillExists = flights.some((flight) => {
+          const { origin, destination } = getRoute(flight);
+          return isBookableFlight(flight) && origin === nextFrom && destination === currentFilters.to;
+        });
+
+        return {
+          ...currentFilters,
+          from: nextFrom,
+          to: !nextFrom || !currentFilters.to || routeStillExists ? currentFilters.to : "",
+        };
+      }
+
+      if (key === "to") {
+        const nextTo = value as string;
+        const routeStillExists = flights.some((flight) => {
+          const { origin, destination } = getRoute(flight);
+          return isBookableFlight(flight) && origin === currentFilters.from && destination === nextTo;
+        });
+
+        return {
+          ...currentFilters,
+          from: !nextTo || !currentFilters.from || routeStillExists ? currentFilters.from : "",
+          to: nextTo,
+        };
+      }
+
+      if (key === "departureDate") {
+        const nextDepartureDate = value as string;
+
+        return {
+          ...currentFilters,
+          departureDate: nextDepartureDate,
+          returnDate: isBeforeDate(currentFilters.returnDate, nextDepartureDate) ? "" : currentFilters.returnDate,
+        };
+      }
+
+      if (key === "returnDate") {
+        const nextReturnDate = value as string;
+
+        return {
+          ...currentFilters,
+          returnDate: isBeforeDate(nextReturnDate, currentFilters.departureDate) ? currentFilters.departureDate : nextReturnDate,
+        };
+      }
+
+      return { ...currentFilters, [key]: value };
+    });
+  };
+
+  const swapRoute = () => {
+    setFilters((currentFilters) => ({
+      ...currentFilters,
+      from: currentFilters.to,
+      to: currentFilters.from,
+    }));
+  };
+
+  const clearSearch = () => {
+    setFilters(defaultFilters);
+    setHasSearched(false);
   };
 
   return (
@@ -124,59 +228,111 @@ export default function FlightSearch() {
           </Typography>
         </Box>
 
-        <Paper elevation={3} sx={{ p: { xs: 2, md: 3 } }}>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <TextField
-                label="From"
-                value={filters.from}
-                onChange={(event) => updateFilter("from", event.target.value)}
-                fullWidth
-                placeholder="New York"
-                slotProps={{ htmlInput: { list: "flight-search-origins" } }}
-              />
-              <datalist id="flight-search-origins">
-                {availableOrigins.map((origin) => (
-                  <option key={origin} value={origin} />
-                ))}
-              </datalist>
-            </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <TextField
-                label="To"
-                value={filters.to}
-                onChange={(event) => updateFilter("to", event.target.value)}
-                fullWidth
-                placeholder="Los Angeles"
-                slotProps={{ htmlInput: { list: "flight-search-destinations" } }}
-              />
-              <datalist id="flight-search-destinations">
-                {availableDestinations.map((destination) => (
-                  <option key={destination} value={destination} />
-                ))}
-              </datalist>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+        <Paper
+          variant="outlined"
+          sx={{
+            p: { xs: 2, md: 3 },
+            borderRadius: 2,
+            bgcolor: "background.paper",
+          }}
+        >
+          <Stack spacing={2.25}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) auto minmax(0, 1fr)" },
+                gap: { xs: 1.5, md: 2 },
+                alignItems: "center",
+              }}
+            >
+              <FormControl fullWidth>
+                <InputLabel id="flight-search-origin-label" shrink>From</InputLabel>
+                <Select
+                  labelId="flight-search-origin-label"
+                  label="From"
+                  value={effectiveFrom}
+                  onChange={(event) => updateFilter("from", event.target.value)}
+                  displayEmpty
+                  renderValue={(value) => value || <Typography component="span" color="text.secondary">Any origin</Typography>}
+                >
+                  <MenuItem value="">Any origin</MenuItem>
+                  {availableOrigins.map((origin) => (
+                    <MenuItem key={origin} value={origin}>{origin}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <Tooltip title="Swap route">
+                <span>
+                  <IconButton
+                    aria-label="Swap origin and destination"
+                    onClick={swapRoute}
+                    disabled={!filters.from && !filters.to}
+                    sx={{
+                      width: 44,
+                      height: 44,
+                      minHeight: 0,
+                      border: 1,
+                      borderColor: "divider",
+                      borderRadius: 1.5,
+                      bgcolor: "background.default",
+                      display: "flex",
+                      mx: "auto",
+                    }}
+                  >
+                    <SwapHorizIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+
+              <FormControl fullWidth>
+                <InputLabel id="flight-search-destination-label" shrink>To</InputLabel>
+                <Select
+                  labelId="flight-search-destination-label"
+                  label="To"
+                  value={effectiveTo}
+                  onChange={(event) => updateFilter("to", event.target.value)}
+                  displayEmpty
+                  renderValue={(value) => value || <Typography component="span" color="text.secondary">Any destination</Typography>}
+                >
+                  <MenuItem value="">Any destination</MenuItem>
+                  {availableDestinations.map((destination) => (
+                    <MenuItem key={destination} value={destination}>{destination}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Grid container spacing={2} sx={{ alignItems: "center" }}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <TextField
                 label="Departure Date"
                 type="date"
                 value={filters.departureDate}
                 onChange={(event) => updateFilter("departureDate", event.target.value)}
                 fullWidth
-                slotProps={{ inputLabel: { shrink: true } }}
+                autoComplete="off"
+                slotProps={{
+                  htmlInput: { max: filters.returnDate || undefined },
+                  inputLabel: { shrink: true },
+                }}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <TextField
                 label="Return Date"
                 type="date"
                 value={filters.returnDate}
                 onChange={(event) => updateFilter("returnDate", event.target.value)}
                 fullWidth
-                slotProps={{ inputLabel: { shrink: true } }}
+                autoComplete="off"
+                slotProps={{
+                  htmlInput: { min: filters.departureDate || undefined },
+                  inputLabel: { shrink: true },
+                }}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 1 }}>
+            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
               <TextField
                 label="Passengers"
                 type="number"
@@ -186,7 +342,7 @@ export default function FlightSearch() {
                 slotProps={{ htmlInput: { min: 1, max: 9 } }}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 1 }}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <FormControl fullWidth>
                 <InputLabel>Cabin</InputLabel>
                 <Select
@@ -202,15 +358,21 @@ export default function FlightSearch() {
                 </Select>
               </FormControl>
             </Grid>
-          </Grid>
+            </Grid>
+          </Stack>
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mt: 2, justifyContent: "space-between" }}>
             <Typography variant="body2" color="text.secondary">
-              Cabin class is captured for the booking flow coming next.
+              {routeOptions.length} available routes loaded.
             </Typography>
-            <Button variant="contained" startIcon={<SearchIcon />} onClick={() => setHasSearched(true)}>
-              Search Flights
-            </Button>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+              <Button variant="text" onClick={clearSearch} disabled={!hasActiveFilters}>
+                Show all flights
+              </Button>
+              <Button variant="contained" startIcon={<SearchIcon />} onClick={() => setHasSearched(true)}>
+                Search Flights
+              </Button>
+            </Stack>
           </Stack>
         </Paper>
 
