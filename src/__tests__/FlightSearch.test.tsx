@@ -44,6 +44,21 @@ const mockFlights: Flight[] = [
     availableSeats: 12,
   },
   {
+    id: 'FL004',
+    flightNumber: 'DD404',
+    origin: 'Boston (BOS)',
+    destination: 'Los Angeles (LAX)',
+    departureTime: '08:15 AM',
+    arrivalTime: '11:45 AM',
+    date: '2025-12-04',
+    status: 'On Time',
+    aircraft: 'Airbus A321',
+    gate: 'D4',
+    terminal: '3',
+    totalSeats: 12,
+    availableSeats: 10,
+  },
+  {
     id: 'FL003',
     flightNumber: 'CC303',
     origin: 'New York (JFK)',
@@ -151,6 +166,28 @@ describe('FlightSearch', () => {
     expect(screen.getByText('AA101')).toBeInTheDocument();
     expect(screen.queryByText('BB202')).not.toBeInTheDocument();
     expect(screen.queryByText('CC303')).not.toBeInTheDocument();
+  });
+
+  it('keeps all origins available after selecting a destination', () => {
+    render(<FlightSearch />);
+
+    selectRouteOption('From', 'New York (JFK)');
+    selectRouteOption('To', 'Los Angeles (LAX)');
+
+    fireEvent.mouseDown(screen.getByRole('combobox', { name: 'From' }));
+
+    expect(screen.getByRole('option', { name: 'Boston (BOS)' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Chicago (ORD)' })).toBeInTheDocument();
+  });
+
+  it('filters destinations based on the selected origin', () => {
+    render(<FlightSearch />);
+
+    selectRouteOption('From', 'Boston (BOS)');
+    fireEvent.mouseDown(screen.getByRole('combobox', { name: 'To' }));
+
+    expect(screen.getByRole('option', { name: 'Los Angeles (LAX)' })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: 'Miami (MIA)' })).not.toBeInTheDocument();
   });
 
   it('creates a booking from a selected flight', async () => {

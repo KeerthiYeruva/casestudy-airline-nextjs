@@ -87,11 +87,10 @@ export default function FlightSearch() {
     () => Array.from(new Set(
       flights
         .filter((flight) => isBookableFlight(flight))
-        .filter((flight) => !filters.to || getRoute(flight).destination === filters.to)
         .map((flight) => getRoute(flight).origin)
         .filter(Boolean)
     )).sort(),
-    [filters.to, flights]
+    [flights]
   );
 
   const availableDestinations = useMemo(
@@ -160,20 +159,6 @@ export default function FlightSearch() {
           ...currentFilters,
           from: nextFrom,
           to: !nextFrom || !currentFilters.to || routeStillExists ? currentFilters.to : "",
-        };
-      }
-
-      if (key === "to") {
-        const nextTo = value as string;
-        const routeStillExists = flights.some((flight) => {
-          const { origin, destination } = getRoute(flight);
-          return isBookableFlight(flight) && origin === currentFilters.from && destination === nextTo;
-        });
-
-        return {
-          ...currentFilters,
-          from: !nextTo || !currentFilters.from || routeStillExists ? currentFilters.from : "",
-          to: nextTo,
         };
       }
 
