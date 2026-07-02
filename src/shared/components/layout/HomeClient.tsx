@@ -21,7 +21,6 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  ListSubheader,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -43,12 +42,14 @@ const StaffCheckIn = lazy(() => import("../../../features/check-in/components/St
 const InFlight = lazy(() => import("../../../features/cabin/components/InFlight"));
 const AdminDashboard = lazy(() => import("../../../features/admin/components/AdminDashboard"));
 const OperationalSeatMap = lazy(() => import("../../../features/seating/components/OperationalSeatMap"));
+const OperationalDashboard = lazy(() => import("../../../features/operations/components/OperationalDashboard"));
 
 type ViewKey =
   | "search"
   | "trips"
   | "status"
   | "signin"
+  | "opsDashboard"
   | "checkin"
   | "inflight"
   | "seatMap"
@@ -57,7 +58,7 @@ type ViewKey =
   | "adminFlights"
   | "adminSeats"
   | "adminServices";
-type AccessLevel = "public" | "customer" | "checkin" | "cabin" | "admin";
+type AccessLevel = "public" | "customer" | "staff" | "checkin" | "cabin" | "admin";
 
 interface NavigationItem {
   view: Exclude<ViewKey, "signin">;
@@ -72,8 +73,6 @@ interface NavigationSection {
   title: string;
   views: NavigationItem["view"][];
 }
-
-const staffDrawerWidth = 280;
 
 const navigationItems: NavigationItem[] = [
   {
@@ -101,6 +100,14 @@ const navigationItems: NavigationItem[] = [
     access: "public",
   },
   {
+    view: "opsDashboard",
+    label: "Overview",
+    mobileLabel: "Operations Overview",
+    description: "Queues, exceptions, and flight readiness",
+    icon: <DashboardIcon />,
+    access: "staff",
+  },
+  {
     view: "checkin",
     label: "Check-In",
     mobileLabel: "Check-In",
@@ -122,7 +129,7 @@ const navigationItems: NavigationItem[] = [
     mobileLabel: "Seat Operations",
     description: "Dedicated cabin seating workspace",
     icon: <EventSeatIcon />,
-    access: "checkin",
+    access: "staff",
   },
   {
     view: "admin",
@@ -177,6 +184,7 @@ const canAccessLevel = (access: AccessLevel, role: UserRole | null, isAuthentica
   if (!isAuthenticated) return false;
   const currentRole = normalizeUserRole(role);
   if (!currentRole) return false;
+  if (access === "staff") return currentRole !== UserRole.PASSENGER;
 
   const permissions = rolePermissions[currentRole];
   if (access === "checkin") return permissions.canUseCheckIn;
@@ -190,20 +198,23 @@ const canAccessNavigationItem = (item: NavigationItem, role: UserRole | null, is
 
 const publicNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
 const customerNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
-const checkInNavigationViews: NavigationItem["view"][] = ["checkin", "seatMap", "status"];
-const cabinNavigationViews: NavigationItem["view"][] = ["inflight", "seatMap", "status"];
-const operationsNavigationViews: NavigationItem["view"][] = ["checkin", "inflight", "seatMap", "status"];
+const checkInNavigationViews: NavigationItem["view"][] = ["opsDashboard", "checkin", "seatMap", "status"];
+const cabinNavigationViews: NavigationItem["view"][] = ["opsDashboard", "inflight", "seatMap", "status"];
+const operationsNavigationViews: NavigationItem["view"][] = ["opsDashboard", "checkin", "inflight", "seatMap", "status"];
 const adminNavigationViews: NavigationItem["view"][] = ["admin", "checkin", "inflight", "seatMap", "adminPassengers", "adminFlights", "adminSeats", "adminServices"];
 
 const checkInNavigationSections: NavigationSection[] = [
+  { title: "Overview", views: ["opsDashboard"] },
   { title: "Operations", views: ["checkin", "seatMap", "status"] },
 ];
 
 const cabinNavigationSections: NavigationSection[] = [
+  { title: "Overview", views: ["opsDashboard"] },
   { title: "Cabin", views: ["inflight", "seatMap", "status"] },
 ];
 
 const operationsNavigationSections: NavigationSection[] = [
+  { title: "Overview", views: ["opsDashboard"] },
   { title: "Operations", views: ["checkin", "inflight", "seatMap", "status"] },
 ];
 
@@ -447,47 +458,51 @@ export default function HomeClient() {
                   </Typography>
                 )}
               </Box>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button
-                  variant={currentRole === UserRole.CHECKIN_AGENT ? 'contained' : 'outlined'}
-                  size="small"
-                  onClick={() => useAuthStore.getState().setRole(UserRole.CHECKIN_AGENT)}
-                  fullWidth
-                  sx={{ fontSize: '0.75rem', py: 0.5 }}
-                >
-                  Check-In
-                </Button>
-                <Button
-                  variant={currentRole === UserRole.CABIN_CREW ? 'contained' : 'outlined'}
-                  size="small"
-                  onClick={() => useAuthStore.getState().setRole(UserRole.CABIN_CREW)}
-                  fullWidth
-                  sx={{ fontSize: '0.75rem', py: 0.5 }}
-                >
-                  Cabin
-                </Button>
-              </Box>
-              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                <Button
-                  variant={currentRole === UserRole.OPERATIONS ? 'contained' : 'outlined'}
-                  size="small"
-                  onClick={() => useAuthStore.getState().setRole(UserRole.OPERATIONS)}
-                  fullWidth
-                  sx={{ fontSize: '0.75rem', py: 0.5 }}
-                >
-                  Ops
-                </Button>
-                <Button
-                  variant={currentRole === UserRole.ADMIN ? 'contained' : 'outlined'}
-                  size="small"
-                  color="secondary"
-                  onClick={() => useAuthStore.getState().setRole(UserRole.ADMIN)}
-                  fullWidth
-                  sx={{ fontSize: '0.75rem', py: 0.5 }}
-                >
-                  Admin
-                </Button>
-              </Box>
+              {isStaffExperience && (
+                <>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Button
+                      variant={currentRole === UserRole.CHECKIN_AGENT ? 'contained' : 'outlined'}
+                      size="small"
+                      onClick={() => useAuthStore.getState().setRole(UserRole.CHECKIN_AGENT)}
+                      fullWidth
+                      sx={{ fontSize: '0.75rem', py: 0.5 }}
+                    >
+                      Check-In
+                    </Button>
+                    <Button
+                      variant={currentRole === UserRole.CABIN_CREW ? 'contained' : 'outlined'}
+                      size="small"
+                      onClick={() => useAuthStore.getState().setRole(UserRole.CABIN_CREW)}
+                      fullWidth
+                      sx={{ fontSize: '0.75rem', py: 0.5 }}
+                    >
+                      Cabin
+                    </Button>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                    <Button
+                      variant={currentRole === UserRole.OPERATIONS ? 'contained' : 'outlined'}
+                      size="small"
+                      onClick={() => useAuthStore.getState().setRole(UserRole.OPERATIONS)}
+                      fullWidth
+                      sx={{ fontSize: '0.75rem', py: 0.5 }}
+                    >
+                      Ops
+                    </Button>
+                    <Button
+                      variant={currentRole === UserRole.ADMIN ? 'contained' : 'outlined'}
+                      size="small"
+                      color="secondary"
+                      onClick={() => useAuthStore.getState().setRole(UserRole.ADMIN)}
+                      fullWidth
+                      sx={{ fontSize: '0.75rem', py: 0.5 }}
+                    >
+                      Admin
+                    </Button>
+                  </Box>
+                </>
+              )}
             </Box>
           ) : (
             <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
@@ -549,68 +564,65 @@ export default function HomeClient() {
           </List>
         </Drawer>
 
-        <Box sx={{ display: 'flex', minHeight: isStaffExperience ? { md: 'calc(100vh - 64px)' } : undefined }}>
-          {isStaffExperience && (
-            <Box component="nav" aria-label="Operations navigation" sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Drawer
-                variant="permanent"
-                sx={{
-                  width: staffDrawerWidth,
-                  flexShrink: 0,
-                  '& .MuiDrawer-paper': {
-                    width: staffDrawerWidth,
-                    boxSizing: 'border-box',
-                    position: 'relative',
-                    height: '100%',
-                    borderRight: '1px solid',
-                    borderColor: 'divider',
-                  },
-                }}
-              >
-                <Box sx={{ px: 2.5, py: 2 }}>
-                  <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0 }}>
-                    Airline Operations
+        {isStaffExperience && (
+          <Box
+            component="nav"
+            aria-label="Operations navigation"
+            sx={{
+              display: { xs: 'none', md: 'block' },
+              bgcolor: 'background.paper',
+              borderBottom: '1px solid',
+              borderColor: 'divider',
+              px: { md: 3, lg: 4 },
+              py: 1.5,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, flexWrap: 'wrap' }}>
+              <Box sx={{ minWidth: 190 }}>
+                <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 0, lineHeight: 1.2 }}>
+                  Airline Operations
+                </Typography>
+                {currentRole && (
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.25 }}>
+                    {roleLabels[currentRole]}
                   </Typography>
-                  {currentRole && (
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
-                      {roleLabels[currentRole]}
-                    </Typography>
-                  )}
-                </Box>
-                <Divider />
+                )}
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', flex: 1 }}>
                 {staffNavigationSections.map((section) => (
-                  <List
-                    key={section.title}
-                    subheader={
-                      <ListSubheader component="div" sx={{ bgcolor: 'background.paper', fontWeight: 700 }}>
-                        {section.title}
-                      </ListSubheader>
-                    }
-                  >
+                  <Box key={section.title} sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
+                      {section.title}
+                    </Typography>
                     {section.items.map((item) => (
-                      <ListItem key={item.view} disablePadding sx={{ px: 1 }}>
-                        <ListItemButton
-                          selected={activeView === item.view}
-                          aria-label={`Navigate to ${item.mobileLabel}`}
-                          aria-current={activeView === item.view ? "page" : undefined}
-                          onClick={() => setCurrentView(item.view)}
-                          sx={{ borderRadius: 1 }}
-                        >
-                          <ListItemIcon>
-                            <Box sx={{ color: activeView === item.view ? 'primary.main' : 'inherit', display: 'flex' }}>
-                              {item.icon}
-                            </Box>
-                          </ListItemIcon>
-                          <ListItemText primary={item.mobileLabel} secondary={item.description} />
-                        </ListItemButton>
-                      </ListItem>
+                      <Button
+                        key={item.view}
+                        variant={activeView === item.view ? "contained" : "text"}
+                        color={item.access === "admin" ? "secondary" : "primary"}
+                        startIcon={item.icon}
+                        onClick={() => setCurrentView(item.view)}
+                        aria-label={`Navigate to ${item.mobileLabel}`}
+                        aria-current={activeView === item.view ? "page" : undefined}
+                        size="small"
+                        sx={{
+                          justifyContent: 'flex-start',
+                          minHeight: 40,
+                          borderRadius: 1.5,
+                          px: 1.5,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {item.label}
+                      </Button>
                     ))}
-                  </List>
+                  </Box>
                 ))}
-              </Drawer>
+              </Box>
             </Box>
-          )}
+          </Box>
+        )}
 
+        <Box sx={{ minHeight: isStaffExperience ? { md: 'calc(100vh - 132px)' } : undefined }}>
           <Box
             component="main"
             id="main-content"
@@ -619,7 +631,7 @@ export default function HomeClient() {
               minWidth: 0,
               mt: isStaffExperience ? { xs: 3, md: 0 } : 3,
               mb: 3,
-              p: isStaffExperience ? { xs: 0, md: 3 } : 0,
+              p: isStaffExperience ? { xs: 0, md: 3, lg: 4 } : 0,
               bgcolor: isStaffExperience ? { md: 'grey.50' } : 'transparent',
             }}
             role="main"
@@ -635,6 +647,12 @@ export default function HomeClient() {
               {activeView === "trips" && <PassengerPortal />}
               {activeView === "status" && <FlightStatusDashboard />}
               {activeView === "signin" && <Auth />}
+              {activeView === "opsDashboard" && currentRole && (
+                <OperationalDashboard
+                  role={currentRole}
+                  onOpenView={(view) => setCurrentView(view)}
+                />
+              )}
               {activeView === "checkin" && <StaffCheckIn />}
               {activeView === "inflight" && <InFlight />}
               {activeView === "seatMap" && (

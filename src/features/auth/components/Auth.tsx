@@ -54,6 +54,7 @@ const Auth: React.FC = () => {
   const firebaseEnabled = isFirebaseConfigured();
   const currentRole = normalizeUserRole(role);
   const currentRoleLabel = currentRole ? roleLabels[currentRole] : 'Role required';
+  const canSwitchStaffRoles = !!currentRole && currentRole !== UserRole.PASSENGER;
 
   useEffect(() => {
     if (!firebaseEnabled) return;
@@ -331,34 +332,36 @@ const Auth: React.FC = () => {
         </Avatar>
       </Box>
       
-      {/* Role Selector - Visible on tablet/desktop, hidden on mobile */}
-      <FormControl 
-        size="small" 
-        sx={{ 
-          display: { xs: 'none', sm: 'block' },
-          minWidth: { sm: 80, md: 90 },
-          '& .MuiOutlinedInput-root': {
-            fontSize: { sm: '0.75rem', md: '0.8rem' },
-          }
-        }}
-      >
-        <Select
-          value={currentRole || ''}
-          onChange={(e) => handleRoleChange(e.target.value as UserRole)}
-          displayEmpty
-          aria-label="Change role"
+      {/* Role Selector - Visible on tablet/desktop for staff contexts */}
+      {canSwitchStaffRoles && (
+        <FormControl 
+          size="small" 
           sx={{ 
-            fontSize: { sm: '0.75rem', md: '0.8rem' },
-            height: { sm: 36, md: 40 },
+            display: { xs: 'none', sm: 'block' },
+            minWidth: { sm: 80, md: 90 },
+            '& .MuiOutlinedInput-root': {
+              fontSize: { sm: '0.75rem', md: '0.8rem' },
+            }
           }}
         >
-          {staffRoleOptions.map((option) => (
-            <MenuItem key={option} value={option} sx={{ fontSize: { sm: '0.8rem', md: '0.875rem' } }}>
-              {roleLabels[option]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+          <Select
+            value={currentRole || ''}
+            onChange={(e) => handleRoleChange(e.target.value as UserRole)}
+            displayEmpty
+            aria-label="Change role"
+            sx={{ 
+              fontSize: { sm: '0.75rem', md: '0.8rem' },
+              height: { sm: 36, md: 40 },
+            }}
+          >
+            {staffRoleOptions.map((option) => (
+              <MenuItem key={option} value={option} sx={{ fontSize: { sm: '0.8rem', md: '0.875rem' } }}>
+                {roleLabels[option]}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
       
       <Button
         variant="text"

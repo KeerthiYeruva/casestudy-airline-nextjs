@@ -29,6 +29,9 @@ jest.mock('../features/cabin/components/InFlight', () => function MockInFlight()
 jest.mock('../features/admin/components/AdminDashboard', () => function MockAdminDashboard() {
   return <div>Admin Dashboard View</div>;
 });
+jest.mock('../features/operations/components/OperationalDashboard', () => function MockOperationalDashboard() {
+  return <div>Operations Overview View</div>;
+});
 
 const mockedUseAuthStore = useAuthStore as unknown as jest.Mock & { getState: jest.Mock };
 
@@ -82,6 +85,19 @@ describe('HomeClient navigation', () => {
     expect(await screen.findByText('Admin Dashboard View')).toBeInTheDocument();
   });
 
+  it('keeps authenticated passengers in the customer navigation', async () => {
+    setAuthRole(UserRole.PASSENGER);
+
+    render(<HomeClient />);
+
+    expect(screen.getByRole('button', { name: /navigate to flight search/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /navigate to my trips/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /navigate to flight status/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to operations overview/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to admin dashboard/i })).not.toBeInTheDocument();
+    expect(await screen.findByText('Flight Search View')).toBeInTheDocument();
+  });
+
   it('shows check-in navigation without customer trips for check-in agents', async () => {
     setAuthRole(UserRole.CHECKIN_AGENT);
 
@@ -89,9 +105,11 @@ describe('HomeClient navigation', () => {
 
     expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /navigate to flight search/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to operations overview/i })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to check-in/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to in-flight services/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to flight status/i })).toBeInTheDocument();
-    expect(await screen.findByText('Staff Check-In View')).toBeInTheDocument();
+    expect(await screen.findByText('Operations Overview View')).toBeInTheDocument();
   });
 
   it('shows in-flight navigation without customer trips for cabin crew', async () => {
@@ -101,8 +119,35 @@ describe('HomeClient navigation', () => {
 
     expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /navigate to flight search/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to operations overview/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to check-in/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to in-flight services/i })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to flight status/i })).toBeInTheDocument();
-    expect(await screen.findByText('In-Flight View')).toBeInTheDocument();
+    expect(await screen.findByText('Operations Overview View')).toBeInTheDocument();
+  });
+
+  it('shows combined operations navigation for operations staff', async () => {
+    setAuthRole(UserRole.OPERATIONS);
+
+    render(<HomeClient />);
+
+    expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to operations overview/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to check-in/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to in-flight services/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to flight status/i })).toBeInTheDocument();
+    expect(await screen.findByText('Operations Overview View')).toBeInTheDocument();
+  });
+
+  it('keeps super admin on admin navigation', async () => {
+    setAuthRole(UserRole.SUPER_ADMIN);
+
+    render(<HomeClient />);
+
+    expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to operations overview/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to admin dashboard/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /navigate to passengers/i })).toBeInTheDocument();
+    expect(await screen.findByText('Admin Dashboard View')).toBeInTheDocument();
   });
 });
