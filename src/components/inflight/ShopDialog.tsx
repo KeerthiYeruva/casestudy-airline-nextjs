@@ -109,7 +109,7 @@ const ShopDialog: React.FC<ShopDialogProps> = ({
           </Box>
 
           {selectedShopItem && (
-            <Box sx={{ mt: 3, p: 2, bgcolor: "#f5f5f5", borderRadius: 1 }}>
+            <Box sx={{ mt: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
               <Typography variant="subtitle1" gutterBottom>
                 Selected: {selectedShopItem.name}
               </Typography>

@@ -145,7 +145,7 @@ const Auth: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+          background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.main} 100%)`,
           padding: { xs: 2, sm: 3 },
         }}
       >

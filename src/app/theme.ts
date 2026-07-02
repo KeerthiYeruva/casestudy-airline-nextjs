@@ -78,15 +78,15 @@ const theme = createTheme({
   },
   components: {
     MuiCssBaseline: {
-      styleOverrides: {
+      styleOverrides: (theme) => ({
         body: {
-          backgroundColor: '#F7F9FC',
+          backgroundColor: theme.palette.background.default,
         },
         a: {
-          color: '#174EA6',
+          color: theme.palette.primary.main,
           textDecoration: 'none',
         },
-      },
+      }),
     },
     MuiButton: {
       defaultProps: {
@@ -101,10 +101,31 @@ const theme = createTheme({
     },
     MuiPaper: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           backgroundImage: 'none',
-          borderColor: '#E2E8F0',
-        },
+          borderColor: theme.palette.divider,
+          '.staff-checkin &.flight-details': {
+            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+            color: theme.palette.primary.contrastText,
+            '& .MuiTypography-root': {
+              color: theme.palette.primary.contrastText,
+            },
+            '& .MuiTypography-body2': {
+              opacity: 0.9,
+            },
+          },
+          '.inflight &.flight-details': {
+            background: `linear-gradient(130deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 52%, ${theme.palette.secondary.main} 100%)`,
+            border: '1px solid rgba(255, 255, 255, 0.18)',
+            color: theme.palette.primary.contrastText,
+            '& .MuiTypography-root': {
+              color: theme.palette.primary.contrastText,
+            },
+            '& .MuiTypography-body2': {
+              opacity: 0.9,
+            },
+          },
+        }),
         elevation1: {
           boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08)',
         },
@@ -115,14 +136,14 @@ const theme = createTheme({
     },
     MuiTableCell: {
       styleOverrides: {
-        root: {
-          borderBottomColor: '#E2E8F0',
-        },
-        head: {
-          backgroundColor: '#F1F5F9',
-          color: '#334155',
+        root: ({ theme }) => ({
+          borderBottomColor: theme.palette.divider,
+        }),
+        head: ({ theme }) => ({
+          backgroundColor: theme.palette.grey[100],
+          color: theme.palette.text.primary,
           fontWeight: 700,
-        },
+        }),
       },
     },
     MuiTableRow: {
@@ -141,10 +162,10 @@ const theme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           borderRadius: 8,
-          backgroundColor: '#FFFFFF',
-        },
+          backgroundColor: theme.palette.background.paper,
+        }),
       },
     },
     MuiDialog: {

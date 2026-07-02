@@ -137,12 +137,12 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
   const getGroupColor = (groupId: string | null) => {
     if (!groupId) return "";
     const colors = [
-      "#FFE0B2",
-      "#C8E6C9",
-      "#BBDEFB",
-      "#F8BBD0",
-      "#E1BEE7",
-      "#FFE0F0",
+      "warning.100",
+      "success.50",
+      "primary.100",
+      "error.50",
+      "secondary.100",
+      "info.50",
     ];
     const hash = groupId
       .split("")
@@ -471,7 +471,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                             ? getGroupColor(seatInfo.groupId)
                             : seatInfo.passenger
                               ? `${seatInfo.color}.50`
-                              : "white",
+                              : "background.paper",
                           cursor:
                             mode === "inflight" && !seatInfo.passenger
                               ? "not-allowed"
@@ -671,7 +671,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                             ? getGroupColor(seatInfo.groupId)
                             : seatInfo.passenger
                               ? `${seatInfo.color}.50`
-                              : "white",
+                              : "background.paper",
                           cursor:
                             mode === "inflight" && !seatInfo.passenger
                               ? "not-allowed"

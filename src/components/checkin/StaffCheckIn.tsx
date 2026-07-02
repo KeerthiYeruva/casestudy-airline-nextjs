@@ -23,7 +23,6 @@ import type { Passenger } from '@/types/passenger';
 import { Container, Paper, Typography, Grid, Box, Button, Stack, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
-import '@/styles/StaffCheckIn.scss';
 
 const StaffCheckIn: React.FC = () => {
   const { flights, passengers, fetchFlights, fetchPassengers, checkInPassenger, undoCheckIn, changeSeat, updatePassenger } = useDataStore();

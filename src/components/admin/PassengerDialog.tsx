@@ -174,9 +174,10 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
             <Grid size={{ xs: 12, sm: 6 }}>
               <Box sx={{
                 p: 1.5,
-                border: '1px solid #e0e0e0',
+                border: '1px solid',
+                borderColor: 'divider',
                 borderRadius: 1,
-                backgroundColor: formValues.seat ? '#e8f5e9' : '#f5f5f5',
+                backgroundColor: formValues.seat ? 'success.50' : 'grey.50',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -321,9 +322,10 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
               <Grid size={12}>
                 <Box sx={{
                   p: 2,
-                  border: '1px solid #e0e0e0',
+                  border: '1px solid',
+                  borderColor: 'divider',
                   borderRadius: 1,
-                  backgroundColor: formValues.seat ? '#e8f5e9' : '#f5f5f5',
+                  backgroundColor: formValues.seat ? 'success.50' : 'grey.50',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 2

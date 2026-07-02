@@ -2,6 +2,10 @@
   --background: #f7f9fc;
   --foreground: #172033;
   --link: #174ea6;
+  --link-hover: #0b2f6b;
+  --link-visited: #5b3ea6;
+  --success: #168a4a;
+  --error: #c2410c;
 }
 
 html,

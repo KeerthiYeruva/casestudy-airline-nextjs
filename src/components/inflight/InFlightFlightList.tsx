@@ -32,9 +32,13 @@ const InFlightFlightList: React.FC<InFlightFlightListProps> = ({
             sx={{ 
               borderRadius: 1, 
               mb: 1,
+              bgcolor: selectedFlightId === flight.id ? 'primary.50' : 'transparent',
               border: selectedFlightId === flight.id ? '2px solid' : '1px solid transparent',
               borderColor: selectedFlightId === flight.id ? 'primary.main' : 'transparent',
-              '&:hover': { borderColor: 'primary.light' }
+              '&:hover': {
+                borderColor: 'primary.light',
+                bgcolor: selectedFlightId === flight.id ? 'primary.50' : 'grey.50',
+              }
             }}
           >
             <ListItemText

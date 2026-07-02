@@ -55,10 +55,12 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                 selected={selectedPassengerId === passenger.id}
                 sx={{ 
                   borderRadius: 1,
+                    bgcolor: selectedPassengerId === passenger.id ? 'primary.50' : 'background.paper',
                   border: '1px solid',
                   borderColor: selectedPassengerId === passenger.id ? 'primary.main' : 'divider',
                   '&:hover': {
                     borderColor: 'primary.light',
+                      bgcolor: selectedPassengerId === passenger.id ? 'primary.50' : 'grey.50',
                   },
                   px: { xs: 1.25, sm: 2 },
                   py: 1.5,

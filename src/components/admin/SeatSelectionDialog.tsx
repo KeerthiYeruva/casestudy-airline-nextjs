@@ -92,7 +92,7 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
             sx={{
               mb: 3,
               p: 2,
-              backgroundColor: "#e3f2fd",
+              backgroundColor: "primary.50",
               borderRadius: 1,
               display: "flex",
               justifyContent: "space-between",
@@ -113,9 +113,10 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
           <Box
             sx={{
               p: 3,
-              border: "2px solid #e0e0e0",
+              border: "2px solid",
+              borderColor: "divider",
               borderRadius: 2,
-              backgroundColor: "#fafafa",
+              backgroundColor: "grey.50",
             }}
           >
             {/* Aircraft Front Indicator */}
@@ -126,8 +127,8 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
                   display: "inline-block",
                   px: 2,
                   py: 0.5,
-                  backgroundColor: "#1976d2",
-                  color: "white",
+                  backgroundColor: "primary.main",
+                  color: "primary.contrastText",
                   borderRadius: 1,
                 }}
               >
@@ -169,7 +170,7 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
                       width: 30,
                       fontWeight: "bold",
                       textAlign: "center",
-                      color: "#666",
+                      color: "text.secondary",
                     }}
                   >
                     {rowIndex + 1}
@@ -193,31 +194,36 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
                             fontSize: "0.75rem",
                             fontWeight: "bold",
                             backgroundColor: isOccupied
-                              ? "#bdbdbd"
+                              ? "grey.400"
                               : isSelected
-                              ? "#1976d2"
-                              : "white",
+                              ? "primary.main"
+                              : "background.paper",
                             color: isOccupied
-                              ? "#757575"
+                              ? "grey.700"
                               : isSelected
-                              ? "white"
-                              : "#1976d2",
+                              ? "primary.contrastText"
+                              : "primary.main",
                             border: isOccupied
-                              ? "1px solid #9e9e9e"
+                              ? "1px solid"
                               : isSelected
-                              ? "2px solid #1565c0"
-                              : "1px solid #1976d2",
+                              ? "2px solid"
+                              : "1px solid",
+                            borderColor: isOccupied
+                              ? "grey.500"
+                              : isSelected
+                              ? "primary.dark"
+                              : "primary.main",
                             "&:hover": {
                               backgroundColor: isOccupied
-                                ? "#bdbdbd"
+                                ? "grey.400"
                                 : isSelected
-                                ? "#1565c0"
-                                : "#e3f2fd",
+                                ? "primary.dark"
+                                : "primary.50",
                               transform: isOccupied ? "none" : "scale(1.05)",
                             },
                             "&:disabled": {
-                              backgroundColor: "#bdbdbd",
-                              color: "#757575",
+                              backgroundColor: "grey.400",
+                              color: "grey.700",
                             },
                             transition: "all 0.2s",
                           }}
@@ -235,7 +241,7 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
                           >
                             <Typography
                               variant="caption"
-                              sx={{ color: "#999", fontSize: "0.7rem" }}
+                              sx={{ color: "text.disabled", fontSize: "0.7rem" }}
                             >
                               ||
                             </Typography>
@@ -261,9 +267,10 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
                     sx={{
                       width: 32,
                       height: 32,
-                      border: "1px solid #1976d2",
+                      border: "1px solid",
+                      borderColor: "primary.main",
                       borderRadius: 0.5,
-                      backgroundColor: "white",
+                      backgroundColor: "background.paper",
                     }}
                   />
                   <Typography variant="body2">Available</Typography>
@@ -275,9 +282,10 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
                     sx={{
                       width: 32,
                       height: 32,
-                      bgcolor: "#1976d2",
+                      bgcolor: "primary.main",
                       borderRadius: 0.5,
-                      border: "2px solid #1565c0",
+                      border: "2px solid",
+                      borderColor: "primary.dark",
                     }}
                   />
                   <Typography variant="body2">Selected</Typography>
@@ -289,7 +297,7 @@ const SeatSelectionDialog: React.FC<SeatSelectionDialogProps> = ({
                     sx={{
                       width: 32,
                       height: 32,
-                      bgcolor: "#bdbdbd",
+                      bgcolor: "grey.400",
                       borderRadius: 0.5,
                     }}
                   />

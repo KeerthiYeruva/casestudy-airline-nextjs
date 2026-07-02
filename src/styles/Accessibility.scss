@@ -3,7 +3,7 @@
 // Focus indicators
 *:focus,
 *:focus-visible {
-  outline: 3px solid #1976d2;
+  outline: 3px solid var(--link);
   outline-offset: 2px;
 }
 
@@ -12,7 +12,7 @@ a:focus,
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 3px solid #1976d2;
+  outline: 3px solid var(--link);
   outline-offset: 2px;
 }
 
@@ -22,7 +22,7 @@ textarea:focus {
   left: -9999px;
   z-index: 999;
   padding: 1em;
-  background-color: #1976d2;
+  background-color: var(--link);
   color: white;
   text-decoration: none;
 
@@ -69,13 +69,13 @@ textarea:focus {
 
 // Keyboard navigation styles
 .keyboard-focus {
-  outline: 3px dashed #1976d2;
+  outline: 3px dashed var(--link);
   outline-offset: 3px;
 }
 
 // Error message accessibility
 .error-message {
-  color: #d32f2f;
+  color: var(--error);
   font-weight: 500;
   margin-top: 4px;
   display: flex;
@@ -90,7 +90,7 @@ textarea:focus {
 
 // Success message accessibility
 .success-message {
-  color: #2e7d32;
+  color: var(--success);
   font-weight: 500;
   margin-top: 4px;
   display: flex;
@@ -105,19 +105,19 @@ textarea:focus {
 
 // Ensure sufficient color contrast
 .text-primary {
-  color: #1976d2;
+  color: var(--link);
 }
 
 .text-secondary {
-  color: #424242;
+  color: var(--foreground);
 }
 
 .text-error {
-  color: #d32f2f;
+  color: var(--error);
 }
 
 .text-success {
-  color: #2e7d32;
+  color: var(--success);
 }
 
 // Touch target size (minimum 44x44px for WCAG)
@@ -139,14 +139,14 @@ a,
 // Improve link visibility
 a {
   text-decoration: underline;
-  color: #1976d2;
+  color: var(--link);
 
   &:hover {
-    color: #1565c0;
+    color: var(--link-hover);
   }
 
   &:visited {
-    color: #7b1fa2;
+    color: var(--link-visited);
   }
 }
   

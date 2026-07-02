@@ -120,6 +120,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
               <Chip
                 label={passenger.specialMeal || 'Regular'}
                 color="secondary"
+                variant="outlined"
                 sx={{ fontWeight: 'medium' }}
               />
             </CardContent>
@@ -169,7 +170,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
 
         {/* In-Flight Shop Requests */}
         <Grid size={12}>
-          <Card variant="outlined" sx={{ bgcolor: 'secondary.50' }}>
+          <Card variant="outlined" sx={{ bgcolor: 'background.default', borderColor: 'secondary.100' }}>
             <CardContent>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -212,7 +213,8 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
                           justifyContent: "space-between",
                           alignItems: "center",
                           p: 1,
-                          border: "1px solid #e0e0e0",
+                          border: "1px solid",
+                          borderColor: "divider",
                           borderRadius: 1,
                         }}
                       >
