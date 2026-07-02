@@ -1,15 +1,18 @@
 "use client";
 
 import React, { type ReactNode } from "react";
-import { Box, Container, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Box, Chip, Container, Grid, Paper, Stack, Typography } from "@mui/material";
 import PageHeader from "../ui/PageHeader";
 import StatusChip from "../ui/StatusChip";
 import type { Flight } from "../../../domain/flights/types";
+import type { Passenger } from "../../../domain/passengers/types";
 
 interface OperationalWorkspaceProps {
   title: string;
   isConnected?: boolean;
   selectedFlight?: Flight | null;
+  operationalPassengers?: Passenger[];
+  totalSeats?: number;
   leftRail: ReactNode;
   children: ReactNode;
   rightRail?: ReactNode;
@@ -27,10 +30,30 @@ const getRoute = (flight: Flight) => {
 
 const getTime = (flight: Flight) => flight.time || flight.departureTime || "TBD";
 
+const getPassengerMetrics = (passengers: Passenger[], totalSeats: number) => {
+  const occupiedSeats = passengers.filter((passenger) => passenger.seat).length;
+  const checkedInPassengers = passengers.filter((passenger) => passenger.checkedIn).length;
+  const serviceRequests = passengers.filter(
+    (passenger) => passenger.ancillaryServices.length > 0 || (passenger.shopRequests?.length ?? 0) > 0
+  ).length;
+  const specialAssistance = passengers.filter((passenger) => passenger.wheelchair || passenger.infant).length;
+
+  return {
+    checkedInPassengers,
+    occupiedSeats,
+    serviceRequests,
+    specialAssistance,
+    boardingLabel: `${checkedInPassengers}/${passengers.length || 0} checked in`,
+    occupancyLabel: `${occupiedSeats}/${totalSeats} seats`,
+  };
+};
+
 export default function OperationalWorkspace({
   title,
   isConnected = false,
   selectedFlight,
+  operationalPassengers = [],
+  totalSeats = 60,
   leftRail,
   children,
   rightRail,
@@ -60,6 +83,7 @@ export default function OperationalWorkspace({
     lg: rightRailWidth.lg,
     xl: rightRailWidth.xl ?? rightRailWidth.lg,
   };
+  const passengerMetrics = getPassengerMetrics(operationalPassengers, totalSeats);
 
   return (
     <Container
@@ -99,26 +123,36 @@ export default function OperationalWorkspace({
                 }}
               >
                 <Grid container spacing={1.5} sx={{ alignItems: "center" }}>
-                  <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                  <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
                     <Typography variant="caption" color="text.secondary">Flight</Typography>
                     <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.25 }}>
                       {selectedFlight.flightNumber || selectedFlight.name}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                  <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
                     <Typography variant="caption" color="text.secondary">Route</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 650 }}>{getRoute(selectedFlight)}</Typography>
                   </Grid>
-                  <Grid size={{ xs: 6, sm: 3, lg: 2 }}>
+                  <Grid size={{ xs: 6, sm: 3, lg: 1.6 }}>
                     <Typography variant="caption" color="text.secondary">Departure</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 650 }}>{getTime(selectedFlight)}</Typography>
                   </Grid>
-                  <Grid size={{ xs: 6, sm: 3, lg: 2 }}>
+                  <Grid size={{ xs: 6, sm: 3, lg: 1.4 }}>
                     <Typography variant="caption" color="text.secondary">Gate</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 650 }}>{selectedFlight.gate || "TBD"}</Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6, lg: 2 }} sx={{ display: "flex", justifyContent: { xs: "flex-start", lg: "flex-end" } }}>
-                    <StatusChip status={selectedFlight.status} />
+                  <Grid size={{ xs: 12, lg: 4.2 }}>
+                    <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", rowGap: 1, justifyContent: { xs: "flex-start", lg: "flex-end" } }}>
+                      <StatusChip status={selectedFlight.status} />
+                      <Chip label={passengerMetrics.boardingLabel} size="small" color="success" variant="outlined" />
+                      <Chip label={passengerMetrics.occupancyLabel} size="small" color="primary" variant="outlined" />
+                      {passengerMetrics.serviceRequests > 0 && (
+                        <Chip label={`${passengerMetrics.serviceRequests} service`} size="small" color="secondary" variant="outlined" />
+                      )}
+                      {passengerMetrics.specialAssistance > 0 && (
+                        <Chip label={`${passengerMetrics.specialAssistance} assistance`} size="small" color="warning" variant="outlined" />
+                      )}
+                    </Stack>
                   </Grid>
                 </Grid>
               </Paper>

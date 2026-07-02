@@ -145,6 +145,7 @@ const StaffCheckIn: React.FC = () => {
       title="Staff Check-In"
       isConnected={isConnected}
       selectedFlight={selectedFlight}
+      operationalPassengers={flightPassengers}
       leftRail={(
         <FlightSelectionPanel
           flights={flights}

@@ -241,6 +241,7 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
       title="In-Flight Services"
       isConnected={isConnected}
       selectedFlight={selectedFlight}
+      operationalPassengers={flightPassengers}
       leftRail={(
         <InFlightFlightList
           flights={flights}

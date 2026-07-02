@@ -177,6 +177,7 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
       title={copy.title}
       isConnected={isConnected}
       selectedFlight={selectedFlight}
+      operationalPassengers={flightPassengers}
       leftRail={(
         <FlightSelectionPanel
           flights={flights}
