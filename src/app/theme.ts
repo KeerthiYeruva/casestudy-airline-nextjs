@@ -137,7 +137,7 @@ const theme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: ({ theme }) => ({
-          borderBottomColor: theme.palette.divider,
+          border: `1px solid ${theme.palette.divider}`,
         }),
         head: ({ theme }) => ({
           backgroundColor: theme.palette.grey[100],
@@ -150,7 +150,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '&:last-child td': {
-            borderBottom: 0,
+            borderBottomColor: 'inherit',
           },
         },
       },

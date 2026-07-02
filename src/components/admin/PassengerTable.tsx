@@ -251,14 +251,14 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Status</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Passenger</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Flight</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Seat</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Seating Info</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Services</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }}>Verification</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'right' }}>Actions</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Passenger</TableCell>
+            <TableCell>Flight</TableCell>
+            <TableCell>Seat</TableCell>
+            <TableCell>Seating Info</TableCell>
+            <TableCell>Services</TableCell>
+            <TableCell>Verification</TableCell>
+            <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

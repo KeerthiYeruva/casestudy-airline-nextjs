@@ -17,6 +17,8 @@ const InFlightFlightList: React.FC<InFlightFlightListProps> = ({
   selectedFlightId,
   onFlightSelect,
 }) => {
+  const getAirportCode = (value?: string) => value?.match(/\(([A-Z]{3})\)/)?.[1] || value || 'N/A';
+
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
       <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -52,12 +54,12 @@ const InFlightFlightList: React.FC<InFlightFlightListProps> = ({
               }
               secondary={
                 <Box component="span" sx={{ mt: 0.5, display: 'block' }}>
-                  <Box component="span" sx={{ display: 'block', fontSize: '0.875rem', color: 'text.secondary' }}>
-                    {flight.origin || flight.from} → {flight.destination || flight.to}
-                  </Box>
-                  <Box component="span" sx={{ display: 'block', fontSize: '0.875rem', color: 'text.secondary' }}>
-                    {flight.time || flight.departureTime} • Gate {flight.gate}
-                  </Box>
+                  <Typography component="span" variant="body2" color="text.secondary" sx={{ display: 'block' }}>
+                    {getAirportCode(flight.origin || flight.from)} → {getAirportCode(flight.destination || flight.to)}
+                  </Typography>
+                  <Typography component="span" variant="body2" color="text.secondary" sx={{ display: 'block' }}>
+                    {flight.time || flight.departureTime} • {flight.gate || 'No gate'}
+                  </Typography>
                 </Box>
               }
             />

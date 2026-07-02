@@ -24,7 +24,7 @@ export default function PageHeader({
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: description ? 0.5 : 0, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {icon}
-          <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+          <Typography variant="h4">
             {title}
           </Typography>
         </Box>

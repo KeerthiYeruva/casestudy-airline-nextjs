@@ -55,12 +55,12 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                 selected={selectedPassengerId === passenger.id}
                 sx={{ 
                   borderRadius: 1,
-                    bgcolor: selectedPassengerId === passenger.id ? 'primary.50' : 'background.paper',
+                  bgcolor: selectedPassengerId === passenger.id ? 'primary.50' : 'background.paper',
                   border: '1px solid',
                   borderColor: selectedPassengerId === passenger.id ? 'primary.main' : 'divider',
                   '&:hover': {
                     borderColor: 'primary.light',
-                      bgcolor: selectedPassengerId === passenger.id ? 'primary.50' : 'grey.50',
+                    bgcolor: selectedPassengerId === passenger.id ? 'primary.50' : 'grey.50',
                   },
                   px: { xs: 1.25, sm: 2 },
                   py: 1.5,
@@ -78,8 +78,8 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                           {passenger.name}
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
-                          <Chip label={passenger.seat} size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
-                          <Chip label={passenger.bookingReference} size="small" variant="outlined" sx={{ height: 20, fontSize: '0.7rem' }} />
+                          <Chip label={passenger.seat} size="small" />
+                          <Chip label={passenger.bookingReference} size="small" variant="outlined" />
                         </Box>
                       </Box>
                     </Box>
@@ -116,7 +116,6 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
                         label={`${passenger.ancillaryServices.length} services`} 
                         size="small" 
                         variant="outlined"
-                        sx={{ height: 20, fontSize: '0.7rem' }}
                       />
                     )}
                   </Box>

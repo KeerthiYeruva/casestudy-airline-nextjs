@@ -25,37 +25,37 @@ export default function FlightInfoGrid({ flight, sx }: FlightInfoGridProps) {
       <Typography
         variant="h5"
         gutterBottom
-        sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' }, mb: { xs: 1, sm: 1.5 } }}
+        sx={{ mb: { xs: 1, sm: 1.5 } }}
       >
         {flight.name || flight.flightNumber}
       </Typography>
       <Grid container spacing={{ xs: 1, sm: 1.5, md: 2 }}>
         <Grid size={{ xs: 6, sm: 3 }}>
-          <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+          <Typography variant="body2" color="textSecondary">
             Time
           </Typography>
-          <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>
+          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
             {time}
           </Typography>
         </Grid>
         <Grid size={{ xs: 6, sm: 3 }}>
-          <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+          <Typography variant="body2" color="textSecondary">
             Route
           </Typography>
-          <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>
+          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
             {route}
           </Typography>
         </Grid>
         <Grid size={{ xs: 6, sm: 3 }}>
-          <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+          <Typography variant="body2" color="textSecondary">
             Gate
           </Typography>
-          <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, fontWeight: 'medium' }}>
+          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
             {flight.gate || 'N/A'}
           </Typography>
         </Grid>
         <Grid size={{ xs: 6, sm: 3 }}>
-          <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+          <Typography variant="body2" color="textSecondary">
             Status
           </Typography>
           <StatusChip status={flight.status} />

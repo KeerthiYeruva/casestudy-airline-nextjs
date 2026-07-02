@@ -148,7 +148,7 @@ const LocaleSelector: React.FC = () => {
             selected={lang.code === currentLocale}
           >
             <ListItemIcon>
-              <span style={{ fontSize: '1.5rem' }}>{lang.flag}</span>
+              <Box component="span" sx={{ fontSize: '1.5rem' }}>{lang.flag}</Box>
             </ListItemIcon>
             <ListItemText>{lang.name}</ListItemText>
             {lang.code === currentLocale && (

@@ -439,10 +439,10 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
           {selectedPassengers.length === totalMembers && !compositionValid && (
             <Alert severity="error">
               Selected passengers don&apos;t match family composition:
-              <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+              <Box component="ul" sx={{ my: 1, pl: 2.5 }}>
                 <li>Expected: {infants} infant(s), {expectedNonInfants} adult(s)/child(ren)</li>
                 <li>Selected: {selectedInfants} infant(s), {selectedNonInfants} adult(s)/child(ren)</li>
-              </ul>
+              </Box>
               Please select passengers with the correct infant flags.
             </Alert>
           )}
@@ -500,7 +500,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
             <Typography variant="caption" color="text.secondary">
               <strong>Note:</strong> Family seating will prioritize:
             </Typography>
-            <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+            <Box component="ul" sx={{ my: 1, pl: 2.5 }}>
               <li>
                 <Typography variant="caption" color="text.secondary">
                   Seats in the same row or adjacent rows
@@ -516,7 +516,7 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                   At least one adult next to each child under 12
                 </Typography>
               </li>
-            </ul>
+            </Box>
           </Box>
         </Box>
       </DialogContent>

@@ -245,7 +245,7 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
       />
 
       <Grid container spacing={{ xs: 2, sm: 3, xl: 4 }} sx={{ minWidth: 0 }}>
-        <Grid size={{ xs: 12, md: 3 }} sx={{ minWidth: 0 }}>
+        <Grid size={{ xs: 12, md: 3, lg: 2.6, xl: 2.4 }} sx={{ minWidth: 0 }}>
           <InFlightFlightList
             flights={flights}
             selectedFlightId={selectedFlight?.id}
@@ -253,13 +253,13 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 9 }} sx={{ minWidth: 0 }}>
+        <Grid size={{ xs: 12, md: 9, lg: 9.4, xl: 9.6 }} sx={{ minWidth: 0 }}>
           {selectedFlight ? (
             <>
               <FlightInfoGrid flight={selectedFlight} />
 
               <Grid container spacing={{ xs: 2, xl: 3 }} sx={{ minWidth: 0 }}>
-                <Grid size={{ xs: 12, lg: 4 }} sx={{ minWidth: 0 }}>
+                <Grid size={{ xs: 12, lg: 4.4, xl: 4 }} sx={{ minWidth: 300 }}>
                   <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Box>
                       <Typography variant="h6">
@@ -278,7 +278,7 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
                   </Paper>
                 </Grid>
 
-                <Grid size={{ xs: 12, lg: 8 }} sx={{ minWidth: 0 }}>
+                <Grid size={{ xs: 12, lg: 7.6, xl: 8 }} sx={{ minWidth: 0 }}>
                   {currentPassengerData ? (
                     <PassengerServicePanel
                       passenger={currentPassengerData}
