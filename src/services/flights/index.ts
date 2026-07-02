@@ -1,4 +1,4 @@
-export { fetchFlightById, fetchFlights } from '../../lib/fetchUtils';
+export { fetchFlightById, fetchFlights } from '../../infrastructure/api/fetchUtils';
 export {
   createFlight,
   deleteFlight,
@@ -6,4 +6,4 @@ export {
   getFlightById,
   subscribeToFlights,
   updateFlight,
-} from '../../lib/firestoreService';
+} from '../../infrastructure/persistence/firestoreService';

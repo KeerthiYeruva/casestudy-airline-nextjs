@@ -1,8 +1,8 @@
 // API Route for passenger seat change (TypeScript)
-import { passengerDB } from '../../../../../lib/db';
-import { handleApiError, successResponse, notFoundResponse, badRequestResponse } from '../../../../../lib/apiUtils';
-import { SeatChangeSchema, validateSchema } from '../../../../../lib/validationSchemas';
-import { eventBroadcaster } from '../../../../../lib/eventBroadcaster';
+import { passengerDB } from '../../../../../infrastructure/persistence/db';
+import { handleApiError, successResponse, notFoundResponse, badRequestResponse } from '../../../../../infrastructure/api/apiUtils';
+import { SeatChangeSchema, validateSchema } from '../../../../../domain/validation/schemas';
+import { eventBroadcaster } from '../../../../../infrastructure/realtime/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
 
 interface RouteParams {

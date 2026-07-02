@@ -1,6 +1,6 @@
 import SettingsIcon from '@mui/icons-material/Settings';
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import PageHeader from '../../components/ui/PageHeader';
+import PageHeader from '../../shared/components/ui/PageHeader';
 
 const meta = {
   title: 'UI/PageHeader',

@@ -1,6 +1,6 @@
-import { serviceDB } from '../../../lib/db';
-import { badRequestResponse, handleApiError, notFoundResponse, successResponse, HTTP_STATUS } from '../../../lib/apiUtils';
-import { eventBroadcaster } from '../../../lib/eventBroadcaster';
+import { serviceDB } from '../../../infrastructure/persistence/db';
+import { badRequestResponse, handleApiError, notFoundResponse, successResponse, HTTP_STATUS } from '../../../infrastructure/api/apiUtils';
+import { eventBroadcaster } from '../../../infrastructure/realtime/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';

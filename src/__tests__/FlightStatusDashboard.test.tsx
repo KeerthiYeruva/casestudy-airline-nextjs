@@ -1,8 +1,8 @@
 import React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import FlightStatusDashboard from '../components/customer/FlightStatusDashboard';
-import type { Flight } from '../types/flight';
+import FlightStatusDashboard from '../features/customer/components/FlightStatusDashboard';
+import type { Flight } from '../domain/flights/types';
 
 const mockFetchFlights = jest.fn();
 

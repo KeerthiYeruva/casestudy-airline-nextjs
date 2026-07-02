@@ -1,10 +1,10 @@
 // API Route for single Passenger operations (TypeScript)
-import { passengerDB } from '../../../../lib/db';
-import { handleApiError, successResponse, notFoundResponse } from '../../../../lib/apiUtils';
-import { UpdatePassengerSchema, validateSchema } from '../../../../lib/validationSchemas';
-import { eventBroadcaster } from '../../../../lib/eventBroadcaster';
+import { passengerDB } from '../../../../infrastructure/persistence/db';
+import { handleApiError, successResponse, notFoundResponse } from '../../../../infrastructure/api/apiUtils';
+import { UpdatePassengerSchema, validateSchema } from '../../../../domain/validation/schemas';
+import { eventBroadcaster } from '../../../../infrastructure/realtime/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
-import type { Passenger } from '../../../../types/passenger';
+import type { Passenger } from '../../../../domain/passengers/types';
 
 interface RouteParams {
   params: Promise<{ id: string }>;

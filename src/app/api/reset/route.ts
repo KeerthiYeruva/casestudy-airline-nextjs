@@ -1,6 +1,6 @@
 // API Route for resetting data to initial state
-import { resetDatabase } from '../../../lib/db';
-import { handleApiError, successResponse } from '../../../lib/apiUtils';
+import { resetDatabase } from '../../../infrastructure/persistence/db';
+import { handleApiError, successResponse } from '../../../infrastructure/api/apiUtils';
 
 // POST reset database to initial state
 export async function POST() {

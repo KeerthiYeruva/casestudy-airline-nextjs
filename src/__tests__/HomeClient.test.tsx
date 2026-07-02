@@ -1,32 +1,32 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import HomeClient from '../components/layout/HomeClient';
+import HomeClient from '../shared/components/layout/HomeClient';
 import useAuthStore from '../stores/useAuthStore';
-import { UserRole } from '../types/auth';
+import { UserRole } from '../domain/auth/types';
 
 jest.mock('../stores/useAuthStore');
-jest.mock('../components/auth/Auth', () => function MockAuth() {
+jest.mock('../features/auth/components/Auth', () => function MockAuth() {
   return <div>Auth Controls</div>;
 });
-jest.mock('../components/common/LocaleSelector', () => function MockLocaleSelector() {
+jest.mock('../shared/components/common/LocaleSelector', () => function MockLocaleSelector() {
   return <div>Locale Selector</div>;
 });
-jest.mock('../components/customer/FlightSearch', () => function MockFlightSearch() {
+jest.mock('../features/customer/components/FlightSearch', () => function MockFlightSearch() {
   return <div>Flight Search View</div>;
 });
-jest.mock('../components/customer/PassengerPortal', () => function MockPassengerPortal() {
+jest.mock('../features/customer/components/PassengerPortal', () => function MockPassengerPortal() {
   return <div>Passenger Portal View</div>;
 });
-jest.mock('../components/customer/FlightStatusDashboard', () => function MockFlightStatusDashboard() {
+jest.mock('../features/customer/components/FlightStatusDashboard', () => function MockFlightStatusDashboard() {
   return <div>Flight Status View</div>;
 });
-jest.mock('../components/checkin/StaffCheckIn', () => function MockStaffCheckIn() {
+jest.mock('../features/check-in/components/StaffCheckIn', () => function MockStaffCheckIn() {
   return <div>Staff Check-In View</div>;
 });
-jest.mock('../components/inflight/InFlight', () => function MockInFlight() {
+jest.mock('../features/cabin/components/InFlight', () => function MockInFlight() {
   return <div>In-Flight View</div>;
 });
-jest.mock('../components/admin/AdminDashboard', () => function MockAdminDashboard() {
+jest.mock('../features/admin/components/AdminDashboard', () => function MockAdminDashboard() {
   return <div>Admin Dashboard View</div>;
 });
 

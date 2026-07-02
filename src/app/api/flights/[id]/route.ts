@@ -1,10 +1,10 @@
 // API Route for single Flight operations (TypeScript)
-import { flightDB } from '../../../../lib/db';
-import { handleApiError, successResponse, notFoundResponse } from '../../../../lib/apiUtils';
-import { UpdateFlightSchema, validateSchema } from '../../../../lib/validationSchemas';
-import { eventBroadcaster } from '../../../../lib/eventBroadcaster';
+import { flightDB } from '../../../../infrastructure/persistence/db';
+import { handleApiError, successResponse, notFoundResponse } from '../../../../infrastructure/api/apiUtils';
+import { UpdateFlightSchema, validateSchema } from '../../../../domain/validation/schemas';
+import { eventBroadcaster } from '../../../../infrastructure/realtime/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
-import type { Flight } from '../../../../types/flight';
+import type { Flight } from '../../../../domain/flights/types';
 
 interface RouteParams {
   params: Promise<{ id: string }>;

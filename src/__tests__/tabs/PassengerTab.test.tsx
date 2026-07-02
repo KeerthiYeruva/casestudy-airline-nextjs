@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import PassengerTab from '../../components/admin/tabs/PassengerTab';
+import PassengerTab from '../../features/admin/components/tabs/PassengerTab';
 
 const mockPassengers = [
   {

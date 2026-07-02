@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import SeatManagementTab from '../../components/admin/tabs/SeatManagementTab';
+import SeatManagementTab from '../../features/admin/components/tabs/SeatManagementTab';
 
 const mockPassengers = [
   {

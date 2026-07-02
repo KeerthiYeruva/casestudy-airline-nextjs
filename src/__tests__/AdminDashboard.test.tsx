@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import AdminDashboard from '../components/admin/AdminDashboard';
+import AdminDashboard from '../features/admin/components/AdminDashboard';
 
 // Mock the stores
 jest.mock('../stores/useDataStore', () => ({

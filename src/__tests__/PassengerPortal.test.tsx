@@ -1,9 +1,9 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import PassengerPortal from '../components/customer/PassengerPortal';
-import type { Flight } from '../types/flight';
-import type { Passenger } from '../types/passenger';
+import PassengerPortal from '../features/customer/components/PassengerPortal';
+import type { Flight } from '../domain/flights/types';
+import type { Passenger } from '../domain/passengers/types';
 
 const mockFetchFlights = jest.fn();
 const mockFetchPassengers = jest.fn();

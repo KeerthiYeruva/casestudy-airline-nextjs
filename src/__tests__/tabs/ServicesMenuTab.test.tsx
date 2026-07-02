@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ServicesMenuTab from '../../components/admin/tabs/ServicesMenuTab';
+import ServicesMenuTab from '../../features/admin/components/tabs/ServicesMenuTab';
 
 const mockShopItems = [
   { id: 'SHOP1', name: 'Perfume', category: 'Perfumes & Cosmetics', price: 50, currency: 'USD' },

@@ -1,8 +1,8 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import AircraftManagementTab from '../components/admin/tabs/AircraftManagementTab';
-import type { Flight } from '../types/flight';
+import AircraftManagementTab from '../features/admin/components/tabs/AircraftManagementTab';
+import type { Flight } from '../domain/flights/types';
 
 const mockFlights: Flight[] = [
   {

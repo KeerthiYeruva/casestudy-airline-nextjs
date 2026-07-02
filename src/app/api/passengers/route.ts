@@ -1,10 +1,10 @@
 // API Route for Passengers CRUD operations (TypeScript)
-import { passengerDB } from '../../../lib/db';
-import { handleApiError, successResponse, HTTP_STATUS } from '../../../lib/apiUtils';
-import { CreatePassengerSchema, validateSchema } from '../../../lib/validationSchemas';
-import { eventBroadcaster } from '../../../lib/eventBroadcaster';
+import { passengerDB } from '../../../infrastructure/persistence/db';
+import { handleApiError, successResponse, HTTP_STATUS } from '../../../infrastructure/api/apiUtils';
+import { CreatePassengerSchema, validateSchema } from '../../../domain/validation/schemas';
+import { eventBroadcaster } from '../../../infrastructure/realtime/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
-import type { Passenger } from '../../../types/passenger';
+import type { Passenger } from '../../../domain/passengers/types';
 
 export const dynamic = 'force-dynamic';
 

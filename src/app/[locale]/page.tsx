@@ -1,5 +1,5 @@
 ﻿import { Metadata } from 'next';
-import HomeClient from '../../components/layout/HomeClient';
+import HomeClient from '../../shared/components/layout/HomeClient';
 
 export const metadata: Metadata = {
   title: 'Airline Management System',

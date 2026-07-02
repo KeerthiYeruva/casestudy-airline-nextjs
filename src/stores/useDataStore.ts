@@ -14,12 +14,12 @@
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import type { APIResponse } from '../types/api';
-import type { Flight } from '../types/flight';
-import type { Passenger } from '../types/passenger';
-import type { FamilySeating, GroupSeating, SeatPreferences } from '../types/seat';
-import type { AncillaryService, MealOption, ShopCategory, ShopItem } from '../types/services';
-import type { DataStore } from '../types/store';
+import type { APIResponse } from '../shared/types/api';
+import type { Flight } from '../domain/flights/types';
+import type { Passenger } from '../domain/passengers/types';
+import type { FamilySeating, GroupSeating, SeatPreferences } from '../domain/seats/types';
+import type { AncillaryService, MealOption, ShopCategory, ShopItem } from '../domain/services/types';
+import type { DataStore } from '../shared/types/store';
 import { 
   flights as initialFlights,
   passengers as initialPassengers,
@@ -27,7 +27,7 @@ import {
   mealOptions as defaultMealOptions,
   shopItems as defaultShopItems,
   shopCategories as defaultShopCategories
-} from '../data/flightData';
+} from '../domain/fixtures/flightData';
 
 // Version for auto-sync detection
 const DATA_VERSION = 1;

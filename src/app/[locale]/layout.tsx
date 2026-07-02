@@ -5,7 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import theme from "../theme";
-import ClientLayout from "../../components/layout/ClientLayout";
+import ClientLayout from "../../shared/components/layout/ClientLayout";
 import "../../styles/App.scss";
 import "../../styles/Accessibility.scss";
 

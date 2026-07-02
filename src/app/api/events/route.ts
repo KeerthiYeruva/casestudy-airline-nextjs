@@ -1,6 +1,6 @@
 // SSE API Route for real-time updates
 import { NextRequest } from 'next/server';
-import { eventBroadcaster } from '../../../lib/eventBroadcaster';
+import { eventBroadcaster } from '../../../infrastructure/realtime/eventBroadcaster';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';

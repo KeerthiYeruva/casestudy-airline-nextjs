@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import FlightInfoGrid from '../../components/ui/FlightInfoGrid';
-import type { Flight } from '../../types/flight';
+import FlightInfoGrid from '../../shared/components/ui/FlightInfoGrid';
+import type { Flight } from '../../domain/flights/types';
 
 const flight: Flight = {
   id: 'AA101',
