@@ -221,6 +221,51 @@ describe('AdminDashboard', () => {
       });
     });
 
+    it('should edit an existing service', async () => {
+      const mockUpdateService = jest.fn(() => Promise.resolve('Fast WiFi'));
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
+      useDataStoreMock.mockReturnValue({
+        ...mockDataStoreState,
+        updateAncillaryService: mockUpdateService,
+      });
+
+      render(<AdminDashboard />);
+
+      fireEvent.click(screen.getByText('Services & Menu'));
+      fireEvent.click(screen.getByLabelText('Edit WiFi'));
+
+      const input = screen.getByLabelText(/service name/i);
+      fireEvent.change(input, { target: { value: 'Fast WiFi' } });
+
+      const dialog = screen.getByRole('dialog');
+      fireEvent.click(within(dialog).getByRole('button', { name: /update/i }));
+
+      await waitFor(() => {
+        expect(mockUpdateService).toHaveBeenCalledWith('WiFi', 'Fast WiFi');
+      });
+    });
+
+    it('should delete an existing service after confirmation', async () => {
+      const mockDeleteService = jest.fn(() => Promise.resolve('Extra Legroom'));
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
+      useDataStoreMock.mockReturnValue({
+        ...mockDataStoreState,
+        deleteAncillaryService: mockDeleteService,
+      });
+
+      render(<AdminDashboard />);
+
+      fireEvent.click(screen.getByText('Services & Menu'));
+      fireEvent.click(screen.getByLabelText('Delete Extra Legroom'));
+      fireEvent.click(screen.getByRole('button', { name: /confirm/i }));
+
+      await waitFor(() => {
+        expect(mockDeleteService).toHaveBeenCalledWith('Extra Legroom');
+      });
+    });
+
     it('should not add empty service', async () => {
       render(<AdminDashboard />);
       
@@ -239,6 +284,25 @@ describe('AdminDashboard', () => {
   });
 
   describe('Meal Dialog Operations', () => {
+    it('should protect the default Regular meal option from edit and delete actions', () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
+      useDataStoreMock.mockReturnValue({
+        ...mockDataStoreState,
+        mealOptions: ['Regular', 'Vegetarian'],
+      });
+
+      render(<AdminDashboard />);
+
+      fireEvent.click(screen.getByText('Services & Menu'));
+
+      expect(screen.getByText('Default')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Edit Regular')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Delete Regular')).not.toBeInTheDocument();
+      expect(screen.getByLabelText('Edit Vegetarian')).toBeInTheDocument();
+      expect(screen.getByLabelText('Delete Vegetarian')).toBeInTheDocument();
+    });
+
     it('should add a new meal option', async () => {
       const mockAddMeal = jest.fn(() => Promise.resolve('Vegan'));
       // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -267,6 +331,51 @@ describe('AdminDashboard', () => {
       
       await waitFor(() => {
         expect(mockAddMeal).toHaveBeenCalledWith('Vegan');
+      });
+    });
+
+    it('should edit an existing meal option', async () => {
+      const mockUpdateMeal = jest.fn(() => Promise.resolve('Jain Vegetarian'));
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
+      useDataStoreMock.mockReturnValue({
+        ...mockDataStoreState,
+        updateMealOption: mockUpdateMeal,
+      });
+
+      render(<AdminDashboard />);
+
+      fireEvent.click(screen.getByText('Services & Menu'));
+      fireEvent.click(screen.getByLabelText('Edit Vegetarian'));
+
+      const input = screen.getByLabelText(/meal name/i);
+      fireEvent.change(input, { target: { value: 'Jain Vegetarian' } });
+
+      const dialog = screen.getByRole('dialog');
+      fireEvent.click(within(dialog).getByRole('button', { name: /update/i }));
+
+      await waitFor(() => {
+        expect(mockUpdateMeal).toHaveBeenCalledWith('Vegetarian', 'Jain Vegetarian');
+      });
+    });
+
+    it('should delete an existing meal option after confirmation', async () => {
+      const mockDeleteMeal = jest.fn(() => Promise.resolve('Non-Vegetarian'));
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
+      useDataStoreMock.mockReturnValue({
+        ...mockDataStoreState,
+        deleteMealOption: mockDeleteMeal,
+      });
+
+      render(<AdminDashboard />);
+
+      fireEvent.click(screen.getByText('Services & Menu'));
+      fireEvent.click(screen.getByLabelText('Delete Non-Vegetarian'));
+      fireEvent.click(screen.getByRole('button', { name: /confirm/i }));
+
+      await waitFor(() => {
+        expect(mockDeleteMeal).toHaveBeenCalledWith('Non-Vegetarian');
       });
     });
 

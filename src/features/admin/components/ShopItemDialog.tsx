@@ -54,7 +54,7 @@ const ShopItemDialog: React.FC<ShopItemDialogProps> = ({
   }, [open, reset, shopItemForm]);
 
   return (
-    <Dialog open={open} onClose={onClose} component="form" onSubmit={handleSubmit(onSave)}>
+    <Dialog open={open} onClose={onClose} component="form" onSubmit={handleSubmit(onSave)} transitionDuration={0}>
       <DialogTitle>{editMode ? "Edit Shop Item" : "Add Shop Item"}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ mt: 1 }}>

@@ -331,7 +331,13 @@ const useDataStore = create<DataStore>()(
           });
           const result: APIResponse<string> = await response.json();
           if (result.success && result.data) {
-            set((state) => ({ ancillaryServices: state.ancillaryServices.map((service) => (service === oldService ? result.data! : service)) }));
+            set((state) => ({
+              ancillaryServices: Array.from(new Set(state.ancillaryServices.map((service) => (service === oldService ? result.data! : service)))),
+              passengers: state.passengers.map((passenger) => ({
+                ...passenger,
+                ancillaryServices: Array.from(new Set((passenger.ancillaryServices || []).map((service) => (service === oldService ? result.data! : service)))),
+              })),
+            }));
             return result.data;
           }
           set({ error: result.error || 'Failed to update service' });
@@ -351,7 +357,13 @@ const useDataStore = create<DataStore>()(
           });
           const result: APIResponse<string> = await response.json();
           if (result.success && result.data) {
-            set((state) => ({ ancillaryServices: state.ancillaryServices.filter((item) => item !== service) }));
+            set((state) => ({
+              ancillaryServices: state.ancillaryServices.filter((item) => item !== service),
+              passengers: state.passengers.map((passenger) => ({
+                ...passenger,
+                ancillaryServices: (passenger.ancillaryServices || []).filter((item) => item !== service),
+              })),
+            }));
             return result.data;
           }
           set({ error: result.error || 'Failed to delete service' });
@@ -391,7 +403,13 @@ const useDataStore = create<DataStore>()(
           });
           const result: APIResponse<string> = await response.json();
           if (result.success && result.data) {
-            set((state) => ({ mealOptions: state.mealOptions.map((meal) => (meal === oldMeal ? result.data! : meal)) }));
+            set((state) => ({
+              mealOptions: Array.from(new Set(state.mealOptions.map((meal) => (meal === oldMeal ? result.data! : meal)))),
+              passengers: state.passengers.map((passenger) => ({
+                ...passenger,
+                specialMeal: passenger.specialMeal === oldMeal ? result.data! : passenger.specialMeal,
+              })),
+            }));
             return result.data;
           }
           set({ error: result.error || 'Failed to update meal option' });
@@ -411,7 +429,13 @@ const useDataStore = create<DataStore>()(
           });
           const result: APIResponse<string> = await response.json();
           if (result.success && result.data) {
-            set((state) => ({ mealOptions: state.mealOptions.filter((item) => item !== meal) }));
+            set((state) => ({
+              mealOptions: state.mealOptions.filter((item) => item !== meal),
+              passengers: state.passengers.map((passenger) => ({
+                ...passenger,
+                specialMeal: passenger.specialMeal === meal ? 'Regular' : passenger.specialMeal,
+              })),
+            }));
             return result.data;
           }
           set({ error: result.error || 'Failed to delete meal option' });

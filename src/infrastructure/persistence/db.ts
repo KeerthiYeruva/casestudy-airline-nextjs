@@ -25,6 +25,13 @@ let categories: string[] = [...shopCategories];
 // Check if Firestore is available
 const isFirestoreConfigured = firestoreService.isFirebaseConfigured();
 
+const getCatalogIndex = (catalog: string[], value: string) => {
+  const normalizedValue = value.toLocaleLowerCase();
+  return catalog.findIndex((item) => item.toLocaleLowerCase() === normalizedValue);
+};
+
+const dedupeStrings = (items: string[]) => Array.from(new Set(items));
+
 // Helper function to check if seat is available
 function validateSeatAvailability(
   seat: string, 
@@ -276,20 +283,38 @@ export const passengerDB = {
 export const serviceDB = {
   getAll: (): string[] => [...services],
   add: (service: string): string => {
-    if (!services.includes(service)) {
-      services.push(service);
+    if (getCatalogIndex(services, service) !== -1) {
+      throw new Error(`Service "${service}" already exists`);
     }
+
+    services.push(service);
     return service;
   },
   update: (oldService: string, newService: string): string | null => {
     const index = services.findIndex(s => s === oldService);
     if (index === -1) return null;
+
+    const duplicateIndex = getCatalogIndex(services, newService);
+    if (duplicateIndex !== -1 && duplicateIndex !== index) {
+      throw new Error(`Service "${newService}" already exists`);
+    }
+
     services[index] = newService;
+    passengers = passengers.map((passenger) => ({
+      ...passenger,
+      ancillaryServices: dedupeStrings(
+        (passenger.ancillaryServices || []).map((service) => (service === oldService ? newService : service))
+      ),
+    }));
     return newService;
   },
   remove: (service: string): string | null => {
     if (!services.includes(service)) return null;
     services = services.filter(s => s !== service);
+    passengers = passengers.map((passenger) => ({
+      ...passenger,
+      ancillaryServices: (passenger.ancillaryServices || []).filter((item) => item !== service),
+    }));
     return service;
   },
 };
@@ -298,21 +323,43 @@ export const serviceDB = {
 export const mealDB = {
   getAll: (): string[] => [...meals],
   add: (meal: string): string => {
-    if (!meals.includes(meal)) {
-      meals.push(meal);
-
+    if (getCatalogIndex(meals, meal) !== -1) {
+      throw new Error(`Meal option "${meal}" already exists`);
     }
+
+    meals.push(meal);
     return meal;
   },
   update: (oldMeal: string, newMeal: string): string | null => {
     const index = meals.findIndex(m => m === oldMeal);
     if (index === -1) return null;
+    if (oldMeal === 'Regular') {
+      throw new Error('Regular meal option cannot be renamed');
+    }
+
+    const duplicateIndex = getCatalogIndex(meals, newMeal);
+    if (duplicateIndex !== -1 && duplicateIndex !== index) {
+      throw new Error(`Meal option "${newMeal}" already exists`);
+    }
+
     meals[index] = newMeal;
+    passengers = passengers.map((passenger) => ({
+      ...passenger,
+      specialMeal: passenger.specialMeal === oldMeal ? newMeal : passenger.specialMeal,
+    }));
     return newMeal;
   },
   remove: (meal: string): string | null => {
     if (!meals.includes(meal)) return null;
+    if (meal === 'Regular') {
+      throw new Error('Regular meal option cannot be deleted');
+    }
+
     meals = meals.filter(m => m !== meal);
+    passengers = passengers.map((passenger) => ({
+      ...passenger,
+      specialMeal: passenger.specialMeal === meal ? 'Regular' : passenger.specialMeal,
+    }));
 
     return meal;
   },

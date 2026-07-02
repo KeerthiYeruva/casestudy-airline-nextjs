@@ -32,7 +32,7 @@ const SimpleInputDialog: React.FC<SimpleInputDialogProps> = ({
   editMode = false,
 }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} transitionDuration={0}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <TextField

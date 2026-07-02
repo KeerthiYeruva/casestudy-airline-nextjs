@@ -46,6 +46,8 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
   onEditShopItem,
   onDeleteShopItem,
 }) => {
+  const protectedMealOptions = new Set(['Regular']);
+
   return (
     <Grid container spacing={3}>
       {/* Ancillary Services */}
@@ -121,33 +123,43 @@ const ServicesMenuManagement: React.FC<ServicesMenuManagementProps> = ({
             </Button>
           </Box>
           <List>
-            {mealOptions.map((meal) => (
-              <ListItem
-                key={meal}
-                secondaryAction={
-                  <>
-                    <IconButton
-                      edge="end"
-                      size="small"
-                      aria-label={`Edit ${meal}`}
-                      onClick={() => onEditMeal(meal)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      edge="end"
-                      size="small"
-                      aria-label={`Delete ${meal}`}
-                      onClick={() => onDeleteMeal(meal)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </>
-                }
-              >
-                <ListItemText primary={meal} />
-              </ListItem>
-            ))}
+            {mealOptions.map((meal) => {
+              const isProtectedMeal = protectedMealOptions.has(meal);
+
+              return (
+                <ListItem
+                  key={meal}
+                  secondaryAction={
+                    isProtectedMeal ? (
+                      <Typography variant="caption" color="text.secondary">
+                        Default
+                      </Typography>
+                    ) : (
+                      <>
+                        <IconButton
+                          edge="end"
+                          size="small"
+                          aria-label={`Edit ${meal}`}
+                          onClick={() => onEditMeal(meal)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          edge="end"
+                          size="small"
+                          aria-label={`Delete ${meal}`}
+                          onClick={() => onDeleteMeal(meal)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )
+                  }
+                >
+                  <ListItemText primary={meal} />
+                </ListItem>
+              );
+            })}
           </List>
         </Paper>
       </Grid>
