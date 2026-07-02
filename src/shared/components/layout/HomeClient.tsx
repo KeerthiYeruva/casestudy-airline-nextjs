@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useState, lazy, Suspense, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import useAuthStore from "../../../stores/useAuthStore";
 import { UserRole, normalizeUserRole, roleLabels, rolePermissions } from "../../../domain/auth/types";
 import Auth from "../../../features/auth/components/Auth";
+import FlightSearch from "../../../features/customer/components/FlightSearch";
+import PassengerPortal from "../../../features/customer/components/PassengerPortal";
+import FlightStatusDashboard from "../../../features/customer/components/FlightStatusDashboard";
+import StaffCheckIn from "../../../features/check-in/components/StaffCheckIn";
 import InFlight from "../../../features/cabin/components/InFlight";
 import AdminDashboard from "../../../features/admin/components/AdminDashboard";
+import OperationalSeatMap from "../../../features/seating/components/OperationalSeatMap";
 import OperationalDashboard from "../../../features/operations/components/OperationalDashboard";
 import ErrorBoundary from "../common/ErrorBoundary";
 import { 
@@ -14,7 +19,6 @@ import {
   Typography, 
   Button,
   Box,
-  CircularProgress,
   Alert,
   Drawer,
   IconButton,
@@ -36,18 +40,6 @@ import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineE
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import LocaleSelector from "../common/LocaleSelector";
 
-const loadFlightSearch = () => import("../../../features/customer/components/FlightSearch");
-const loadPassengerPortal = () => import("../../../features/customer/components/PassengerPortal");
-const loadFlightStatusDashboard = () => import("../../../features/customer/components/FlightStatusDashboard");
-const loadStaffCheckIn = () => import("../../../features/check-in/components/StaffCheckIn");
-const loadOperationalSeatMap = () => import("../../../features/seating/components/OperationalSeatMap");
-
-const FlightSearch = lazy(loadFlightSearch);
-const PassengerPortal = lazy(loadPassengerPortal);
-const FlightStatusDashboard = lazy(loadFlightStatusDashboard);
-const StaffCheckIn = lazy(loadStaffCheckIn);
-const OperationalSeatMap = lazy(loadOperationalSeatMap);
-
 type ViewKey =
   | "search"
   | "trips"
@@ -59,14 +51,6 @@ type ViewKey =
   | "seatMap"
   | "admin";
 type AccessLevel = "public" | "customer" | "staff" | "checkin" | "cabin" | "admin";
-
-const viewPreloaders: Partial<Record<ViewKey, () => Promise<unknown>>> = {
-  search: loadFlightSearch,
-  trips: loadPassengerPortal,
-  status: loadFlightStatusDashboard,
-  checkin: loadStaffCheckIn,
-  seatMap: loadOperationalSeatMap,
-};
 
 interface NavigationItem {
   view: Exclude<ViewKey, "signin">;
@@ -172,10 +156,6 @@ const canAccessNavigationItem = (item: NavigationItem, role: UserRole | null, is
   return canAccessLevel(item.access, role, isAuthenticated);
 };
 
-const preloadView = (view: ViewKey) => {
-  void viewPreloaders[view]?.();
-};
-
 const publicNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
 const customerNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
 const checkInNavigationViews: NavigationItem["view"][] = ["opsDashboard", "checkin", "seatMap", "status"];
@@ -259,15 +239,6 @@ const getNavigationSectionsForContext = (role: UserRole | null, isAuthenticated:
     .filter((section) => section.items.length > 0);
 };
 
-const LoadingFallback = () => (
-  <Box className="loading-container" role="status" aria-live="polite">
-    <CircularProgress aria-label="Loading content" />
-    <Typography variant="body1" sx={{ ml: 2 }}>
-      Loading...
-    </Typography>
-  </Box>
-);
-
 /**
  * HomeClient Component
  * 
@@ -292,26 +263,6 @@ export default function HomeClient() {
     : accessibleNavigationItems.some((item) => item.view === currentView);
   const fallbackView = accessibleNavigationItems[0]?.view || "search";
   const activeView: ViewKey = canAccessCurrentView ? currentView : fallbackView;
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const preloadAccessibleViews = () => {
-      getNavigationItemsForContext(currentRole, isAuthenticated).forEach((item) => {
-        if (item.view !== activeView) {
-          preloadView(item.view);
-        }
-      });
-    };
-
-    if ("requestIdleCallback" in window) {
-      const idleHandle = window.requestIdleCallback(preloadAccessibleViews, { timeout: 2000 });
-      return () => window.cancelIdleCallback(idleHandle);
-    }
-
-    const timeoutHandle = window.setTimeout(preloadAccessibleViews, 250);
-    return () => window.clearTimeout(timeoutHandle);
-  }, [activeView, currentRole, isAuthenticated]);
 
   const getSeatMapMode = () => {
     if (currentRole === UserRole.CABIN_CREW) return "cabin";
@@ -365,8 +316,6 @@ export default function HomeClient() {
                     key={item.view}
                     color="inherit"
                     startIcon={item.icon}
-                    onMouseEnter={() => preloadView(item.view)}
-                    onFocus={() => preloadView(item.view)}
                     onClick={() => setCurrentView(item.view)}
                     variant={activeView === item.view ? "outlined" : "text"}
                     aria-label={`Navigate to ${item.mobileLabel}`}
@@ -528,8 +477,6 @@ export default function HomeClient() {
                     selected={activeView === item.view}
                     aria-label={`Navigate to ${item.mobileLabel}`}
                     aria-current={activeView === item.view ? "page" : undefined}
-                    onMouseEnter={() => preloadView(item.view)}
-                    onFocus={() => preloadView(item.view)}
                     onClick={() => {
                       setCurrentView(item.view);
                       setMobileMenuOpen(false);
@@ -595,8 +542,6 @@ export default function HomeClient() {
                         variant={activeView === item.view ? "contained" : "text"}
                         color={item.access === "admin" ? "secondary" : "primary"}
                         startIcon={item.icon}
-                        onMouseEnter={() => preloadView(item.view)}
-                        onFocus={() => preloadView(item.view)}
                         onClick={() => setCurrentView(item.view)}
                         aria-label={`Navigate to ${item.mobileLabel}`}
                         aria-current={activeView === item.view ? "page" : undefined}
@@ -639,30 +584,28 @@ export default function HomeClient() {
               </Alert>
             )}
             
-            <Suspense fallback={<LoadingFallback />}>
-              {activeView === "search" && <FlightSearch />}
-              {activeView === "trips" && <PassengerPortal />}
-              {activeView === "status" && <FlightStatusDashboard />}
-              {activeView === "signin" && <Auth />}
-              {activeView === "opsDashboard" && currentRole && (
-                <OperationalDashboard
-                  role={currentRole}
-                  onOpenView={(view) => setCurrentView(view)}
-                />
-              )}
-              {activeView === "checkin" && <StaffCheckIn />}
-              {activeView === "inflight" && <InFlight />}
-              {activeView === "seatMap" && (
-                <OperationalSeatMap
-                  mode={getSeatMapMode()}
-                  onOpenCheckIn={() => setCurrentView("checkin")}
-                  onOpenSeatManagement={() => setCurrentView("admin")}
-                />
-              )}
-              {activeView === "admin" && canAccessAdmin && (
-                <AdminDashboard />
-              )}
-            </Suspense>
+            {activeView === "search" && <FlightSearch />}
+            {activeView === "trips" && <PassengerPortal />}
+            {activeView === "status" && <FlightStatusDashboard />}
+            {activeView === "signin" && <Auth />}
+            {activeView === "opsDashboard" && currentRole && (
+              <OperationalDashboard
+                role={currentRole}
+                onOpenView={(view) => setCurrentView(view)}
+              />
+            )}
+            {activeView === "checkin" && <StaffCheckIn />}
+            {activeView === "inflight" && <InFlight />}
+            {activeView === "seatMap" && (
+              <OperationalSeatMap
+                mode={getSeatMapMode()}
+                onOpenCheckIn={() => setCurrentView("checkin")}
+                onOpenSeatManagement={() => setCurrentView("admin")}
+              />
+            )}
+            {activeView === "admin" && canAccessAdmin && (
+              <AdminDashboard />
+            )}
           </Box>
         </Box>
       </Box>
