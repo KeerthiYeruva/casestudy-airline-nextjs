@@ -84,9 +84,9 @@ const PassengerSelectionDialog: React.FC<PassengerSelectionDialogProps> = ({
         
         {filteredPassengers.length > 0 ? (
           <List sx={{ maxHeight: 400, overflow: 'auto' }}>
-            {filteredPassengers.map((passenger) => (
+            {filteredPassengers.map((passenger, passengerIndex) => (
               <ListItemButton
-                key={passenger.id}
+                key={`${passenger.id}-${passengerIndex}`}
                 onClick={() => handleSelect(passenger.id)}
               >
                 <ListItemText

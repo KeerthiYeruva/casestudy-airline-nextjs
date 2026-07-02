@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import useAuthStore from '../stores/useAuthStore';
 import useDataStore from '../stores/useDataStore';
-import type { Passenger } from '../domain/passengers/types';
 
 type EventType = 
   | 'passenger_updated' 
@@ -122,15 +121,9 @@ export function useRealtimeUpdates() {
         case 'passenger_checked_in':
         case 'seat_changed':
         case 'passenger_deleted': {
-          // Refresh passenger data for the affected flight
-          const updatedPassenger = eventData.data as Passenger;
-          if (updatedPassenger?.flightId) {
-            console.log('[Realtime] Refreshing passengers after update');
-            fetchPassengers(updatedPassenger.flightId);
-          } else {
-            // Refresh all passengers if no specific flight
-            fetchPassengers();
-          }
+          // Refresh the full passenger set so cross-flight dashboards and shared views stay in sync.
+          console.log('[Realtime] Refreshing passengers after update');
+          fetchPassengers();
           break;
         }
 

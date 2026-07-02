@@ -135,7 +135,12 @@ export default function OperationalDashboard({ role, onOpenView }: OperationalDa
     (passenger) => passenger.ancillaryServices.length > 0 || (passenger.shopRequests?.length ?? 0) > 0 || passenger.specialMeal !== "Regular"
   );
   const assistanceQueue = passengers.filter((passenger) => passenger.wheelchair || passenger.infant);
-  const seatingExceptions = activeFlights.flatMap((flight) => getSeatRecommendations(getFlightPassengers(flight, passengers)));
+  const seatingExceptions = activeFlights.flatMap((flight, flightIndex) =>
+    getSeatRecommendations(getFlightPassengers(flight, passengers)).map((exception) => ({
+      ...exception,
+      id: `${flight.id}-${flightIndex}-${exception.id}`,
+    }))
+  );
   const delayedFlights = activeFlights.filter((flight) => flight.status === "Delayed");
   const boardingFlights = activeFlights.filter((flight) => flight.status === "Boarding");
 
@@ -305,8 +310,8 @@ export default function OperationalDashboard({ role, onOpenView }: OperationalDa
                   </Alert>
                 ) : (
                   <List dense disablePadding>
-                    {delayedFlights.slice(0, 2).map((flight) => (
-                      <ListItem key={`delay-${flight.id}`} disableGutters>
+                    {delayedFlights.slice(0, 2).map((flight, flightIndex) => (
+                      <ListItem key={`delay-${flight.id}-${flightIndex}`} disableGutters>
                         <ListItemText
                           primary={`${flight.flightNumber} delayed`}
                           secondary={`${flight.origin || flight.from} to ${flight.destination || flight.to} · Gate ${flight.gate || "TBD"}`}
@@ -339,13 +344,13 @@ export default function OperationalDashboard({ role, onOpenView }: OperationalDa
               </Typography>
             </Box>
             <Grid container spacing={1.5}>
-              {activeFlights.slice(0, 6).map((flight) => {
+              {activeFlights.slice(0, 6).map((flight, flightIndex) => {
                 const flightPassengers = getFlightPassengers(flight, passengers);
                 const flightCheckedIn = flightPassengers.filter((passenger) => passenger.checkedIn).length;
                 const flightRate = flightPassengers.length > 0 ? (flightCheckedIn / flightPassengers.length) * 100 : 0;
 
                 return (
-                  <Grid key={flight.id} size={{ xs: 12, md: 6, xl: 4 }}>
+                  <Grid key={`${flight.id}-${flightIndex}`} size={{ xs: 12, md: 6, xl: 4 }}>
                     <Paper variant="outlined" sx={{ p: 1.5, height: "100%" }}>
                       <Stack spacing={1}>
                         <Box sx={{ display: "flex", justifyContent: "space-between", gap: 1 }}>

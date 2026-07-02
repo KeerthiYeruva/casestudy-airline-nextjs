@@ -17,6 +17,7 @@ import FamilySeatingDialog from '../../seating/components/FamilySeatingDialog';
 import PremiumSeatUpsellDialog from '../../seating/components/PremiumSeatUpsellDialog';
 import SeatArrangementSummary from '../../seating/components/SeatArrangementSummary';
 import SeatingRecommendationsPanel from '../../seating/components/SeatingRecommendationsPanel';
+import type { SeatRecommendation } from '../../seating/utils/seatRecommendations';
 import OperationalWorkspace from '../../../shared/components/layout/OperationalWorkspace';
 import type { Passenger } from '../../../domain/passengers/types';
 import { Paper, Typography, Box, Button, Stack } from '@mui/material';
@@ -119,6 +120,31 @@ const StaffCheckIn: React.FC = () => {
     setChangeSeatDialog(true);
   };
 
+  const handleRecommendationAction = async (recommendation: SeatRecommendation) => {
+    const passenger = passengers.find((item) => item.id === recommendation.passengerIds[0]);
+    const suggestedSeat = recommendation.suggestedSeats[0];
+
+    if (!passenger) {
+      showToast('Passenger not found for seating recommendation', 'error');
+      return;
+    }
+
+    if (!suggestedSeat) {
+      setSelectedPassenger(passenger);
+      showToast('No available suggested seat for this recommendation', 'info');
+      return;
+    }
+
+    const result = await updatePassenger(passenger.id, { seat: suggestedSeat });
+    if (result) {
+      showToast(`Moved ${passenger.name} to ${suggestedSeat}`, 'success');
+      setSelectedPassenger(result);
+      await fetchPassengers();
+    } else {
+      showToast(`Failed to move ${passenger.name} to ${suggestedSeat}`, 'error');
+    }
+  };
+
   const handleViewBoardingPass = (passenger: Passenger) => {
     setSelectedPassenger(passenger);
     setBoardingPassDialog(true);
@@ -153,6 +179,7 @@ const StaffCheckIn: React.FC = () => {
             passengers={flightPassengers}
             onReviewFamily={() => setFamilySeatingDialog(true)}
             onReviewGroup={() => setGroupSeatingDialog(true)}
+            onApplyRecommendation={handleRecommendationAction}
             onSelectPassenger={handlePassengerSelect}
           />
           <Paper elevation={1} sx={{ p: 2 }}>

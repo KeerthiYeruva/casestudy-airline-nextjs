@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Auth from '../features/auth/components/Auth';
 import useAuthStore from '../stores/useAuthStore';
 
@@ -49,6 +50,40 @@ describe('Auth Component', () => {
     const loginButton = screen.getByRole('button', { name: /Sign in with Google/i });
     expect(loginButton).toBeInTheDocument();
     expect(loginButton).not.toBeDisabled();
+  });
+
+  test('role setup dialog can be cancelled during local sign in', async () => {
+    jest.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const logout = jest.fn();
+
+    useAuthStore.mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      role: null,
+      loading: false,
+      error: null,
+      loginStart: jest.fn(),
+      loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
+      logout,
+      setRole: jest.fn(),
+    });
+
+    render(<Auth />);
+
+    await user.click(screen.getByRole('button', { name: /Sign in with Google/i }));
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+
+    await user.click(screen.getByRole('button', { name: /Cancel/i }));
+
+    expect(logout).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: /Continue to Dashboard/i })).not.toBeInTheDocument();
+    });
+    jest.useRealTimers();
   });
 
   test('displays user profile when authenticated', () => {

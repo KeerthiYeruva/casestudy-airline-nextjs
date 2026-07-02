@@ -69,8 +69,8 @@ const PassengerFilters: React.FC<PassengerFiltersProps> = ({
               onChange={(e: SelectChangeEvent) => onFlightSelect(e.target.value)}
             >
               <MenuItem value="">All Flights</MenuItem>
-              {flights.map((flight) => (
-                <MenuItem key={flight.id} value={flight.id}>
+              {flights.map((flight, flightIndex) => (
+                <MenuItem key={`${flight.id}-${flightIndex}`} value={flight.id}>
                   {flight.flightNumber} - {flight.origin || flight.from} → {flight.destination || flight.to} ({flight.time || flight.departureTime})
                 </MenuItem>
               ))}

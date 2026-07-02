@@ -95,13 +95,13 @@ export default function CrewManagementTab({ flights, onUpdateFlight }: CrewManag
         </Typography>
       </Box>
 
-      {flights.map((flight) => {
+      {flights.map((flight, flightIndex) => {
         const draft = getDraft(flight);
         const cabinCrew = parseCabinCrew(draft.cabinCrew);
         const isSaving = savingFlightId === flight.id;
 
         return (
-          <Paper key={flight.id} variant="outlined" sx={{ p: { xs: 2, md: 2.5 } }}>
+          <Paper key={`${flight.id}-${flightIndex}`} variant="outlined" sx={{ p: { xs: 2, md: 2.5 } }}>
             <Stack spacing={2}>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "space-between" }}>
                 <Box>

@@ -146,8 +146,8 @@ export default function PassengerPortal() {
     setSeatChangeTrip(null);
   };
 
-  const renderTripCard = ({ passenger, flight }: PassengerTrip) => (
-    <Card key={passenger.id} variant="outlined">
+  const renderTripCard = ({ passenger, flight }: PassengerTrip, tripIndex: number) => (
+    <Card key={`${passenger.id}-${tripIndex}`} variant="outlined">
       <CardContent>
         <Stack spacing={2}>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "space-between" }}>

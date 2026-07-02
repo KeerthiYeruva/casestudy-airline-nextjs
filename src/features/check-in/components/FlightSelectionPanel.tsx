@@ -42,12 +42,12 @@ const FlightSelectionPanel: React.FC<FlightSelectionPanelProps> = ({
         Select Flight
       </Typography>
       <List sx={{ pt: 0 }}>
-        {flights.map((flight) => {
+        {flights.map((flight, flightIndex) => {
           const stats = getFlightStats(flight.id);
           
           return (
             <ListItemButton
-              key={flight.id}
+              key={`${flight.id}-${flightIndex}`}
               selected={selectedFlightId === flight.id}
               onClick={() => onFlightSelect(flight)}
               sx={{ 

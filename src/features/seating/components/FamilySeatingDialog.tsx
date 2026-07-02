@@ -385,9 +385,9 @@ const FamilySeatingDialog: React.FC<FamilySeatingDialogProps> = ({
                 <Alert severity="warning">No available passengers for family seating</Alert>
               ) : (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  {availablePassengers.map((passenger) => (
+                  {availablePassengers.map((passenger, passengerIndex) => (
                     <Paper
-                      key={passenger.id}
+                      key={`${passenger.id}-${passengerIndex}`}
                       elevation={selectedPassengers.includes(passenger.id) ? 3 : 0}
                       sx={{
                         p: 1.5,

@@ -26,9 +26,9 @@ const InFlightFlightList: React.FC<InFlightFlightListProps> = ({
         Active Flights
       </Typography>
       <List sx={{ pt: 0 }}>
-        {flights.map((flight) => (
+        {flights.map((flight, flightIndex) => (
           <ListItemButton
-            key={flight.id}
+            key={`${flight.id}-${flightIndex}`}
             selected={selectedFlightId === flight.id}
             onClick={() => onFlightSelect(flight)}
             sx={{ 

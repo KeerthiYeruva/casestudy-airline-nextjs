@@ -119,13 +119,13 @@ const FlightOpsTab: React.FC<FlightOpsTabProps> = ({ flights, onAddFlight, onUpd
 
       {flights.length === 0 && <Alert severity="info">No flights are available to manage.</Alert>}
 
-      {flights.map((flight) => {
+      {flights.map((flight, flightIndex) => {
         const draft = getDraft(flight);
         const isSaving = savingFlightId === flight.id;
         const isDeleting = deletingFlightId === flight.id;
 
         return (
-          <Paper key={flight.id} variant="outlined" sx={{ p: { xs: 2, md: 2.5 } }}>
+          <Paper key={`${flight.id}-${flightIndex}`} variant="outlined" sx={{ p: { xs: 2, md: 2.5 } }}>
             <Stack spacing={2}>
               <Stack
                 direction={{ xs: "column", sm: "row" }}

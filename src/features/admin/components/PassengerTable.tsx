@@ -74,13 +74,13 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
     // Mobile Card View
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {passengers.map((passenger) => {
+        {passengers.map((passenger, passengerIndex) => {
           const flight = flights.find((f) => f.id === passenger.flightId);
           const missingFields = getMissingFields(passenger);
           const isExpanded = expandedRows.has(passenger.id);
 
           return (
-            <Paper key={passenger.id} elevation={2} sx={{ p: 2, border: missingFields.length > 0 ? '2px solid' : 'none', borderColor: 'warning.main' }}>
+            <Paper key={`${passenger.id}-${passengerIndex}`} elevation={2} sx={{ p: 2, border: missingFields.length > 0 ? '2px solid' : 'none', borderColor: 'warning.main' }}>
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 1 }}>
                 <Avatar sx={{ bgcolor: missingFields.length > 0 ? 'warning.main' : 'primary.main' }}>
                   {missingFields.length > 0 ? <ErrorIcon /> : <PersonIcon />}
@@ -262,13 +262,13 @@ const PassengerTable: React.FC<PassengerTableProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {passengers.map((passenger) => {
+          {passengers.map((passenger, passengerIndex) => {
             const flight = flights.find((f) => f.id === passenger.flightId);
             const missingFields = getMissingFields(passenger);
             
             return (
               <TableRow
-                key={passenger.id}
+                key={`${passenger.id}-${passengerIndex}`}
                 hover
                 sx={{
                   bgcolor: missingFields.length > 0 ? "warning.50" : "transparent",

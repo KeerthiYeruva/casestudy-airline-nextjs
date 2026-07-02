@@ -59,7 +59,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     
     // Broadcast update to all connected clients
     eventBroadcaster.broadcast({
-      type: 'passenger_updated',
+      type: validatedData.seat ? 'seat_changed' : 'passenger_updated',
       data: updatedPassenger,
     });
     

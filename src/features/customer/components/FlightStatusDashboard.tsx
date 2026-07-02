@@ -162,8 +162,8 @@ export default function FlightStatusDashboard() {
             <Alert severity="info">No flights match the current status filters.</Alert>
           ) : (
             <Grid container spacing={2}>
-              {visibleFlights.map((flight) => (
-                <Grid key={flight.id} size={{ xs: 12, md: 6, xl: 4 }}>
+              {visibleFlights.map((flight, flightIndex) => (
+                <Grid key={`${flight.id}-${flightIndex}`} size={{ xs: 12, md: 6, xl: 4 }}>
                   <Card variant="outlined" sx={{ height: "100%" }}>
                     <CardContent>
                       <Stack spacing={2}>

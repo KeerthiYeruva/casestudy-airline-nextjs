@@ -90,7 +90,7 @@ export async function getAllFlights(): Promise<Flight[]> {
 
   try {
     const snapshot = await getDocs(collection(db, COLLECTIONS.FLIGHTS));
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Flight));
+    return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Flight));
   } catch (error) {
     console.error('[Firestore] Error fetching flights:', error);
     return initialFlights;
@@ -103,7 +103,7 @@ export async function getFlightById(id: string): Promise<Flight | null> {
   try {
     const docRef = doc(db, COLLECTIONS.FLIGHTS, id);
     const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as Flight : null;
+    return docSnap.exists() ? { ...docSnap.data(), id: docSnap.id } as Flight : null;
   } catch (error) {
     console.error('[Firestore] Error fetching flight:', error);
     return null;
@@ -178,7 +178,7 @@ export async function getAllPassengers(flightId?: string | null): Promise<Passen
       : collectionRef;
     
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Passenger));
+    return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Passenger));
   } catch (error) {
     console.error('[Firestore] Error fetching passengers:', error);
     return flightId 
@@ -193,7 +193,7 @@ export async function getPassengerById(id: string): Promise<Passenger | null> {
   try {
     const docRef = doc(db, COLLECTIONS.PASSENGERS, id);
     const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as Passenger : null;
+    return docSnap.exists() ? { ...docSnap.data(), id: docSnap.id } as Passenger : null;
   } catch (error) {
     console.error('[Firestore] Error fetching passenger:', error);
     return null;

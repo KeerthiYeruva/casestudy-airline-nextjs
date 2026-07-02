@@ -48,7 +48,7 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
       )}
       <List sx={{ pt: 0, overflowY: 'auto', overflowX: 'hidden', flex: 1, minWidth: 0, minHeight: 0, maxHeight: { xs: 360, sm: 420, md: 480, lg: 'calc(100vh - 260px)' } }}>
         {passengers.map((passenger, index) => (
-          <React.Fragment key={passenger.id}>
+          <React.Fragment key={`${passenger.id}-${index}`}>
             <ListItem disablePadding sx={{ mb: 1 }}>
               <ListItemButton
                 onClick={() => onPassengerSelect(passenger)}

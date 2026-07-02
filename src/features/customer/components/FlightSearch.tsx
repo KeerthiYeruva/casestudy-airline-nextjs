@@ -370,11 +370,11 @@ export default function FlightSearch() {
             <Alert severity="info">No flights match your search. Try a different route or date.</Alert>
           ) : (
             <Grid container spacing={2}>
-              {visibleFlights.map((flight) => {
+              {visibleFlights.map((flight, flightIndex) => {
                 const { origin, destination } = getRoute(flight);
 
                 return (
-                  <Grid key={flight.id} size={{ xs: 12, md: 6 }}>
+                  <Grid key={`${flight.id}-${flightIndex}`} size={{ xs: 12, md: 6 }}>
                     <Card variant="outlined" sx={{ height: "100%" }}>
                       <CardContent>
                         <Stack spacing={2}>

@@ -116,7 +116,7 @@ export default function AircraftManagementTab({ flights, onUpdateFlight }: Aircr
         </Typography>
       </Box>
 
-      {flights.map((flight) => {
+      {flights.map((flight, flightIndex) => {
         const draft = getDraft(flight);
         const totalSeats = parsePositiveInteger(draft.totalSeats);
         const availableSeats = parsePositiveInteger(draft.availableSeats);
@@ -124,7 +124,7 @@ export default function AircraftManagementTab({ flights, onUpdateFlight }: Aircr
         const isInvalid = !draft.aircraft.trim() || totalSeats === null || totalSeats === 0 || availableSeats === null;
 
         return (
-          <Paper key={flight.id} variant="outlined" sx={{ p: { xs: 2, md: 2.5 } }}>
+          <Paper key={`${flight.id}-${flightIndex}`} variant="outlined" sx={{ p: { xs: 2, md: 2.5 } }}>
             <Stack spacing={2}>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "space-between" }}>
                 <Box>

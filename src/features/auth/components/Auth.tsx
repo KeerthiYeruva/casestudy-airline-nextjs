@@ -132,6 +132,14 @@ const Auth: React.FC = () => {
     setRoleDialog(false);
   };
 
+  const handleRoleDialogClose = async () => {
+    setRoleDialog(false);
+    if (firebaseEnabled) {
+      await signOut(auth);
+    }
+    logout();
+  };
+
   const handleLogout = async () => {
     try {
       if (firebaseEnabled) {
@@ -225,7 +233,7 @@ const Auth: React.FC = () => {
         </Paper>
 
         {/* Role Selection Dialog */}
-        <Dialog open={roleDialog} onClose={() => {}} maxWidth="sm" fullWidth>
+        <Dialog open={roleDialog} onClose={handleRoleDialogClose} maxWidth="sm" fullWidth>
           <DialogTitle sx={{ pb: 1, fontWeight: 'bold' }}>
             Complete Setup
             <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'normal', mt: 0.5 }}>
@@ -292,11 +300,13 @@ const Auth: React.FC = () => {
             </FormControl>
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button onClick={handleRoleDialogClose} size="large">
+              Cancel
+            </Button>
             <Button 
               onClick={handleRoleSelection} 
               variant="contained" 
               size="large"
-              fullWidth
               sx={{ py: 1.5 }}
             >
               Continue to Dashboard

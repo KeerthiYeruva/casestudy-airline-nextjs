@@ -158,8 +158,8 @@ const PassengerDialog: React.FC<PassengerDialogProps> = ({
                 <FormControl fullWidth required error={!!errors.flightId}>
                   <InputLabel>Flight</InputLabel>
                   <Select {...field} label="Flight">
-                    {flights.map((flight) => (
-                      <MenuItem key={flight.id} value={flight.id}>
+                    {flights.map((flight, flightIndex) => (
+                      <MenuItem key={`${flight.id}-${flightIndex}`} value={flight.id}>
                         {flight.flightNumber} - {flight.origin} → {flight.destination} ({new Date(flight.departureTime).toLocaleDateString()})
                       </MenuItem>
                     ))}

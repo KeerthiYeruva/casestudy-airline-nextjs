@@ -324,8 +324,8 @@ const GroupSeatingDialog: React.FC<GroupSeatingDialogProps> = ({
                   borderRadius: 1
                 }}
               >
-                {availablePassengers.map(passenger => (
-                  <ListItem key={passenger.id} disablePadding>
+                {availablePassengers.map((passenger, passengerIndex) => (
+                  <ListItem key={`${passenger.id}-${passengerIndex}`} disablePadding>
                     <ListItemButton
                       onClick={() => handleTogglePassenger(passenger.id)}
                       selected={selectedPassengers.includes(passenger.id)}

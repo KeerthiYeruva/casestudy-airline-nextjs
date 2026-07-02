@@ -53,6 +53,11 @@ interface PaymentForm {
   securityCode: string;
 }
 
+interface SeatSelection {
+  flightId: string;
+  seat: string;
+}
+
 const defaultForm: BookingForm = {
   name: "",
   dateOfBirth: "",
@@ -236,13 +241,7 @@ export default function BookingDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmation, setConfirmation] = useState<Passenger | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSeat, setSelectedSeat] = useState<string | null>(() => {
-    if (flight) {
-      const occupied = getOccupiedSeats(flight, passengers);
-      return getFirstAvailableSeat(flight, occupied);
-    }
-    return null;
-  });
+  const [selectedSeatOverride, setSelectedSeatOverride] = useState<SeatSelection | null>(null);
   const [paymentForm, setPaymentForm] = useState<PaymentForm>(defaultPaymentForm);
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
 
@@ -252,15 +251,9 @@ export default function BookingDialog({
     }
   }, [open, fetchCatalog]);
 
-  useEffect(() => {
-    if (!open || !flight || confirmation) return;
-
-    const occupied = getOccupiedSeats(flight, passengers);
-    setSelectedSeat(getFirstAvailableSeat(flight, occupied));
-  }, [confirmation, flight, open, passengers]);
-
   const occupiedSeats = useMemo(() => (flight ? getOccupiedSeats(flight, passengers) : new Set<string>()), [flight, passengers]);
   const suggestedSeat = useMemo(() => (flight ? getFirstAvailableSeat(flight, occupiedSeats) : null), [flight, occupiedSeats]);
+  const selectedSeat = flight && selectedSeatOverride?.flightId === flight.id ? selectedSeatOverride.seat : suggestedSeat;
   const availableMealOptions = Array.isArray(mealOptions) && mealOptions.length > 0 ? mealOptions : defaultMealOptions;
   const availableAddOns = Array.isArray(ancillaryServices) && ancillaryServices.length > 0 ? ancillaryServices : DEFAULT_ANCILLARY_SERVICES;
   const includedCabinServices = cabinClass === "Business" || cabinClass === "First" ? ["Priority Boarding"] : [];
@@ -278,10 +271,15 @@ export default function BookingDialog({
     setConfirmation(null);
     setError(null);
     setIsSubmitting(false);
-    setSelectedSeat(null);
+    setSelectedSeatOverride(null);
     setPaymentForm(defaultPaymentForm);
     setSelectedAddOns([]);
     onClose();
+  };
+
+  const handleSelectSeat = (seat: string) => {
+    if (!flight) return;
+    setSelectedSeatOverride({ flightId: flight.id, seat });
   };
 
   const updateForm = <Key extends keyof BookingForm>(key: Key, value: BookingForm[Key]) => {
@@ -420,7 +418,7 @@ export default function BookingDialog({
               flight={flight}
               selectedSeat={selectedSeat}
               occupiedSeats={occupiedSeats}
-              onSelectSeat={setSelectedSeat}
+              onSelectSeat={handleSelectSeat}
             />
 
             <Grid container spacing={2}>

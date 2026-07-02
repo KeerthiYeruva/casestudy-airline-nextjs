@@ -14,6 +14,7 @@ interface SeatingRecommendationsPanelProps {
   passengers: Passenger[];
   onReviewFamily?: () => void;
   onReviewGroup?: () => void;
+  onApplyRecommendation?: (recommendation: SeatRecommendation) => void;
   onSelectPassenger?: (passenger: Passenger) => void;
 }
 
@@ -35,10 +36,13 @@ const getAction = (
   passengers: Passenger[],
   onReviewFamily?: () => void,
   onReviewGroup?: () => void,
+  onApplyRecommendation?: (recommendation: SeatRecommendation) => void,
   onSelectPassenger?: (passenger: Passenger) => void
 ) => {
   if (recommendation.category === "family") return onReviewFamily;
   if (recommendation.category === "group") return onReviewGroup;
+
+  if (onApplyRecommendation) return () => onApplyRecommendation(recommendation);
 
   const passenger = passengers.find((item) => item.id === recommendation.passengerIds[0]);
   if (!passenger || !onSelectPassenger) return undefined;
@@ -50,6 +54,7 @@ const SeatingRecommendationsPanel: React.FC<SeatingRecommendationsPanelProps> = 
   passengers,
   onReviewFamily,
   onReviewGroup,
+  onApplyRecommendation,
   onSelectPassenger,
 }) => {
   const recommendations = getSeatRecommendations(passengers).slice(0, 5);
@@ -70,12 +75,12 @@ const SeatingRecommendationsPanel: React.FC<SeatingRecommendationsPanelProps> = 
             No family, group, assistance, or premium seating exceptions detected.
           </Alert>
         ) : (
-          recommendations.map((recommendation) => {
-            const action = getAction(recommendation, passengers, onReviewFamily, onReviewGroup, onSelectPassenger);
+          recommendations.map((recommendation, recommendationIndex) => {
+            const action = getAction(recommendation, passengers, onReviewFamily, onReviewGroup, onApplyRecommendation, onSelectPassenger);
 
             return (
               <Box
-                key={recommendation.id}
+                key={`${recommendation.id}-${recommendationIndex}`}
                 sx={{
                   p: 1.5,
                   border: "1px solid",

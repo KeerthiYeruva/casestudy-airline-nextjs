@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Alert,
   Box,
   Button,
   Chip,
@@ -137,9 +136,15 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
           <Button variant="contained" size="small" startIcon={<CheckCircleIcon />} onClick={onOpenCheckIn}>
             Continue Check-In
           </Button>
-          <Chip icon={<FamilyRestroomIcon />} label="Auto Allocate Family" color="secondary" variant="outlined" />
-          <Chip icon={<GroupIcon />} label="Auto Allocate Group" color="primary" variant="outlined" />
-          <Chip icon={<StarIcon />} label="Premium Upgrade" color="warning" />
+          <Button variant="outlined" size="small" color="secondary" startIcon={<FamilyRestroomIcon />} onClick={onOpenCheckIn}>
+            Open Family Seating
+          </Button>
+          <Button variant="outlined" size="small" startIcon={<GroupIcon />} onClick={onOpenCheckIn}>
+            Open Group Seating
+          </Button>
+          <Button variant="outlined" size="small" color="warning" startIcon={<StarIcon />} onClick={onOpenCheckIn}>
+            Open Premium Upgrades
+          </Button>
         </Stack>
       );
     }
@@ -172,8 +177,12 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
           Seat Management
         </Button>
         <Chip icon={<StarIcon />} label={`${premiumPassengers} premium seats`} color="warning" />
-        <Chip icon={<BlockIcon />} label="Block seats" color="error" variant="outlined" />
-        <Chip icon={<AnalyticsIcon />} label="Seat analytics" color="primary" variant="outlined" />
+        <Button variant="outlined" size="small" color="error" startIcon={<BlockIcon />} onClick={onOpenSeatManagement}>
+          Manage Blocked Seats
+        </Button>
+        <Button variant="outlined" size="small" startIcon={<AnalyticsIcon />} onClick={onOpenSeatManagement}>
+          View Seat Analytics
+        </Button>
       </Stack>
     );
   };
@@ -234,7 +243,7 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
                 <Typography variant="caption" color="text.secondary">Passenger Groups</Typography>
                 <Typography variant="body2">{familyPassengers} family, {groupPassengers} group</Typography>
               </Box>
-              {selectedPassengerOnFlight ? (
+              {selectedPassengerOnFlight && (
                 <Box sx={{ pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
                   <Typography variant="subtitle2">{selectedPassengerOnFlight.name}</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -249,8 +258,6 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
                     </Typography>
                   )}
                 </Box>
-              ) : (
-                <Alert severity="info">Select an occupied seat to inspect passenger context.</Alert>
               )}
             </Stack>
           </Paper>
