@@ -5,7 +5,6 @@ import useCheckInStore from "../../../stores/useCheckInStore";
 import useDataStore from "../../../stores/useDataStore";
 import useToastStore from "../../../stores/useToastStore";
 import useRealtimeUpdates from "../../../hooks/useRealtimeUpdates";
-import CabinSeatMapDialog from "../../seating/components/CabinSeatMapDialog";
 import InFlightFlightList from "./InFlightFlightList";
 import InFlightPassengerList from "./InFlightPassengerList";
 import PassengerServicePanel from "./PassengerServicePanel";
@@ -20,11 +19,7 @@ import {
 } from "../../../domain/fixtures/flightData";
 import { Paper, Typography, Box } from "@mui/material";
 
-interface InFlightProps {
-  openSeatMapRequest?: number;
-}
-
-const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
+const InFlight: React.FC = () => {
   const {
     flights,
     passengers,
@@ -80,7 +75,6 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
   ]);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
-  const [seatMapClosedRequest, setSeatMapClosedRequest] = useState(0);
   const [addServiceDialog, setAddServiceDialog] = useState(false);
   const [changeMealDialog, setChangeMealDialog] = useState(false);
   const [shopDialog, setShopDialog] = useState(false);
@@ -112,23 +106,10 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
   const currentPassengerData = selectedPassengerOnFlight
     ? passengers.find((passenger) => passenger.id === selectedPassengerOnFlight.id) || selectedPassengerOnFlight
     : flightPassengers[0] ?? null;
-  const seatMapDialogOpen = openSeatMapRequest > seatMapClosedRequest;
-
-  const handleCloseSeatMap = () => {
-    setSeatMapClosedRequest(openSeatMapRequest);
-  };
 
   const handleFlightSelect = (flight: (typeof flights)[0]) => {
     selectFlight(flight);
     setSelectedPassenger(null);
-  };
-
-  const handleSeatClick = (seat: string) => {
-    const passenger = flightPassengers.find((p) => p.seat === seat);
-    if (passenger) {
-      setSelectedPassenger(passenger);
-      handleCloseSeatMap();
-    }
   };
 
   const handlePassengerSelect = (passenger: Passenger) => {
@@ -254,7 +235,7 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
           <Box>
             <Typography variant="h6">Passenger Manifest</Typography>
             <Typography variant="body2" color="text.secondary">
-              Select by seat and booking reference; use Seat Map for visual lookup.
+              Select by seat and booking reference; use Seat Ops for visual cabin lookup.
             </Typography>
           </Box>
           <InFlightPassengerList
@@ -334,12 +315,6 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
         </>
       )}
 
-      <CabinSeatMapDialog
-        open={seatMapDialogOpen}
-        passengers={flightPassengers}
-        onClose={handleCloseSeatMap}
-        onSeatSelect={handleSeatClick}
-      />
     </OperationalWorkspace>
   );
 };

@@ -5,7 +5,6 @@ import useCheckInStore from '../../../stores/useCheckInStore';
 import useDataStore from '../../../stores/useDataStore';
 import useToastStore from '../../../stores/useToastStore';
 import useRealtimeUpdates from '../../../hooks/useRealtimeUpdates';
-import SeatMapVisual from '../../seating/components/SeatMapVisual';
 import FlightSelectionPanel from './FlightSelectionPanel';
 import CheckInFilters from './CheckInFilters';
 import PassengerListPanel from './PassengerListPanel';
@@ -17,6 +16,7 @@ import GroupSeatingDialog from '../../seating/components/GroupSeatingDialog';
 import FamilySeatingDialog from '../../seating/components/FamilySeatingDialog';
 import PremiumSeatUpsellDialog from '../../seating/components/PremiumSeatUpsellDialog';
 import SeatArrangementSummary from '../../seating/components/SeatArrangementSummary';
+import SeatingRecommendationsPanel from '../../seating/components/SeatingRecommendationsPanel';
 import OperationalWorkspace from '../../../shared/components/layout/OperationalWorkspace';
 import type { Passenger } from '../../../domain/passengers/types';
 import { Paper, Typography, Box, Button, Stack } from '@mui/material';
@@ -97,13 +97,6 @@ const StaffCheckIn: React.FC = () => {
     }
   };
 
-  const handleSeatClick = (seat: string) => {
-    const passenger = flightPassengers.find((p) => p.seat === seat);
-    if (passenger) {
-      setSelectedPassenger(passenger);
-    }
-  };
-
   const handlePassengerSelect = (passenger: Passenger) => {
     setSelectedPassenger(passenger);
   };
@@ -156,6 +149,12 @@ const StaffCheckIn: React.FC = () => {
       )}
       rightRail={selectedFlight && (
         <Stack spacing={2}>
+          <SeatingRecommendationsPanel
+            passengers={flightPassengers}
+            onReviewFamily={() => setFamilySeatingDialog(true)}
+            onReviewGroup={() => setGroupSeatingDialog(true)}
+            onSelectPassenger={handlePassengerSelect}
+          />
           <Paper elevation={1} sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom>
               Active Passenger
@@ -169,7 +168,7 @@ const StaffCheckIn: React.FC = () => {
               />
             ) : (
               <Typography variant="body2" color="text.secondary">
-                Select a passenger or occupied seat to inspect details and actions.
+                Select a passenger from the queue to inspect details and actions.
               </Typography>
             )}
           </Paper>
@@ -199,7 +198,7 @@ const StaffCheckIn: React.FC = () => {
             <Box>
               <Typography variant="h6">Check-In Actions</Typography>
               <Typography variant="body2" color="text.secondary">
-                Prioritize passenger check-in, seat changes, and family or group allocation.
+                Work the passenger queue, resolve seating exceptions, and complete check-in actions.
               </Typography>
             </Box>
             <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap', rowGap: 1 }}>
@@ -231,12 +230,6 @@ const StaffCheckIn: React.FC = () => {
           infantFilter={filterOptions.infant ?? false}
           onFilterChange={handleFilterChange}
           onClearFilters={handleClearFilters}
-        />
-
-        <SeatMapVisual
-          passengers={flightPassengers}
-          onSeatClick={handleSeatClick}
-          mode="checkin"
         />
       </Stack>
 

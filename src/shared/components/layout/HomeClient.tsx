@@ -118,9 +118,9 @@ const navigationItems: NavigationItem[] = [
   },
   {
     view: "seatMap",
-    label: "Seat Map",
-    mobileLabel: "Seat Map",
-    description: "Shared operational seating view",
+    label: "Seat Ops",
+    mobileLabel: "Seat Operations",
+    description: "Dedicated cabin seating workspace",
     icon: <EventSeatIcon />,
     access: "checkin",
   },

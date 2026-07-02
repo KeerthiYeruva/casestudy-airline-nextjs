@@ -25,6 +25,7 @@ import useRealtimeUpdates from "../../../hooks/useRealtimeUpdates";
 import FlightSelectionPanel from "../../check-in/components/FlightSelectionPanel";
 import OperationalWorkspace from "../../../shared/components/layout/OperationalWorkspace";
 import SeatMapVisual, { type SeatMapMode } from "./SeatMapVisual";
+import SeatingRecommendationsPanel from "./SeatingRecommendationsPanel";
 import type { Passenger } from "../../../domain/passengers/types";
 
 type OperationalSeatMapMode = Extract<SeatMapMode, "checkin" | "cabin" | "operations" | "admin">;
@@ -203,6 +204,13 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
               {renderModeActions()}
             </Stack>
           </Paper>
+
+          <SeatingRecommendationsPanel
+            passengers={flightPassengers}
+            onReviewFamily={onOpenCheckIn}
+            onReviewGroup={onOpenCheckIn}
+            onSelectPassenger={setSelectedPassenger}
+          />
 
           <Paper elevation={1} sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom>
