@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import useCheckInStore from '@/stores/useCheckInStore';
-import useDataStore from '@/stores/useDataStore';
-import useToastStore from '@/stores/useToastStore';
-import useRealtimeUpdates from '@/hooks/useRealtimeUpdates';
+import useCheckInStore from '../../stores/useCheckInStore';
+import useDataStore from '../../stores/useDataStore';
+import useToastStore from '../../stores/useToastStore';
+import useRealtimeUpdates from '../../hooks/useRealtimeUpdates';
 import SeatMapVisual from '../seats/SeatMapVisual';
 import FlightSelectionPanel from './FlightSelectionPanel';
 import CheckInFilters from './CheckInFilters';
@@ -19,7 +19,7 @@ import PremiumSeatUpsellDialog from '../seats/PremiumSeatUpsellDialog';
 import SeatArrangementSummary from '../seats/SeatArrangementSummary';
 import FlightInfoGrid from '../ui/FlightInfoGrid';
 import PageHeader from '../ui/PageHeader';
-import type { Passenger } from '@/types/passenger';
+import type { Passenger } from '../../types/passenger';
 import { Container, Paper, Typography, Grid, Box, Button, Stack, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';

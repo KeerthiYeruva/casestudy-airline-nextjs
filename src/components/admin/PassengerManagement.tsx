@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import type { Flight } from "@/types/flight";
-import type { Passenger } from "@/types/passenger";
+import type { Flight } from "../../types/flight";
+import type { Passenger } from "../../types/passenger";
 import PassengerFilters from "./PassengerFilters";
 import PassengerTable from "./PassengerTable";
-import PassengerDialog from "@/components/admin/PassengerDialog";
-import ConfirmDialog from "@/components/common/ConfirmDialog";
-import useToastStore from "@/stores/useToastStore";
+import PassengerDialog from "./PassengerDialog";
+import ConfirmDialog from "../common/ConfirmDialog";
+import useToastStore from "../../stores/useToastStore";
 
 interface FilterOptions {
   missingPassport: boolean;

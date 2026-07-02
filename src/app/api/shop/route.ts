@@ -1,9 +1,9 @@
-import { shopDB } from '@/lib/db';
-import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
-import { CreateShopItemSchema, validateSchema } from '@/lib/validationSchemas';
-import { eventBroadcaster } from '@/lib/eventBroadcaster';
+import { shopDB } from '../../../lib/db';
+import { handleApiError, successResponse, HTTP_STATUS } from '../../../lib/apiUtils';
+import { CreateShopItemSchema, validateSchema } from '../../../lib/validationSchemas';
+import { eventBroadcaster } from '../../../lib/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
-import type { ShopItem } from '@/types/services';
+import type { ShopItem } from '../../../types/services';
 
 export const dynamic = 'force-dynamic';
 

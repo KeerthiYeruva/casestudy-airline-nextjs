@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import useDataStore from '@/stores/useDataStore';
+import useDataStore from '../stores/useDataStore';
 
 /**
  * Custom hook to keep Zustand store in sync with API

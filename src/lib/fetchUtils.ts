@@ -5,8 +5,8 @@
  * for Server Components and API routes.
  */
 
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
+import type { Flight } from '../types/flight';
+import type { Passenger } from '../types/passenger';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 

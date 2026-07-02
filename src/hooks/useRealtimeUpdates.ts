@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import useAuthStore from '@/stores/useAuthStore';
-import useDataStore from '@/stores/useDataStore';
-import type { Passenger } from '@/types/passenger';
+import useAuthStore from '../stores/useAuthStore';
+import useDataStore from '../stores/useDataStore';
+import type { Passenger } from '../types/passenger';
 
 type EventType = 
   | 'passenger_updated' 

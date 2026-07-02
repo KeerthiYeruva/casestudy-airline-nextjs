@@ -5,9 +5,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import theme from "../theme";
-import ClientLayout from "@/components/layout/ClientLayout";
-import "@/styles/App.scss";
-import "@/styles/Accessibility.scss";
+import ClientLayout from "../../components/layout/ClientLayout";
+import "../../styles/App.scss";
+import "../../styles/Accessibility.scss";
 
 export const metadata: Metadata = {
   title: {

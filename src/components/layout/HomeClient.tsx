@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, lazy, Suspense, type ReactNode } from "react";
-import useAuthStore from "@/stores/useAuthStore";
-import { UserRole, normalizeUserRole, roleLabels, rolePermissions } from "@/types/auth";
-import Auth from "@/components/auth/Auth";
-import ErrorBoundary from "@/components/common/ErrorBoundary";
+import useAuthStore from "../../stores/useAuthStore";
+import { UserRole, normalizeUserRole, roleLabels, rolePermissions } from "../../types/auth";
+import Auth from "../auth/Auth";
+import ErrorBoundary from "../common/ErrorBoundary";
 import { 
   AppBar, 
   Toolbar, 
@@ -34,14 +34,15 @@ import ConnectingAirportsIcon from "@mui/icons-material/ConnectingAirports";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import SettingsIcon from "@mui/icons-material/Settings";
-import LocaleSelector from "@/components/common/LocaleSelector";
+import LocaleSelector from "../common/LocaleSelector";
 
-const FlightSearch = lazy(() => import("@/components/customer/FlightSearch"));
-const PassengerPortal = lazy(() => import("@/components/customer/PassengerPortal"));
-const FlightStatusDashboard = lazy(() => import("@/components/customer/FlightStatusDashboard"));
-const StaffCheckIn = lazy(() => import("@/components/checkin/StaffCheckIn"));
-const InFlight = lazy(() => import("@/components/inflight/InFlight"));
-const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
+const FlightSearch = lazy(() => import("../customer/FlightSearch"));
+const PassengerPortal = lazy(() => import("../customer/PassengerPortal"));
+const FlightStatusDashboard = lazy(() => import("../customer/FlightStatusDashboard"));
+const StaffCheckIn = lazy(() => import("../checkin/StaffCheckIn"));
+const InFlight = lazy(() => import("../inflight/InFlight"));
+const AdminDashboard = lazy(() => import("../admin/AdminDashboard"));
+const OperationalSeatMap = lazy(() => import("../seats/OperationalSeatMap"));
 
 type ViewKey =
   | "search"
@@ -50,6 +51,7 @@ type ViewKey =
   | "signin"
   | "checkin"
   | "inflight"
+  | "seatMap"
   | "admin"
   | "adminPassengers"
   | "adminFlights"
@@ -113,6 +115,14 @@ const navigationItems: NavigationItem[] = [
     description: "Meals, shop, and services",
     icon: <FlightTakeoffIcon />,
     access: "cabin",
+  },
+  {
+    view: "seatMap",
+    label: "Seat Map",
+    mobileLabel: "Seat Map",
+    description: "Shared operational seating view",
+    icon: <EventSeatIcon />,
+    access: "checkin",
   },
   {
     view: "admin",
@@ -180,26 +190,26 @@ const canAccessNavigationItem = (item: NavigationItem, role: UserRole | null, is
 
 const publicNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
 const customerNavigationViews: NavigationItem["view"][] = ["search", "trips", "status"];
-const checkInNavigationViews: NavigationItem["view"][] = ["checkin", "status"];
-const cabinNavigationViews: NavigationItem["view"][] = ["inflight", "status"];
-const operationsNavigationViews: NavigationItem["view"][] = ["checkin", "inflight", "status"];
-const adminNavigationViews: NavigationItem["view"][] = ["admin", "checkin", "inflight", "adminPassengers", "adminFlights", "adminSeats", "adminServices"];
+const checkInNavigationViews: NavigationItem["view"][] = ["checkin", "seatMap", "status"];
+const cabinNavigationViews: NavigationItem["view"][] = ["inflight", "seatMap", "status"];
+const operationsNavigationViews: NavigationItem["view"][] = ["checkin", "inflight", "seatMap", "status"];
+const adminNavigationViews: NavigationItem["view"][] = ["admin", "checkin", "inflight", "seatMap", "adminPassengers", "adminFlights", "adminSeats", "adminServices"];
 
 const checkInNavigationSections: NavigationSection[] = [
-  { title: "Operations", views: ["checkin", "status"] },
+  { title: "Operations", views: ["checkin", "seatMap", "status"] },
 ];
 
 const cabinNavigationSections: NavigationSection[] = [
-  { title: "Cabin", views: ["inflight", "status"] },
+  { title: "Cabin", views: ["inflight", "seatMap", "status"] },
 ];
 
 const operationsNavigationSections: NavigationSection[] = [
-  { title: "Operations", views: ["checkin", "inflight", "status"] },
+  { title: "Operations", views: ["checkin", "inflight", "seatMap", "status"] },
 ];
 
 const adminNavigationSections: NavigationSection[] = [
   { title: "Dashboard", views: ["admin"] },
-  { title: "Operations", views: ["checkin", "inflight"] },
+  { title: "Operations", views: ["checkin", "inflight", "seatMap"] },
   { title: "Management", views: ["adminPassengers", "adminFlights", "adminSeats", "adminServices"] },
 ];
 
@@ -288,14 +298,10 @@ const LoadingFallback = () => (
 export default function HomeClient() {
   const [currentView, setCurrentView] = useState<ViewKey>("search");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [inFlightSeatMapRequest, setInFlightSeatMapRequest] = useState(0);
   const { isAuthenticated, role } = useAuthStore();
   const currentRole = normalizeUserRole(role);
 
   const canAccessAdmin = isAuthenticated && !!currentRole && rolePermissions[currentRole].canAccessAdminDashboard;
-  const canUseSeatMapTool = isAuthenticated && (currentRole === UserRole.CABIN_CREW || currentRole === UserRole.OPERATIONS);
-  const seatMapToolLabel = currentRole === UserRole.OPERATIONS ? "View Seating" : "Seat Map";
-  const seatMapToolDescription = currentRole === UserRole.OPERATIONS ? "Open seating overview" : "View cabin seating";
   const accessibleNavigationItems = getNavigationItemsForContext(currentRole, isAuthenticated);
   const isStaffExperience = isAuthenticated && !!currentRole && currentRole !== UserRole.PASSENGER;
   const staffNavigationSections = getNavigationSectionsForContext(currentRole, isAuthenticated);
@@ -305,10 +311,11 @@ export default function HomeClient() {
   const fallbackView = accessibleNavigationItems[0]?.view || "search";
   const activeView: ViewKey = canAccessCurrentView ? currentView : fallbackView;
 
-  const openInFlightSeatMap = () => {
-    setCurrentView("inflight");
-    setInFlightSeatMapRequest((request) => request + 1);
-    setMobileMenuOpen(false);
+  const getSeatMapMode = () => {
+    if (currentRole === UserRole.CABIN_CREW) return "cabin";
+    if (currentRole === UserRole.OPERATIONS) return "operations";
+    if (currentRole === UserRole.ADMIN || currentRole === UserRole.SUPER_ADMIN) return "admin";
+    return "checkin";
   };
 
   return (
@@ -539,19 +546,6 @@ export default function HomeClient() {
                 </ListItem>
               </Box>
             ))}
-            {canUseSeatMapTool && (
-              <>
-                <Divider sx={{ my: 1 }} />
-                <ListItem disablePadding>
-                  <ListItemButton onClick={openInFlightSeatMap} aria-label={seatMapToolDescription}>
-                    <ListItemIcon>
-                      <EventSeatIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={seatMapToolLabel} secondary={seatMapToolDescription} />
-                  </ListItemButton>
-                </ListItem>
-              </>
-            )}
           </List>
         </Drawer>
 
@@ -613,33 +607,6 @@ export default function HomeClient() {
                     ))}
                   </List>
                 ))}
-                {canUseSeatMapTool && (
-                  <>
-                    <Divider sx={{ my: 1 }} />
-                    <List
-                      subheader={
-                        <ListSubheader component="div" sx={{ bgcolor: 'background.paper', fontWeight: 700 }}>
-                          Tools
-                        </ListSubheader>
-                      }
-                    >
-                      <ListItem disablePadding sx={{ px: 1 }}>
-                        <ListItemButton
-                          aria-label={seatMapToolDescription}
-                          onClick={openInFlightSeatMap}
-                          sx={{ borderRadius: 1 }}
-                        >
-                          <ListItemIcon>
-                            <Box sx={{ display: 'flex' }}>
-                              <EventSeatIcon />
-                            </Box>
-                          </ListItemIcon>
-                          <ListItemText primary={seatMapToolLabel} secondary={seatMapToolDescription} />
-                        </ListItemButton>
-                      </ListItem>
-                    </List>
-                  </>
-                )}
               </Drawer>
             </Box>
           )}
@@ -669,7 +636,14 @@ export default function HomeClient() {
               {activeView === "status" && <FlightStatusDashboard />}
               {activeView === "signin" && <Auth />}
               {activeView === "checkin" && <StaffCheckIn />}
-              {activeView === "inflight" && <InFlight openSeatMapRequest={inFlightSeatMapRequest} />}
+              {activeView === "inflight" && <InFlight />}
+              {activeView === "seatMap" && (
+                <OperationalSeatMap
+                  mode={getSeatMapMode()}
+                  onOpenCheckIn={() => setCurrentView("checkin")}
+                  onOpenSeatManagement={() => setCurrentView("adminSeats")}
+                />
+              )}
               {(activeView === "admin" || activeView === "adminPassengers" || activeView === "adminFlights" || activeView === "adminSeats" || activeView === "adminServices") && canAccessAdmin && (
                 <AdminDashboard key={activeView} initialTab={adminTabByView[activeView]} />
               )}

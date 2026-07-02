@@ -22,10 +22,10 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
-import { DEFAULT_ANCILLARY_SERVICES } from "@/constants/appConstants";
-import useDataStore from "@/stores/useDataStore";
-import type { Flight } from "@/types/flight";
-import type { Passenger } from "@/types/passenger";
+import { DEFAULT_ANCILLARY_SERVICES } from "../../constants/appConstants";
+import useDataStore from "../../stores/useDataStore";
+import type { Flight } from "../../types/flight";
+import type { Passenger } from "../../types/passenger";
 
 type CabinClass = "Economy" | "Premium Economy" | "Business" | "First";
 

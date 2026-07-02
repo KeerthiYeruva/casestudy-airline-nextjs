@@ -24,10 +24,10 @@ import {
   Chip
 } from '@mui/material';
 import { FamilyRestroom as FamilyIcon } from '@mui/icons-material';
-import type { Passenger } from '@/types/passenger';
-import type { FamilySeating } from '@/types/seat';
-import useToastStore from '@/stores/useToastStore';
-import { FamilySeatingDialogSchema, type FamilySeatingDialogFormData } from '@/lib/validationSchemas';
+import type { Passenger } from '../../types/passenger';
+import type { FamilySeating } from '../../types/seat';
+import useToastStore from '../../stores/useToastStore';
+import { FamilySeatingDialogSchema, type FamilySeatingDialogFormData } from '../../lib/validationSchemas';
 
 interface FamilySeatingDialogProps {
   open: boolean;

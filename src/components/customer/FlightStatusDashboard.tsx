@@ -22,11 +22,11 @@ import ConnectingAirportsIcon from "@mui/icons-material/ConnectingAirports";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import ScheduleIcon from "@mui/icons-material/Schedule";
-import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
-import useDataStore from "@/stores/useDataStore";
+import { useRealtimeUpdates } from "../../hooks/useRealtimeUpdates";
+import useDataStore from "../../stores/useDataStore";
 import ConnectionStatusChip from "../ui/ConnectionStatusChip";
 import StatusChip from "../ui/StatusChip";
-import type { Flight } from "@/types/flight";
+import type { Flight } from "../../types/flight";
 
 type FlightStatusFilter = Flight["status"] | "All";
 

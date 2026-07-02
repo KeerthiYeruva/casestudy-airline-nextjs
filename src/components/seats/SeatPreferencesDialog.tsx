@@ -28,8 +28,8 @@ import {
 } from '@mui/material';
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import type { SeatPreferences, SeatPreference, SeatType } from '@/types/seat';
-import { SeatPreferencesDialogSchema, type SeatPreferencesDialogFormData } from '@/lib/validationSchemas';
+import type { SeatPreferences, SeatPreference, SeatType } from '../../types/seat';
+import { SeatPreferencesDialogSchema, type SeatPreferencesDialogFormData } from '../../lib/validationSchemas';
 
 interface SeatPreferencesDialogProps {
   open: boolean;

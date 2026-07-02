@@ -1,24 +1,24 @@
 "use client";
 
 import React, { useState, useEffect ,useRef} from "react";
-import useCheckInStore from "@/stores/useCheckInStore";
-import useDataStore from "@/stores/useDataStore";
-import useToastStore from "@/stores/useToastStore";
-import useRealtimeUpdates from "@/hooks/useRealtimeUpdates";
-import CabinSeatMapDialog from "@/components/seats/CabinSeatMapDialog";
-import InFlightFlightList from "@/components/inflight/InFlightFlightList";
-import InFlightPassengerList from "@/components/inflight/InFlightPassengerList";
-import PassengerServicePanel from "@/components/inflight/PassengerServicePanel";
-import AddServiceDialog from "@/components/inflight/AddServiceDialog";
-import ChangeMealDialog from "@/components/inflight/ChangeMealDialog";
-import ShopDialog from "@/components/inflight/ShopDialog";
-import FlightInfoGrid from "@/components/ui/FlightInfoGrid";
-import PageHeader from "@/components/ui/PageHeader";
-import type { Passenger } from "@/types/passenger";
-import type { ShopItem } from "@/types/services";
+import useCheckInStore from "../../stores/useCheckInStore";
+import useDataStore from "../../stores/useDataStore";
+import useToastStore from "../../stores/useToastStore";
+import useRealtimeUpdates from "../../hooks/useRealtimeUpdates";
+import CabinSeatMapDialog from "../seats/CabinSeatMapDialog";
+import InFlightFlightList from "./InFlightFlightList";
+import InFlightPassengerList from "./InFlightPassengerList";
+import PassengerServicePanel from "./PassengerServicePanel";
+import AddServiceDialog from "./AddServiceDialog";
+import ChangeMealDialog from "./ChangeMealDialog";
+import ShopDialog from "./ShopDialog";
+import FlightInfoGrid from "../ui/FlightInfoGrid";
+import PageHeader from "../ui/PageHeader";
+import type { Passenger } from "../../types/passenger";
+import type { ShopItem } from "../../types/services";
 import {
   shopCategories as shopCategoriesData,
-} from "@/data/flightData";
+} from "../../data/flightData";
 import { Container, Paper, Typography, Grid, Box } from "@mui/material";
 
 interface InFlightProps {

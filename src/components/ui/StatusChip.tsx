@@ -1,5 +1,5 @@
 import Chip, { type ChipProps } from '@mui/material/Chip';
-import type { Flight } from '@/types/flight';
+import type { Flight } from '../../types/flight';
 
 type FlightStatus = Flight['status'];
 

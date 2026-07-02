@@ -12,7 +12,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import GroupIcon from '@mui/icons-material/Group';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import StarIcon from '@mui/icons-material/Star';
-import type { Passenger } from "@/types/passenger";
+import type { Passenger } from "../../types/passenger";
 
 interface PassengerDetailsPanelProps {
   passenger: Passenger;

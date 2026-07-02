@@ -15,8 +15,8 @@ import Typography from '@mui/material/Typography';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
+import type { Flight } from '../../types/flight';
+import type { Passenger } from '../../types/passenger';
 
 interface BoardingPassDialogProps {
   open: boolean;

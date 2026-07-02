@@ -12,9 +12,9 @@ import {
   where,
   onSnapshot
 } from './firebaseConfig';
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
-import { flights as initialFlights, passengers as initialPassengers, shopItems as initialShopItems } from '@/data/flightData';
+import type { Flight } from '../types/flight';
+import type { Passenger } from '../types/passenger';
+import { flights as initialFlights, passengers as initialPassengers, shopItems as initialShopItems } from '../data/flightData';
 
 // Collection names
 const COLLECTIONS = {

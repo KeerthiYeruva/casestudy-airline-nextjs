@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useFirestoreSync } from '@/hooks/useFirestoreSync';
-import useAuthStore from '@/stores/useAuthStore';
+import { useFirestoreSync } from '../../hooks/useFirestoreSync';
+import useAuthStore from '../../stores/useAuthStore';
 
 /**
  * FirestoreSync Component

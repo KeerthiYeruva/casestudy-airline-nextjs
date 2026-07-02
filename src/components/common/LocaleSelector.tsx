@@ -28,14 +28,14 @@ import {
 } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import type { Locale } from '@/i18n';
-import type { SupportedCurrency, SupportedTimezone } from '@/lib/i18nUtils';
+import type { Locale } from '../../i18n';
+import type { SupportedCurrency, SupportedTimezone } from '../../lib/i18nUtils';
 import {
   getLocalePreferences,
   setLocalePreferences,
   supportedCurrencies,
   supportedTimezones
-} from '@/lib/i18nUtils';
+} from '../../lib/i18nUtils';
 
 const LocaleSelector: React.FC = () => {
   const router = useRouter();

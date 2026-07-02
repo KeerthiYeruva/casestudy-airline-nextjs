@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SaveIcon from "@mui/icons-material/Save";
-import type { CrewAssignment, Flight } from "@/types/flight";
+import type { CrewAssignment, Flight } from "../../../types/flight";
 
 interface CrewDraft {
   pilot: string;

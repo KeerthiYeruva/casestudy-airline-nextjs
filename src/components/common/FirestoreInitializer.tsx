@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { initializeFirestoreData, isFirebaseConfigured } from '@/lib/firestoreService';
-import useAuthStore from '@/stores/useAuthStore';
+import { initializeFirestoreData, isFirebaseConfigured } from '../../lib/firestoreService';
+import useAuthStore from '../../stores/useAuthStore';
 
 /**
  * FirestoreInitializer Component

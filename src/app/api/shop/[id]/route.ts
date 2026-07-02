@@ -1,9 +1,9 @@
-import { shopDB } from '@/lib/db';
-import { handleApiError, notFoundResponse, successResponse } from '@/lib/apiUtils';
-import { UpdateShopItemSchema, validateSchema } from '@/lib/validationSchemas';
-import { eventBroadcaster } from '@/lib/eventBroadcaster';
+import { shopDB } from '../../../../lib/db';
+import { handleApiError, notFoundResponse, successResponse } from '../../../../lib/apiUtils';
+import { UpdateShopItemSchema, validateSchema } from '../../../../lib/validationSchemas';
+import { eventBroadcaster } from '../../../../lib/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
-import type { ShopItem } from '@/types/services';
+import type { ShopItem } from '../../../../types/services';
 
 interface RouteParams {
   params: Promise<{ id: string }>;

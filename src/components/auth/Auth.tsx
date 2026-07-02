@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import useAuthStore from '@/stores/useAuthStore';
-import { UserRole, normalizeUserRole, roleDescriptions, roleLabels, staffRoleOptions } from '@/types/auth';
-import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/lib/firebaseConfig';
-import { isFirebaseConfigured } from '@/lib/firestoreService';
+import useAuthStore from '../../stores/useAuthStore';
+import { UserRole, normalizeUserRole, roleDescriptions, roleLabels, staffRoleOptions } from '../../types/auth';
+import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '../../lib/firebaseConfig';
+import { isFirebaseConfigured } from '../../lib/firestoreService';
 import {
   Dialog,
   DialogTitle,

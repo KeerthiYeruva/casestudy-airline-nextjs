@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
-import { subscribeToFlights, subscribeToPassengers, isFirebaseConfigured } from '@/lib/firestoreService';
-import useDataStore from '@/stores/useDataStore';
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
+import { subscribeToFlights, subscribeToPassengers, isFirebaseConfigured } from '../lib/firestoreService';
+import useDataStore from '../stores/useDataStore';
+import type { Flight } from '../types/flight';
+import type { Passenger } from '../types/passenger';
 
 /**
  * Custom hook for real-time Firestore synchronization

@@ -38,7 +38,7 @@ This document outlines the performance optimizations implemented in the Airline 
 **Server Component** (`src/app/[locale]/page.tsx`):
 ```typescript
 import { Metadata } from 'next';
-import HomeClient from '@/components/layout/HomeClient';
+import HomeClient from '../../components/layout/HomeClient';
 
 export const metadata: Metadata = {
   title: 'Airline Management System',
@@ -183,9 +183,9 @@ compiler: {
 Main components are lazy-loaded to reduce initial bundle:
 
 ```typescript
-const StaffCheckIn = lazy(() => import("@/components/StaffCheckIn"));
-const InFlight = lazy(() => import("@/components/InFlight"));
-const AdminDashboard = lazy(() => import("@/components/AdminDashboard"));
+const StaffCheckIn = lazy(() => import("../checkin/StaffCheckIn"));
+const InFlight = lazy(() => import("../inflight/InFlight"));
+const AdminDashboard = lazy(() => import("../admin/AdminDashboard"));
 ```
 
 **Impact:**

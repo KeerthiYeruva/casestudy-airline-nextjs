@@ -1,7 +1,7 @@
 // Seat lock API endpoints for conflict prevention
 import { NextRequest } from 'next/server';
-import { eventBroadcaster } from '@/lib/eventBroadcaster';
-import { successResponse, handleApiError, badRequestResponse } from '@/lib/apiUtils';
+import { eventBroadcaster } from '../../../../lib/eventBroadcaster';
+import { successResponse, handleApiError, badRequestResponse } from '../../../../lib/apiUtils';
 
 export const dynamic = 'force-dynamic';
 

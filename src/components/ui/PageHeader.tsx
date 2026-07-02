@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import type { ReactNode } from 'react';
-import ConnectionStatusChip from '@/components/ui/ConnectionStatusChip';
+import ConnectionStatusChip from './ConnectionStatusChip';
 
 interface PageHeaderProps {
   title: string;

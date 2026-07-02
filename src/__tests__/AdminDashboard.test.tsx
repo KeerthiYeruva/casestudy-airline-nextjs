@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import AdminDashboard from '../components/admin/AdminDashboard';
 
 // Mock the stores
-jest.mock('@/stores/useDataStore', () => ({
+jest.mock('../stores/useDataStore', () => ({
   __esModule: true,
   default: jest.fn(() => ({
     flights: [
@@ -31,7 +31,7 @@ jest.mock('@/stores/useDataStore', () => ({
   })),
 }));
 
-jest.mock('@/stores/useAdminStore', () => ({
+jest.mock('../stores/useAdminStore', () => ({
   __esModule: true,
   default: jest.fn(() => ({
     selectedFlight: null,
@@ -42,14 +42,14 @@ jest.mock('@/stores/useAdminStore', () => ({
   })),
 }));
 
-jest.mock('@/stores/useToastStore', () => ({
+jest.mock('../stores/useToastStore', () => ({
   __esModule: true,
   default: jest.fn(() => ({
     showToast: jest.fn(),
   })),
 }));
 
-jest.mock('@/hooks/useRealtimeUpdates', () => ({
+jest.mock('../hooks/useRealtimeUpdates', () => ({
   __esModule: true,
   default: jest.fn(() => ({
     isConnected: true,
@@ -141,7 +141,7 @@ describe('AdminDashboard', () => {
     it('should add a new service', async () => {
       const mockSetServices = jest.fn();
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useDataStoreMock = jest.mocked(require('@/stores/useDataStore').default);
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
       useDataStoreMock.mockReturnValueOnce({
         ...useDataStoreMock.mock.results[0].value,
         ancillaryServices: ['WiFi'],
@@ -174,7 +174,7 @@ describe('AdminDashboard', () => {
     it('should not add empty service', async () => {
       const mockShowToast = jest.fn();
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useToastStoreMock = jest.mocked(require('@/stores/useToastStore').default);
+      const useToastStoreMock = jest.mocked(require('../stores/useToastStore').default);
       useToastStoreMock.mockReturnValueOnce({
         showToast: mockShowToast,
       });
@@ -198,7 +198,7 @@ describe('AdminDashboard', () => {
     it('should add a new meal option', async () => {
       const mockSetMeals = jest.fn();
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useDataStoreMock = jest.mocked(require('@/stores/useDataStore').default);
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
       useDataStoreMock.mockReturnValueOnce({
         ...useDataStoreMock.mock.results[0].value,
         mealOptions: ['Vegetarian'],
@@ -228,7 +228,7 @@ describe('AdminDashboard', () => {
     it('should not add empty meal option', async () => {
       const mockShowToast = jest.fn();
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useToastStoreMock = jest.mocked(require('@/stores/useToastStore').default);
+      const useToastStoreMock = jest.mocked(require('../stores/useToastStore').default);
       useToastStoreMock.mockReturnValueOnce({
         showToast: mockShowToast,
       });
@@ -252,7 +252,7 @@ describe('AdminDashboard', () => {
     it('should validate shop item form', async () => {
       const mockShowToast = jest.fn();
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useToastStoreMock = jest.mocked(require('@/stores/useToastStore').default);
+      const useToastStoreMock = jest.mocked(require('../stores/useToastStore').default);
       useToastStoreMock.mockReturnValueOnce({
         showToast: mockShowToast,
       });
@@ -325,7 +325,7 @@ describe('AdminDashboard', () => {
       const mockFetchFlights = jest.fn();
       const mockFetchPassengers = jest.fn();
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useDataStoreMock = jest.mocked(require('@/stores/useDataStore').default);
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
       
       useDataStoreMock.mockReturnValueOnce({
         ...useDataStoreMock.mock.results[0].value,
@@ -345,7 +345,7 @@ describe('AdminDashboard', () => {
       const mockFetchFlights = jest.fn();
       const mockFetchPassengers = jest.fn();
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const useDataStoreMock = jest.mocked(require('@/stores/useDataStore').default);
+      const useDataStoreMock = jest.mocked(require('../stores/useDataStore').default);
       
       useDataStoreMock.mockReturnValueOnce({
         ...useDataStoreMock.mock.results[0].value,

@@ -29,9 +29,9 @@ import {
   Chip
 } from '@mui/material';
 import { Group as GroupIcon } from '@mui/icons-material';
-import type { Passenger } from '@/types/passenger';
-import type { GroupSeating } from '@/types/seat';
-import { GroupSeatingDialogSchema, type GroupSeatingDialogFormData } from '@/lib/validationSchemas';
+import type { Passenger } from '../../types/passenger';
+import type { GroupSeating } from '../../types/seat';
+import { GroupSeatingDialogSchema, type GroupSeatingDialogFormData } from '../../lib/validationSchemas';
 
 interface GroupSeatingDialogProps {
   open: boolean;

@@ -1,9 +1,9 @@
 'use client';
 
 import { ReactNode } from 'react';
-import ToastNotification from '@/components/common/ToastNotification';
-import FirestoreSync from '@/components/common/FirestoreSync';
-import FirestoreInitializer from '@/components/common/FirestoreInitializer';
+import ToastNotification from '../common/ToastNotification';
+import FirestoreSync from '../common/FirestoreSync';
+import FirestoreInitializer from '../common/FirestoreInitializer';
 
 interface ClientLayoutProps {
   children: ReactNode;

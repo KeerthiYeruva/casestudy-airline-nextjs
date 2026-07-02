@@ -248,9 +248,9 @@ Following **WCAG 2.5.5 Target Size (AAA)**:
 
 ### Code Splitting
 ```tsx
-const StaffCheckIn = lazy(() => import("@/components/StaffCheckIn"));
-const InFlight = lazy(() => import("@/components/InFlight"));
-const AdminDashboard = lazy(() => import("@/components/AdminDashboard"));
+const StaffCheckIn = lazy(() => import("../checkin/StaffCheckIn"));
+const InFlight = lazy(() => import("../inflight/InFlight"));
+const AdminDashboard = lazy(() => import("../admin/AdminDashboard"));
 ```
 
 ---

@@ -21,14 +21,14 @@ import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineE
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
-import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
-import useDataStore from "@/stores/useDataStore";
+import { useRealtimeUpdates } from "../../hooks/useRealtimeUpdates";
+import useDataStore from "../../stores/useDataStore";
 import BoardingPassDialog from "../checkin/BoardingPassDialog";
 import ChangeSeatDialog from "../checkin/ChangeSeatDialog";
 import ConnectionStatusChip from "../ui/ConnectionStatusChip";
 import StatusChip from "../ui/StatusChip";
-import type { Flight } from "@/types/flight";
-import type { Passenger } from "@/types/passenger";
+import type { Flight } from "../../types/flight";
+import type { Passenger } from "../../types/passenger";
 
 interface PortalSearch {
   bookingReference: string;

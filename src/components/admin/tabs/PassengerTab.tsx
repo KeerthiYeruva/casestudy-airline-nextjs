@@ -2,8 +2,8 @@
 
 import React from "react";
 import PassengerManagement from "../PassengerManagement";
-import type { Flight } from "@/types/flight";
-import type { Passenger } from "@/types/passenger";
+import type { Flight } from "../../../types/flight";
+import type { Passenger } from "../../../types/passenger";
 
 interface FilterOptions {
   missingPassport: boolean;

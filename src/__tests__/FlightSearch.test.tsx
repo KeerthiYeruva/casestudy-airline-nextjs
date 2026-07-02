@@ -1,9 +1,9 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import FlightSearch from '@/components/customer/FlightSearch';
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
+import FlightSearch from '../components/customer/FlightSearch';
+import type { Flight } from '../types/flight';
+import type { Passenger } from '../types/passenger';
 
 const mockFetchFlights = jest.fn();
 const mockFetchPassengers = jest.fn();
@@ -73,7 +73,7 @@ const mockPassengers: Passenger[] = [
   },
 ];
 
-jest.mock('@/stores/useDataStore', () => ({
+jest.mock('../stores/useDataStore', () => ({
   __esModule: true,
   default: () => ({
     flights: mockFlights,

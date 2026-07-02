@@ -3,8 +3,8 @@
 import React from "react";
 import { Paper, Typography, List, ListItemButton, ListItemText, Box } from "@mui/material";
 import FlightIcon from "@mui/icons-material/Flight";
-import StatusChip from "@/components/ui/StatusChip";
-import type { Flight } from "@/types/flight";
+import StatusChip from "../ui/StatusChip";
+import type { Flight } from "../../types/flight";
 
 interface InFlightFlightListProps {
   flights: Flight[];

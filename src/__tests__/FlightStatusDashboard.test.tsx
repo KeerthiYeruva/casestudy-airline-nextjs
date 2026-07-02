@@ -1,8 +1,8 @@
 import React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import FlightStatusDashboard from '@/components/customer/FlightStatusDashboard';
-import type { Flight } from '@/types/flight';
+import FlightStatusDashboard from '../components/customer/FlightStatusDashboard';
+import type { Flight } from '../types/flight';
 
 const mockFetchFlights = jest.fn();
 
@@ -54,7 +54,7 @@ const mockFlights: Flight[] = [
   },
 ];
 
-jest.mock('@/stores/useDataStore', () => ({
+jest.mock('../stores/useDataStore', () => ({
   __esModule: true,
   default: () => ({
     flights: mockFlights,

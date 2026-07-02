@@ -25,7 +25,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import StarIcon from '@mui/icons-material/Star';
 import GroupIcon from '@mui/icons-material/Group';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
-import type { Passenger } from "@/types/passenger";
+import type { Passenger } from "../../types/passenger";
 
 interface PassengerListPanelProps {
   passengers: Passenger[];

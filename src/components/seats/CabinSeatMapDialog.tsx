@@ -4,8 +4,8 @@ import React from "react";
 import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
-import SeatMapVisual from "@/components/seats/SeatMapVisual";
-import type { Passenger } from "@/types/passenger";
+import SeatMapVisual from "./SeatMapVisual";
+import type { Passenger } from "../../types/passenger";
 
 interface CabinSeatMapDialogProps {
   open: boolean;

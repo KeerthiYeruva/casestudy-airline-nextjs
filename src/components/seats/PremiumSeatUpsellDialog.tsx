@@ -35,10 +35,10 @@ import {
   Power as PowerIcon,
   Weekend as ComfortIcon
 } from '@mui/icons-material';
-import type { Passenger } from '@/types/passenger';
-import type { PremiumSeatUpsell } from '@/types/seat';
-import { formatCurrency } from '@/lib/i18nUtils';
-import { PremiumSeatUpsellDialogSchema, type PremiumSeatUpsellDialogFormData } from '@/lib/validationSchemas';
+import type { Passenger } from '../../types/passenger';
+import type { PremiumSeatUpsell } from '../../types/seat';
+import { formatCurrency } from '../../lib/i18nUtils';
+import { PremiumSeatUpsellDialogSchema, type PremiumSeatUpsellDialogFormData } from '../../lib/validationSchemas';
 
 interface PremiumSeatUpsellDialogProps {
   open: boolean;

@@ -20,9 +20,9 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import FlightDialog from "@/components/admin/FlightDialog";
+import FlightDialog from "../FlightDialog";
 import StatusChip from "../../ui/StatusChip";
-import type { Flight } from "@/types/flight";
+import type { Flight } from "../../../types/flight";
 
 type FlightStatus = Flight["status"];
 

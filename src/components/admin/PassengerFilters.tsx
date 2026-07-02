@@ -16,7 +16,7 @@ import {
   Button,
   SelectChangeEvent,
 } from "@mui/material";
-import type { Flight } from "@/types/flight";
+import type { Flight } from "../../types/flight";
 
 interface FilterOptions {
   missingPassport: boolean;

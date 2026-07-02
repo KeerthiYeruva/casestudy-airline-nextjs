@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import useToastStore from '@/stores/useToastStore';
+import useToastStore from '../../stores/useToastStore';
 import { Snackbar, Alert } from '@mui/material';
 
 const ToastNotification: React.FC = () => {

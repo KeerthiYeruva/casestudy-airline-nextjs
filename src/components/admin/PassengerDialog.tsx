@@ -24,9 +24,9 @@ import {
   Box,
 } from "@mui/material";
 import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
-import type { Flight } from "@/types/flight";
-import type { Passenger } from "@/types/passenger";
-import { PassengerDialogSchema, type PassengerDialogFormData } from "@/lib/validationSchemas";
+import type { Flight } from "../../types/flight";
+import type { Passenger } from "../../types/passenger";
+import { PassengerDialogSchema, type PassengerDialogFormData } from "../../lib/validationSchemas";
 import SeatSelectionDialog from "./SeatSelectionDialog";
 
 interface PassengerFormData extends Omit<Passenger, "id"> {

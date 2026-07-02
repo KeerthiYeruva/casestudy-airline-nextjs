@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import AdminMetrics from '@/components/admin/AdminMetrics';
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
+import AdminMetrics from '../../components/admin/AdminMetrics';
+import type { Flight } from '../../types/flight';
+import type { Passenger } from '../../types/passenger';
 
 const flights: Flight[] = [
   {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import AdminMetrics from '@/components/admin/AdminMetrics';
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
+import AdminMetrics from '../components/admin/AdminMetrics';
+import type { Flight } from '../types/flight';
+import type { Passenger } from '../types/passenger';
 
 const flights: Flight[] = [
   {

@@ -2,7 +2,7 @@
  * Internationalization utilities for currency conversion, timezone handling, and locale formatting
  */
 
-import type { Locale } from '@/i18n';
+import type { Locale } from '../i18n';
 
 // ============ Currency Configuration ============
 export const supportedCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY', 'INR'] as const;

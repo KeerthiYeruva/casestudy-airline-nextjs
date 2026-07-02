@@ -1,23 +1,23 @@
 ﻿"use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import useAdminStore from "@/stores/useAdminStore";
-import useDataStore from "@/stores/useDataStore";
-import useToastStore from "@/stores/useToastStore";
-import useRealtimeUpdates from "@/hooks/useRealtimeUpdates";
-import SimpleInputDialog from "@/components/common/SimpleInputDialog";
-import ConfirmDialog from "@/components/common/ConfirmDialog";
-import PassengerTab from "@/components/admin/tabs/PassengerTab";
-import ServicesMenuTab from "@/components/admin/tabs/ServicesMenuTab";
-import SeatManagementTab from "@/components/admin/tabs/SeatManagementTab";
-import FlightOpsTab from "@/components/admin/tabs/FlightOpsTab";
-import CrewManagementTab from "@/components/admin/tabs/CrewManagementTab";
-import AircraftManagementTab from "@/components/admin/tabs/AircraftManagementTab";
-import AdminMetrics from "@/components/admin/AdminMetrics";
-import ShopItemDialog from "@/components/admin/ShopItemDialog";
-import PageHeader from "@/components/ui/PageHeader";
-import type { ShopItemDialogFormData } from "@/lib/validationSchemas";
-import type { ShopItem } from "@/types/services";
+import useAdminStore from "../../stores/useAdminStore";
+import useDataStore from "../../stores/useDataStore";
+import useToastStore from "../../stores/useToastStore";
+import useRealtimeUpdates from "../../hooks/useRealtimeUpdates";
+import SimpleInputDialog from "../common/SimpleInputDialog";
+import ConfirmDialog from "../common/ConfirmDialog";
+import PassengerTab from "./tabs/PassengerTab";
+import ServicesMenuTab from "./tabs/ServicesMenuTab";
+import SeatManagementTab from "./tabs/SeatManagementTab";
+import FlightOpsTab from "./tabs/FlightOpsTab";
+import CrewManagementTab from "./tabs/CrewManagementTab";
+import AircraftManagementTab from "./tabs/AircraftManagementTab";
+import AdminMetrics from "./AdminMetrics";
+import ShopItemDialog from "./ShopItemDialog";
+import PageHeader from "../ui/PageHeader";
+import type { ShopItemDialogFormData } from "../../lib/validationSchemas";
+import type { ShopItem } from "../../types/services";
 import {
   Container,
   Paper,

@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import FlightIcon from "@mui/icons-material/Flight";
 import SaveIcon from "@mui/icons-material/Save";
-import type { AircraftStatus, Flight } from "@/types/flight";
+import type { AircraftStatus, Flight } from "../../../types/flight";
 
 interface AircraftDraft {
   aircraft: string;

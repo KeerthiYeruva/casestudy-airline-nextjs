@@ -1,10 +1,10 @@
 // API Route for Flights CRUD operations (TypeScript)
-import { flightDB } from '@/lib/db';
-import { handleApiError, successResponse, HTTP_STATUS } from '@/lib/apiUtils';
-import { CreateFlightSchema, validateSchema } from '@/lib/validationSchemas';
-import { eventBroadcaster } from '@/lib/eventBroadcaster';
+import { flightDB } from '../../../lib/db';
+import { handleApiError, successResponse, HTTP_STATUS } from '../../../lib/apiUtils';
+import { CreateFlightSchema, validateSchema } from '../../../lib/validationSchemas';
+import { eventBroadcaster } from '../../../lib/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
-import type { Flight } from '@/types/flight';
+import type { Flight } from '../../../types/flight';
 
 export const dynamic = 'force-dynamic';
 

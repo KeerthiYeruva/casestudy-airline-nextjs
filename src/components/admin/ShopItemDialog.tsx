@@ -17,8 +17,8 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import { SHOP_CATEGORIES } from "@/constants/appConstants";
-import { ShopItemDialogSchema, type ShopItemDialogFormData } from "@/lib/validationSchemas";
+import { SHOP_CATEGORIES } from "../../constants/appConstants";
+import { ShopItemDialogSchema, type ShopItemDialogFormData } from "../../lib/validationSchemas";
 
 interface ShopItemDialogProps {
   open: boolean;

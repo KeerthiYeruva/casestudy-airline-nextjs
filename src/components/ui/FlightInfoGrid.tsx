@@ -2,8 +2,8 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import type { SxProps, Theme } from '@mui/material/styles';
-import type { Flight } from '@/types/flight';
-import StatusChip from '@/components/ui/StatusChip';
+import type { Flight } from '../../types/flight';
+import StatusChip from './StatusChip';
 
 interface FlightInfoGridProps {
   flight: Flight;

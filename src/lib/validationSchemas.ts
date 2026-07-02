@@ -1,6 +1,6 @@
 // Validation schemas using Zod for type-safe API validation
 import { z } from 'zod';
-import type { FamilySeating, GroupSeating, SeatPreferences } from '@/types/seat';
+import type { FamilySeating, GroupSeating, SeatPreferences } from '../types/seat';
 
 /**
  * Validation schema for Passport information

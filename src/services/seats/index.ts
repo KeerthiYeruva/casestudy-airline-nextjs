@@ -1,2 +1,2 @@
-export { eventBroadcaster } from '@/lib/eventBroadcaster';
-export { updatePassenger } from '@/lib/firestoreService';
+export { eventBroadcaster } from '../../lib/eventBroadcaster';
+export { updatePassenger } from '../../lib/firestoreService';

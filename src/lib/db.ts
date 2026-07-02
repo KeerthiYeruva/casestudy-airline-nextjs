@@ -8,11 +8,11 @@ import {
   mealOptions, 
   shopItems, 
   shopCategories 
-} from '@/data/flightData';
+} from '../data/flightData';
 import * as firestoreService from './firestoreService';
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
-import type { ShopItem } from '@/types/services';
+import type { Flight } from '../types/flight';
+import type { Passenger } from '../types/passenger';
+import type { ShopItem } from '../types/services';
 
 // In-memory fallback storage
 let flights: Flight[] = JSON.parse(JSON.stringify(initialFlights));

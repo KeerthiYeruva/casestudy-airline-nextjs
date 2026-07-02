@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import Stack from '@mui/material/Stack';
-import StatusChip from '@/components/ui/StatusChip';
-import type { Flight } from '@/types/flight';
+import StatusChip from '../../components/ui/StatusChip';
+import type { Flight } from '../../types/flight';
 
 const meta = {
   title: 'UI/StatusChip',

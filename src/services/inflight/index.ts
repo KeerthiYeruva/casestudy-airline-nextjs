@@ -4,4 +4,4 @@ export {
   subscribeToFlights,
   subscribeToPassengers,
   updatePassenger,
-} from '@/lib/firestoreService';
+} from '../../lib/firestoreService';

@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import BoardingPassDialog from '@/components/checkin/BoardingPassDialog';
-import type { Flight } from '@/types/flight';
-import type { Passenger } from '@/types/passenger';
+import BoardingPassDialog from '../components/checkin/BoardingPassDialog';
+import type { Flight } from '../types/flight';
+import type { Passenger } from '../types/passenger';
 
 const mockFlight: Flight = {
   id: 'FL001',

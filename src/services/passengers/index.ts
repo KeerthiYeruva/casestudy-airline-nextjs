@@ -1,4 +1,4 @@
-export { fetchPassengerById, fetchPassengers } from '@/lib/fetchUtils';
+export { fetchPassengerById, fetchPassengers } from '../../lib/fetchUtils';
 export {
   createPassenger,
   deletePassenger,
@@ -6,4 +6,4 @@ export {
   getPassengerById,
   subscribeToPassengers,
   updatePassenger,
-} from '@/lib/firestoreService';
+} from '../../lib/firestoreService';

@@ -15,7 +15,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import type { Flight } from "@/types/flight";
+import type { Flight } from "../../types/flight";
 
 type FlightStatus = Flight["status"];
 

@@ -3,8 +3,8 @@
 // Zustand store for authentication
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { normalizeUserRole, UserRole } from '@/types/auth';
-import type { AuthStore, User } from '@/types/auth';
+import { normalizeUserRole, UserRole } from '../types/auth';
+import type { AuthStore, User } from '../types/auth';
 
 const useAuthStore = create<AuthStore>()(
   devtools(

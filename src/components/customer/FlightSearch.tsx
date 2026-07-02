@@ -23,10 +23,10 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
-import useDataStore from "@/stores/useDataStore";
+import useDataStore from "../../stores/useDataStore";
 import BookingDialog from "./BookingDialog";
 import StatusChip from "../ui/StatusChip";
-import type { Flight } from "@/types/flight";
+import type { Flight } from "../../types/flight";
 
 type CabinClass = "Economy" | "Premium Economy" | "Business" | "First";
 

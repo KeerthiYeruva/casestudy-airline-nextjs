@@ -49,7 +49,7 @@ The current auth component auto-detects Firebase configuration and can fall back
 1. **Import Section** (top of file):
 ```javascript
 // UNCOMMENT THIS:
-import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/lib/firebaseConfig';
+import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '../../lib/firebaseConfig';
 
 // COMMENT OUT: Mock user data section
 // const MOCK_USERS = [ ... ];

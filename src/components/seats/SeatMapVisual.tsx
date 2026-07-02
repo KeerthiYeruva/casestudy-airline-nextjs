@@ -11,12 +11,14 @@ import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineE
 import StarIcon from "@mui/icons-material/Star";
 import GroupIcon from "@mui/icons-material/Group";
 import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
-import type { Passenger } from "@/types/passenger";
+import type { Passenger } from "../../types/passenger";
+
+export type SeatMapMode = "booking" | "checkin" | "cabin" | "operations" | "admin" | "inflight";
 
 interface SeatMapVisualProps {
   passengers: Passenger[];
   onSeatClick: (seat: string) => void;
-  mode?: "checkin" | "inflight";
+  mode?: SeatMapMode;
 }
 
 const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
@@ -27,6 +29,8 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
   const rows = 10;
   const seatsPerRow = ["A", "B", "C", "D", "E", "F"];
   const cabinMinWidth = { xs: 330, sm: 430, md: 450 };
+  const isCabinMode = mode === "cabin" || mode === "inflight";
+  const isMonitoringMode = mode === "operations";
 
   const getSeatInfo = (seat: string) => {
     const passenger = passengers.find((p) => p.seat === seat);
@@ -96,7 +100,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
         isFamily,
         groupId,
       };
-    } else if (mode === "inflight") {
+    } else if (isCabinMode) {
       if (passenger.specialMeal && passenger.specialMeal !== "Regular") {
         return {
           status: "special-meal",
@@ -111,6 +115,19 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
       }
       return {
         status: "regular",
+        color: isPremium ? "warning" : "primary",
+        icon: <EventSeatIcon sx={{ fontSize: 16 }} />,
+        passenger,
+        isPremium,
+        isGroup,
+        isFamily,
+        groupId,
+      };
+    }
+
+    if (isMonitoringMode || mode === "admin") {
+      return {
+        status: isPremium ? "premium" : "occupied",
         color: isPremium ? "warning" : "primary",
         icon: <EventSeatIcon sx={{ fontSize: 16 }} />,
         passenger,
@@ -230,7 +247,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
           />
         </Box>
       );
-    } else if (mode === "inflight") {
+    } else if (isCabinMode) {
       return (
         <Box
           sx={{
@@ -280,6 +297,74 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
             size="small"
             color="warning"
             variant="filled"
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
+            }}
+          />
+        </Box>
+      );
+    } else if (isMonitoringMode || mode === "admin") {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            gap: { xs: 0.5, sm: 1 },
+            flexWrap: "wrap",
+            mb: { xs: 1.5, sm: 2 },
+          }}
+        >
+          <Chip
+            icon={<EventSeatIcon sx={{ fontSize: { xs: 14, sm: 18 } }} />}
+            label="Available"
+            size="small"
+            variant="outlined"
+            sx={{
+              borderColor: "grey.300",
+              color: "grey.600",
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
+            }}
+          />
+          <Chip
+            icon={<EventSeatIcon sx={{ fontSize: { xs: 14, sm: 18 } }} />}
+            label="Occupied"
+            size="small"
+            color="primary"
+            variant="outlined"
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
+            }}
+          />
+          <Chip
+            icon={<StarIcon sx={{ fontSize: { xs: 14, sm: 18 } }} />}
+            label="Premium"
+            size="small"
+            color="warning"
+            variant="filled"
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
+            }}
+          />
+          <Chip
+            icon={<GroupIcon sx={{ fontSize: { xs: 14, sm: 18 } }} />}
+            label="Group"
+            size="small"
+            color="primary"
+            variant="outlined"
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.8125rem" },
+              height: { xs: 24, sm: 28 },
+            }}
+          />
+          <Chip
+            icon={<FamilyRestroomIcon sx={{ fontSize: { xs: 14, sm: 18 } }} />}
+            label="Family"
+            size="small"
+            color="secondary"
+            variant="outlined"
             sx={{
               fontSize: { xs: "0.7rem", sm: "0.8125rem" },
               height: { xs: 24, sm: 28 },
@@ -473,22 +558,22 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                               ? `${seatInfo.color}.50`
                               : "background.paper",
                           cursor:
-                            mode === "inflight" && !seatInfo.passenger
+                            isCabinMode && !seatInfo.passenger
                               ? "not-allowed"
                               : "pointer",
                           opacity:
-                            mode === "inflight" && !seatInfo.passenger
+                            isCabinMode && !seatInfo.passenger
                               ? 0.4
                               : 1,
                           transition: "all 0.2s",
                           boxShadow: seatInfo.isPremium ? 1 : 0,
                           "&:hover": {
                             transform:
-                              mode === "inflight" && !seatInfo.passenger
+                              isCabinMode && !seatInfo.passenger
                                 ? "none"
                                 : "translateY(-2px)",
                             boxShadow:
-                              mode === "inflight" && !seatInfo.passenger
+                              isCabinMode && !seatInfo.passenger
                                 ? "none"
                                 : seatInfo.isPremium
                                   ? 3
@@ -673,22 +758,22 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                               ? `${seatInfo.color}.50`
                               : "background.paper",
                           cursor:
-                            mode === "inflight" && !seatInfo.passenger
+                            isCabinMode && !seatInfo.passenger
                               ? "not-allowed"
                               : "pointer",
                           opacity:
-                            mode === "inflight" && !seatInfo.passenger
+                            isCabinMode && !seatInfo.passenger
                               ? 0.4
                               : 1,
                           transition: "all 0.2s",
                           boxShadow: seatInfo.isPremium ? 1 : 0,
                           "&:hover": {
                             transform:
-                              mode === "inflight" && !seatInfo.passenger
+                              isCabinMode && !seatInfo.passenger
                                 ? "none"
                                 : "translateY(-2px)",
                             boxShadow:
-                              mode === "inflight" && !seatInfo.passenger
+                              isCabinMode && !seatInfo.passenger
                                 ? "none"
                                 : seatInfo.isPremium
                                   ? 3

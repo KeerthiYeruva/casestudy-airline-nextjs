@@ -1,7 +1,7 @@
 // API Route for passenger check-in operations (TypeScript)
-import { passengerDB } from '@/lib/db';
-import { handleApiError, successResponse, notFoundResponse } from '@/lib/apiUtils';
-import { eventBroadcaster } from '@/lib/eventBroadcaster';
+import { passengerDB } from '../../../../../lib/db';
+import { handleApiError, successResponse, notFoundResponse } from '../../../../../lib/apiUtils';
+import { eventBroadcaster } from '../../../../../lib/eventBroadcaster';
 import { revalidatePath } from 'next/cache';
 
 interface RouteParams {

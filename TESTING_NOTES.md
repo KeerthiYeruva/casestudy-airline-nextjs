@@ -34,7 +34,7 @@ The Auth component uses Firebase authentication, which requires either:
 
 The test file includes proper setup:
 ```javascript
-jest.mock('@/lib/firebaseConfig', () => ({
+jest.mock('../lib/firebaseConfig', () => ({
   auth: {},
   googleProvider: {}
 }));
@@ -150,7 +150,7 @@ export default Auth;
 
 Then in tests:
 ```javascript
-jest.mock('@/components/auth/Auth');
+jest.mock('../components/auth/Auth');
 ```
 
 This makes tests pass but doesn't test actual authentication logic.

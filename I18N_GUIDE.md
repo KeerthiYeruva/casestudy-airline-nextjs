@@ -87,7 +87,7 @@ export default function MyComponent() {
 ### Basic Usage
 
 ```tsx
-import { formatCurrency, convertCurrency } from '@/lib/i18nUtils';
+import { formatCurrency, convertCurrency } from '../../lib/i18nUtils';
 
 // Format currency
 const priceUSD = formatCurrency(100, 'USD', 'en'); // "$100.00"
@@ -126,7 +126,7 @@ const exchangeRates: Record<SupportedCurrency, number> = {
 ### Format Dates
 
 ```tsx
-import { formatDate, formatTime, formatDateTime } from '@/lib/i18nUtils';
+import { formatDate, formatTime, formatDateTime } from '../../lib/i18nUtils';
 
 // Format date
 const date = formatDate(new Date(), 'en'); // "December 5, 2025"
@@ -147,7 +147,7 @@ const dateTime = formatDateTime(
 ### Timezone Conversion
 
 ```tsx
-import { convertToTimezone, getTimezoneOffset } from '@/lib/i18nUtils';
+import { convertToTimezone, getTimezoneOffset } from '../../lib/i18nUtils';
 
 // Convert to specific timezone
 const nyTime = convertToTimezone(new Date(), 'America/New_York');
@@ -160,7 +160,7 @@ const offset = getTimezoneOffset('America/New_York'); // "GMT-5"
 ### Relative Time
 
 ```tsx
-import { formatRelativeTime } from '@/lib/i18nUtils';
+import { formatRelativeTime } from '../../lib/i18nUtils';
 
 // Format relative time
 const future = new Date(Date.now() + 3600000); // 1 hour from now
@@ -175,7 +175,7 @@ const relativePast = formatRelativeTime(past, 'en'); // "yesterday"
 ### Saving User Preferences
 
 ```tsx
-import { setLocalePreferences, getLocalePreferences } from '@/lib/i18nUtils';
+import { setLocalePreferences, getLocalePreferences } from '../../lib/i18nUtils';
 
 // Get current preferences
 const prefs = getLocalePreferences();
@@ -196,7 +196,7 @@ setLocalePreferences({
 The `LocaleSelector` component is automatically included in the layout:
 
 ```tsx
-import LocaleSelector from '@/components/LocaleSelector';
+import LocaleSelector from '../common/LocaleSelector';
 
 <LocaleSelector currentLocale="en" />
 ```
@@ -287,7 +287,7 @@ t('selectFlight');    // checkIn.selectFlight
 Always format currency values:
 
 ```tsx
-import { formatCurrency } from '@/lib/i18nUtils';
+import { formatCurrency } from '../../lib/i18nUtils';
 
 // Get user's preferred currency
 const prefs = getLocalePreferences();
@@ -302,7 +302,7 @@ const price = formatCurrency(
 ### 4. Format All Dates and Times
 
 ```tsx
-import { formatDateTime } from '@/lib/i18nUtils';
+import { formatDateTime } from '../../lib/i18nUtils';
 
 const prefs = getLocalePreferences();
 
@@ -349,7 +349,7 @@ http://localhost:3000/fr
 ### 2. Test Currency Conversion
 
 ```tsx
-import { convertCurrency } from '@/lib/i18nUtils';
+import { convertCurrency } from '../../lib/i18nUtils';
 
 describe('Currency Conversion', () => {
   it('converts USD to EUR', () => {
@@ -362,7 +362,7 @@ describe('Currency Conversion', () => {
 ### 3. Test Date Formatting
 
 ```tsx
-import { formatDate } from '@/lib/i18nUtils';
+import { formatDate } from '../../lib/i18nUtils';
 
 describe('Date Formatting', () => {
   it('formats date in English', () => {
