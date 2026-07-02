@@ -13,6 +13,8 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 
 interface ChangeMealDialogProps {
@@ -34,8 +36,18 @@ const ChangeMealDialog: React.FC<ChangeMealDialogProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      fullScreen={isCompact}
+      slotProps={{ paper: { sx: { m: { xs: 0, sm: 2 }, borderRadius: { xs: 0, sm: 2 } } } }}
+    >
       <DialogTitle>Change Meal Preference</DialogTitle>
       <DialogContent>
         <Typography variant="body2" color="textSecondary" gutterBottom>

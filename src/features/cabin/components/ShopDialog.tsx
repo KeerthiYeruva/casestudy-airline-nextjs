@@ -18,6 +18,8 @@ import {
   Chip,
   SelectChangeEvent,
   Grid,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import type { ShopItem } from "../../../domain/services/types";
 
@@ -48,8 +50,18 @@ const ShopDialog: React.FC<ShopDialogProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      fullScreen={isCompact}
+      slotProps={{ paper: { sx: { m: { xs: 0, sm: 2 }, borderRadius: { xs: 0, sm: 2 } } } }}
+    >
       <DialogTitle>In-Flight Shop - Add Item</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2 }}>
@@ -74,7 +86,7 @@ const ShopDialog: React.FC<ShopDialogProps> = ({
             Select an item:
           </Typography>
 
-          <Box sx={{ maxHeight: 400, overflowY: "auto" }}>
+          <Box sx={{ maxHeight: { xs: "calc(100vh - 360px)", sm: 400 }, overflowY: "auto", pr: { sm: 0.5 } }}>
             <Grid container spacing={2}>
               {filteredShopItems.map((item) => (
                 <Grid size={{ xs: 12, sm: 6 }} key={item.id}>
@@ -114,7 +126,7 @@ const ShopDialog: React.FC<ShopDialogProps> = ({
                 Selected: {selectedShopItem.name}
               </Typography>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}
+                sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 2, flexWrap: "wrap" }}
               >
                 <Typography variant="body1">Quantity:</Typography>
                 <Button
@@ -137,7 +149,7 @@ const ShopDialog: React.FC<ShopDialogProps> = ({
                 >
                   +
                 </Button>
-                <Typography variant="h6" sx={{ ml: "auto" }}>
+                <Typography variant="h6" sx={{ ml: { sm: "auto" }, width: { xs: "100%", sm: "auto" } }}>
                   Total: ${(selectedShopItem.price * shopQuantity).toFixed(2)}
                 </Typography>
               </Box>

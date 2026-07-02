@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
+import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import SeatMapVisual from "./SeatMapVisual";
@@ -20,17 +20,22 @@ const CabinSeatMapDialog: React.FC<CabinSeatMapDialogProps> = ({
   onClose,
   onSeatSelect,
 }) => {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
+      fullScreen={isCompact}
       fullWidth
       maxWidth="lg"
       slotProps={{
         paper: {
           sx: {
-            borderRadius: 2,
-            maxHeight: { xs: "calc(100% - 32px)", sm: "calc(100% - 64px)" },
+            borderRadius: { xs: 0, sm: 2 },
+            m: { xs: 0, sm: 2 },
+            maxHeight: { xs: "100%", sm: "calc(100% - 64px)" },
           },
         },
       }}

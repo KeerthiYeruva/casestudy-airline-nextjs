@@ -46,7 +46,7 @@ const InFlightPassengerList: React.FC<InFlightPassengerListProps> = ({
           No passengers match this search.
         </Typography>
       )}
-      <List sx={{ pt: 0, overflowY: 'auto', overflowX: 'hidden', flex: 1, minWidth: 0 }}>
+      <List sx={{ pt: 0, overflowY: 'auto', overflowX: 'hidden', flex: 1, minWidth: 0, minHeight: 0, maxHeight: { xs: 360, sm: 420, md: 480, lg: 'calc(100vh - 260px)' } }}>
         {passengers.map((passenger, index) => (
           <React.Fragment key={passenger.id}>
             <ListItem disablePadding sx={{ mb: 1 }}>

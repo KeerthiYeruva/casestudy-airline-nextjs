@@ -6,8 +6,6 @@ import {
   Box,
   Button,
   Chip,
-  Container,
-  Grid,
   Paper,
   Stack,
   Typography,
@@ -25,8 +23,7 @@ import useCheckInStore from "../../../stores/useCheckInStore";
 import useDataStore from "../../../stores/useDataStore";
 import useRealtimeUpdates from "../../../hooks/useRealtimeUpdates";
 import FlightSelectionPanel from "../../check-in/components/FlightSelectionPanel";
-import FlightInfoGrid from "../../../shared/components/ui/FlightInfoGrid";
-import PageHeader from "../../../shared/components/ui/PageHeader";
+import OperationalWorkspace from "../../../shared/components/layout/OperationalWorkspace";
 import SeatMapVisual, { type SeatMapMode } from "./SeatMapVisual";
 import type { Passenger } from "../../../domain/passengers/types";
 
@@ -176,109 +173,85 @@ const OperationalSeatMap: React.FC<OperationalSeatMapProps> = ({
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 }, minWidth: 0 }}>
-      <PageHeader
-        title={copy.title}
-        isConnected={isConnected}
-        selectedFlightNumber={selectedFlight?.flightNumber}
-      />
+    <OperationalWorkspace
+      title={copy.title}
+      isConnected={isConnected}
+      selectedFlight={selectedFlight}
+      leftRail={(
+        <FlightSelectionPanel
+          flights={flights}
+          selectedFlightId={selectedFlight?.id}
+          onFlightSelect={handleFlightSelect}
+          passengers={passengers}
+        />
+      )}
+      rightRailWidth={{ lg: 3.25, xl: 3 }}
+      rightRail={selectedFlight && (
+        <Stack spacing={2}>
+          <Paper elevation={1} sx={{ p: 2 }}>
+            <Stack spacing={1.5}>
+              <Box>
+                <Typography variant="h6" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <AirlineSeatReclineExtraIcon color="primary" />
+                  {copy.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {copy.subtitle}
+                </Typography>
+              </Box>
+              {renderModeActions()}
+            </Stack>
+          </Paper>
 
-      <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ minWidth: 0 }}>
-        <Grid size={{ xs: 12, md: 3 }} sx={{ minWidth: 0 }}>
-          <FlightSelectionPanel
-            flights={flights}
-            selectedFlightId={selectedFlight?.id}
-            onFlightSelect={handleFlightSelect}
-            passengers={passengers}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 9 }} sx={{ minWidth: 0 }}>
-          {selectedFlight ? (
-            <>
-              <FlightInfoGrid flight={selectedFlight} />
-              <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-                <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2, flexWrap: "wrap" }}>
-                  <Box>
-                    <Typography variant="h6" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <AirlineSeatReclineExtraIcon color="primary" />
-                      {copy.title}
-                    </Typography>
+          <Paper elevation={1} sx={{ p: 2 }}>
+            <Typography variant="subtitle1" gutterBottom>
+              Seat Context
+            </Typography>
+            <Stack spacing={1.25}>
+              <Box>
+                <Typography variant="caption" color="text.secondary">Capacity</Typography>
+                <Typography variant="body2">{occupiedSeats}/{totalSeats} occupied ({occupancyRate}%)</Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" color="text.secondary">Boarding</Typography>
+                <Typography variant="body2">{checkedInPassengers}/{flightPassengers.length} checked in ({boardingRate}%)</Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" color="text.secondary">Passenger Groups</Typography>
+                <Typography variant="body2">{familyPassengers} family, {groupPassengers} group</Typography>
+              </Box>
+              {selectedPassengerOnFlight ? (
+                <Box sx={{ pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
+                  <Typography variant="subtitle2">{selectedPassengerOnFlight.name}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Seat {selectedPassengerOnFlight.seat} · {selectedPassengerOnFlight.checkedIn ? "Checked in" : "Not checked in"}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Meal: {selectedPassengerOnFlight.specialMeal || "Regular"}
+                  </Typography>
+                  {selectedPassengerOnFlight.ancillaryServices.length > 0 && (
                     <Typography variant="body2" color="text.secondary">
-                      {copy.subtitle}
+                      Services: {selectedPassengerOnFlight.ancillaryServices.join(", ")}
                     </Typography>
-                  </Box>
-                  {renderModeActions()}
+                  )}
                 </Box>
-              </Paper>
-
-              <Grid container spacing={2} sx={{ minWidth: 0 }}>
-                <Grid size={{ xs: 12, lg: 8 }} sx={{ minWidth: 0 }}>
-                  <SeatMapVisual passengers={flightPassengers} onSeatClick={handleSeatClick} mode={mode} />
-                </Grid>
-                <Grid size={{ xs: 12, lg: 4 }} sx={{ minWidth: 0 }}>
-                  <Paper elevation={1} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom>
-                      Seat Context
-                    </Typography>
-                    <Stack spacing={1.25}>
-                      <Box>
-                        <Typography variant="caption" color="text.secondary">
-                          Capacity
-                        </Typography>
-                        <Typography variant="body2">
-                          {occupiedSeats}/{totalSeats} occupied ({occupancyRate}%)
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="text.secondary">
-                          Boarding
-                        </Typography>
-                        <Typography variant="body2">
-                          {checkedInPassengers}/{flightPassengers.length} checked in ({boardingRate}%)
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="text.secondary">
-                          Passenger Groups
-                        </Typography>
-                        <Typography variant="body2">
-                          {familyPassengers} family, {groupPassengers} group
-                        </Typography>
-                      </Box>
-                      {selectedPassengerOnFlight ? (
-                        <Box sx={{ pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
-                          <Typography variant="subtitle2">{selectedPassengerOnFlight.name}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Seat {selectedPassengerOnFlight.seat} · {selectedPassengerOnFlight.checkedIn ? "Checked in" : "Not checked in"}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Meal: {selectedPassengerOnFlight.specialMeal || "Regular"}
-                          </Typography>
-                          {selectedPassengerOnFlight.ancillaryServices.length > 0 && (
-                            <Typography variant="body2" color="text.secondary">
-                              Services: {selectedPassengerOnFlight.ancillaryServices.join(", ")}
-                            </Typography>
-                          )}
-                        </Box>
-                      ) : (
-                        <Alert severity="info">Select an occupied seat to inspect passenger context.</Alert>
-                      )}
-                    </Stack>
-                  </Paper>
-                </Grid>
-              </Grid>
-            </>
-          ) : (
-            <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}>
-              <Typography variant="h6" color="text.secondary">
-                Please select a flight to view the seat map
-              </Typography>
-            </Paper>
-          )}
-        </Grid>
-      </Grid>
-    </Container>
+              ) : (
+                <Alert severity="info">Select an occupied seat to inspect passenger context.</Alert>
+              )}
+            </Stack>
+          </Paper>
+        </Stack>
+      )}
+      emptyState={(
+        <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}>
+          <Typography variant="h6" color="text.secondary">
+            Please select a flight to view the seat map
+          </Typography>
+        </Paper>
+      )}
+    >
+      <SeatMapVisual passengers={flightPassengers} onSeatClick={handleSeatClick} mode={mode} />
+    </OperationalWorkspace>
   );
 };
 

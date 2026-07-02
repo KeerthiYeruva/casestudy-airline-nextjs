@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Paper, Typography, Chip, Box, Grid, Divider, Avatar, Button, Stack } from "@mui/material";
+import { Typography, Chip, Box, Grid, Divider, Avatar, Button, Stack } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
@@ -28,7 +28,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
   onViewBoardingPass,
 }) => {
   return (
-    <Paper elevation={3} sx={{ mt: 2, p: { xs: 2, sm: 3 }, bgcolor: passenger.checkedIn ? 'success.50' : 'background.paper' }}>
+    <Box sx={{ pt: 0.5, bgcolor: passenger.checkedIn ? 'success.50' : 'background.paper' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 }, mb: { xs: 2, sm: 3 } }}>
         <Avatar sx={{ 
           width: { xs: 48, sm: 56 }, 
@@ -337,7 +337,7 @@ const PassengerDetailsPanel: React.FC<PassengerDetailsPanelProps> = ({
           </Box>
         </>
       )}
-    </Paper>
+    </Box>
   );
 };
 

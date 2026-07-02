@@ -12,6 +12,8 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 
 interface AddServiceDialogProps {
@@ -31,8 +33,18 @@ const AddServiceDialog: React.FC<AddServiceDialogProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      fullScreen={isCompact}
+      slotProps={{ paper: { sx: { m: { xs: 0, sm: 2 }, borderRadius: { xs: 0, sm: 2 } } } }}
+    >
       <DialogTitle>Add Ancillary Service</DialogTitle>
       <DialogContent>
         <FormControl fullWidth sx={{ mt: 2 }}>

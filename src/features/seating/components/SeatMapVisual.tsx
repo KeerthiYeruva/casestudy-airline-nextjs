@@ -32,6 +32,14 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
   const isCabinMode = mode === "cabin" || mode === "inflight";
   const isMonitoringMode = mode === "operations";
 
+  const handleSeatKeyDown = (event: React.KeyboardEvent, seat: string, disabled: boolean) => {
+    if (disabled) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onSeatClick(seat);
+    }
+  };
+
   const getSeatInfo = (seat: string) => {
     const passenger = passengers.find((p) => p.seat === seat);
     if (!passenger)
@@ -379,7 +387,7 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
   return (
     <Paper
       elevation={3}
-      sx={{ p: { xs: 2, sm: 2.5, md: 3 }, bgcolor: "grey.50" }}
+      sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, bgcolor: "grey.50", minWidth: 0 }}
     >
       <Box
         sx={{
@@ -534,7 +542,12 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                       arrow
                     >
                       <Box
+                        component="button"
+                        type="button"
                         onClick={() => onSeatClick(seatNumber)}
+                        onKeyDown={(event) => handleSeatKeyDown(event, seatNumber, isCabinMode && !seatInfo.passenger)}
+                        disabled={isCabinMode && !seatInfo.passenger}
+                        aria-label={seatInfo.passenger ? `Seat ${seatNumber}, ${seatInfo.passenger.name}, ${seatInfo.status}` : `Seat ${seatNumber}, available`}
                         sx={{
                           width: { xs: 34, sm: 42, md: 44 },
                           height: { xs: 34, sm: 42, md: 44 },
@@ -544,6 +557,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                           justifyContent: "center",
                           flexDirection: "column",
                           position: "relative",
+                          p: 0,
+                          font: "inherit",
+                          appearance: "none",
                           borderRadius: {
                             xs: "6px 6px 3px 3px",
                             sm: "8px 8px 4px 4px",
@@ -581,6 +597,11 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                             borderColor: seatInfo.passenger
                               ? `${seatInfo.color}.dark`
                               : "primary.main",
+                          },
+                          "&:focus-visible": {
+                            outline: "3px solid",
+                            outlineColor: "primary.main",
+                            outlineOffset: 2,
                           },
                         }}
                       >
@@ -734,7 +755,12 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                       arrow
                     >
                       <Box
+                        component="button"
+                        type="button"
                         onClick={() => onSeatClick(seatNumber)}
+                        onKeyDown={(event) => handleSeatKeyDown(event, seatNumber, isCabinMode && !seatInfo.passenger)}
+                        disabled={isCabinMode && !seatInfo.passenger}
+                        aria-label={seatInfo.passenger ? `Seat ${seatNumber}, ${seatInfo.passenger.name}, ${seatInfo.status}` : `Seat ${seatNumber}, available`}
                         sx={{
                           width: { xs: 34, sm: 42, md: 44 },
                           height: { xs: 34, sm: 42, md: 44 },
@@ -744,6 +770,9 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                           justifyContent: "center",
                           flexDirection: "column",
                           position: "relative",
+                          p: 0,
+                          font: "inherit",
+                          appearance: "none",
                           borderRadius: {
                             xs: "6px 6px 3px 3px",
                             sm: "8px 8px 4px 4px",
@@ -781,6 +810,11 @@ const SeatMapVisual: React.FC<SeatMapVisualProps> = ({
                             borderColor: seatInfo.passenger
                               ? `${seatInfo.color}.dark`
                               : "primary.main",
+                          },
+                          "&:focus-visible": {
+                            outline: "3px solid",
+                            outlineColor: "primary.main",
+                            outlineOffset: 2,
                           },
                         }}
                       >

@@ -17,10 +17,9 @@ import GroupSeatingDialog from '../../seating/components/GroupSeatingDialog';
 import FamilySeatingDialog from '../../seating/components/FamilySeatingDialog';
 import PremiumSeatUpsellDialog from '../../seating/components/PremiumSeatUpsellDialog';
 import SeatArrangementSummary from '../../seating/components/SeatArrangementSummary';
-import FlightInfoGrid from '../../../shared/components/ui/FlightInfoGrid';
-import PageHeader from '../../../shared/components/ui/PageHeader';
+import OperationalWorkspace from '../../../shared/components/layout/OperationalWorkspace';
 import type { Passenger } from '../../../domain/passengers/types';
-import { Container, Paper, Typography, Grid, Box, Button, Stack, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import { Paper, Typography, Box, Button, Stack } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 
@@ -45,7 +44,6 @@ const StaffCheckIn: React.FC = () => {
   }, [flights.length, passengers.length, fetchFlights, fetchPassengers]);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | null>(null);
-  const [passengerDetailsDialog, setPassengerDetailsDialog] = useState(false);
   const [changeSeatDialog, setChangeSeatDialog] = useState(false);
   const [seatPreferencesDialog, setSeatPreferencesDialog] = useState(false);
   const [groupSeatingDialog, setGroupSeatingDialog] = useState(false);
@@ -103,13 +101,11 @@ const StaffCheckIn: React.FC = () => {
     const passenger = flightPassengers.find((p) => p.seat === seat);
     if (passenger) {
       setSelectedPassenger(passenger);
-      setPassengerDetailsDialog(true);
     }
   };
 
   const handlePassengerSelect = (passenger: Passenger) => {
     setSelectedPassenger(passenger);
-    setPassengerDetailsDialog(true);
   };
 
   const handleChangeSeat = async (newSeat: string) => {
@@ -144,99 +140,104 @@ const StaffCheckIn: React.FC = () => {
   };
 
   return (
-    <Container className="staff-checkin" maxWidth="xl" sx={{ py: { xs: 2, sm: 3 }, minWidth: 0 }}>
-      <PageHeader
-        title="Staff Check-In"
-        isConnected={isConnected}
-        selectedFlightNumber={selectedFlight?.flightNumber}
-      />
-
-      <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ minWidth: 0 }}>
-        {/* Flight Selection */}
-        <Grid size={{ xs: 12, md: 3 }} sx={{ minWidth: 0 }}>
-          <FlightSelectionPanel
-            flights={flights}
-            selectedFlightId={selectedFlight?.id}
-            onFlightSelect={handleFlightSelect}
-            passengers={passengers}
-          />
-        </Grid>
-
-        {/* Main Content */}
-        <Grid size={{ xs: 12, md: 9 }} sx={{ minWidth: 0 }}>
-          {selectedFlight ? (
-            <>
-              {/* Flight Details */}
-              <FlightInfoGrid flight={selectedFlight} />
-
-              {/* Group & Family Seating Actions */}
-              <Stack direction="row" spacing={2} sx={{ mb: 2, flexWrap: 'wrap', rowGap: 1 }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<GroupIcon />}
-                  onClick={() => setGroupSeatingDialog(true)}
-                  size="small"
-                >
-                  Group Seating
-                </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<FamilyRestroomIcon />}
-                  onClick={() => setFamilySeatingDialog(true)}
-                  size="small"
-                >
-                  Family Seating
-                </Button>
-              </Stack>
-
-              {/* Seat Arrangement Summary */}
-              <Box sx={{ mb: 2 }}>
-                <SeatArrangementSummary passengers={flightPassengers} totalSeats={60} />
-              </Box>
-
-              {/* Filters */}
-              <CheckInFilters
-                checkedInFilter={filterOptions.checkedIn ?? null}
-                wheelchairFilter={filterOptions.wheelchair ?? false}
-                infantFilter={filterOptions.infant ?? false}
-                onFilterChange={handleFilterChange}
-                onClearFilters={handleClearFilters}
+    <OperationalWorkspace
+      className="staff-checkin"
+      title="Staff Check-In"
+      isConnected={isConnected}
+      selectedFlight={selectedFlight}
+      leftRail={(
+        <FlightSelectionPanel
+          flights={flights}
+          selectedFlightId={selectedFlight?.id}
+          onFlightSelect={handleFlightSelect}
+          passengers={passengers}
+        />
+      )}
+      rightRail={selectedFlight && (
+        <Stack spacing={2}>
+          <Paper elevation={1} sx={{ p: 2 }}>
+            <Typography variant="subtitle1" gutterBottom>
+              Active Passenger
+            </Typography>
+            {selectedPassenger ? (
+              <PassengerDetailsPanel
+                passenger={selectedPassenger}
+                onSetPreferences={() => setSeatPreferencesDialog(true)}
+                onOfferPremiumUpgrade={() => setPremiumSeatDialog(true)}
+                onViewBoardingPass={() => setBoardingPassDialog(true)}
               />
-
-              <Grid container spacing={2} sx={{ minWidth: 0 }}>
-                {/* Seat Map */}
-                <Grid size={{ xs: 12, lg: 7 }} sx={{ minWidth: 0 }}>
-                  <SeatMapVisual
-                    passengers={flightPassengers}
-                    onSeatClick={handleSeatClick}
-                    mode="checkin"
-                  />
-                </Grid>
-
-                {/* Passenger List */}
-                <Grid size={{ xs: 12, lg: 5 }} sx={{ minWidth: 0 }}>
-                  <PassengerListPanel
-                    passengers={filteredPassengers}
-                    selectedPassengerId={selectedPassenger?.id}
-                    onPassengerSelect={handlePassengerSelect}
-                    onCheckIn={handleCheckIn}
-                    onUndoCheckIn={handleUndoCheckIn}
-                    onChangeSeat={handleChangeSeatClick}
-                    onViewBoardingPass={handleViewBoardingPass}
-                  />
-                </Grid>
-              </Grid>
-
-            </>
-          ) : (
-            <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 }, textAlign: 'center' }}>
-              <Typography variant="h6" color="textSecondary" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                Please select a flight to begin check-in
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                Select a passenger or occupied seat to inspect details and actions.
               </Typography>
-            </Paper>
-          )}
-        </Grid>
-      </Grid>
+            )}
+          </Paper>
+          <PassengerListPanel
+            passengers={filteredPassengers}
+            selectedPassengerId={selectedPassenger?.id}
+            onPassengerSelect={handlePassengerSelect}
+            onCheckIn={handleCheckIn}
+            onUndoCheckIn={handleUndoCheckIn}
+            onChangeSeat={handleChangeSeatClick}
+            onViewBoardingPass={handleViewBoardingPass}
+          />
+        </Stack>
+      )}
+      rightRailWidth={{ lg: 3.5, xl: 3.25 }}
+      emptyState={(
+        <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 }, textAlign: 'center' }}>
+          <Typography variant="h6" color="textSecondary" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+            Please select a flight to begin check-in
+          </Typography>
+        </Paper>
+      )}
+    >
+      <Stack spacing={2}>
+        <Paper elevation={1} sx={{ p: 2 }}>
+          <Stack spacing={2}>
+            <Box>
+              <Typography variant="h6">Check-In Actions</Typography>
+              <Typography variant="body2" color="text.secondary">
+                Prioritize passenger check-in, seat changes, and family or group allocation.
+              </Typography>
+            </Box>
+            <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap', rowGap: 1 }}>
+              <Button
+                variant="outlined"
+                startIcon={<GroupIcon />}
+                onClick={() => setGroupSeatingDialog(true)}
+                size="small"
+              >
+                Group Seating
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<FamilyRestroomIcon />}
+                onClick={() => setFamilySeatingDialog(true)}
+                size="small"
+              >
+                Family Seating
+              </Button>
+            </Stack>
+          </Stack>
+        </Paper>
+
+        <SeatArrangementSummary passengers={flightPassengers} totalSeats={60} />
+
+        <CheckInFilters
+          checkedInFilter={filterOptions.checkedIn ?? null}
+          wheelchairFilter={filterOptions.wheelchair ?? false}
+          infantFilter={filterOptions.infant ?? false}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+        />
+
+        <SeatMapVisual
+          passengers={flightPassengers}
+          onSeatClick={handleSeatClick}
+          mode="checkin"
+        />
+      </Stack>
 
       {/* Change Seat Dialog */}
       {selectedPassenger && (
@@ -319,33 +320,6 @@ const StaffCheckIn: React.FC = () => {
           currentPreferences={selectedPassenger.seatPreferences}
         />
       )}
-
-      <Dialog open={passengerDetailsDialog} onClose={() => setPassengerDetailsDialog(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Passenger Details</DialogTitle>
-        <DialogContent dividers>
-          {selectedPassenger ? (
-            <PassengerDetailsPanel
-              passenger={selectedPassenger}
-              onSetPreferences={() => {
-                setPassengerDetailsDialog(false);
-                setSeatPreferencesDialog(true);
-              }}
-              onOfferPremiumUpgrade={() => {
-                setPassengerDetailsDialog(false);
-                setPremiumSeatDialog(true);
-              }}
-              onViewBoardingPass={() => {
-                setPassengerDetailsDialog(false);
-                setBoardingPassDialog(true);
-              }}
-            />
-          ) : (
-            <Typography variant="body1" color="text.secondary">
-              Select a passenger to view details.
-            </Typography>
-          )}
-        </DialogContent>
-      </Dialog>
 
       <BoardingPassDialog
         open={boardingPassDialog}
@@ -472,7 +446,7 @@ const StaffCheckIn: React.FC = () => {
           locale="en"
         />
       )}
-    </Container>
+    </OperationalWorkspace>
   );
 };
 

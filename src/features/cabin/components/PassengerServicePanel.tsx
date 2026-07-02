@@ -46,7 +46,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
   calculateShopTotal,
 }) => {
   return (
-    <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, height: '100%' }}>
+    <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, height: '100%', minWidth: 0 }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
         <Avatar sx={{ width: 56, height: 56, bgcolor: 'primary.main' }}>
@@ -108,7 +108,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
         <Grid size={{ xs: 12, md: 6 }}>
           <Card variant="outlined" sx={{ height: '100%' }}>
             <CardContent>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, gap: 1, flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <RestaurantIcon color="action" />
                   <Typography variant="h6" sx={{ fontWeight: 'medium' }}>Meal Preference</Typography>
@@ -131,7 +131,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
         <Grid size={{ xs: 12, md: 6 }}>
           <Card variant="outlined" sx={{ height: '100%' }}>
             <CardContent>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, gap: 1, flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
                 <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
                   Ancillary Services
                 </Typography>
@@ -172,7 +172,7 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
         <Grid size={12}>
           <Card variant="outlined" sx={{ bgcolor: 'background.default', borderColor: 'secondary.100' }}>
             <CardContent>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, gap: 1, flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <LocalMallIcon color="secondary" />
                   <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
@@ -210,15 +210,17 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
                         key={index}
                         sx={{
                           display: "flex",
+                          flexDirection: { xs: "column", sm: "row" },
                           justifyContent: "space-between",
-                          alignItems: "center",
+                          alignItems: { xs: "stretch", sm: "center" },
+                          gap: 1,
                           p: 1,
                           border: "1px solid",
                           borderColor: "divider",
                           borderRadius: 1,
                         }}
                       >
-                        <Box sx={{ flex: 1 }}>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
                           <Typography variant="body1">
                             {request.itemName}
                           </Typography>
@@ -229,8 +231,10 @@ const PassengerServicePanel: React.FC<PassengerServicePanelProps> = ({
                         <Box
                           sx={{
                             display: "flex",
+                            flexWrap: "wrap",
                             alignItems: "center",
                             gap: 1,
+                            justifyContent: { xs: "space-between", sm: "flex-end" },
                           }}
                         >
                           <Button

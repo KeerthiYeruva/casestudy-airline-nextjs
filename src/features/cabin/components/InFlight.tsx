@@ -12,14 +12,13 @@ import PassengerServicePanel from "./PassengerServicePanel";
 import AddServiceDialog from "./AddServiceDialog";
 import ChangeMealDialog from "./ChangeMealDialog";
 import ShopDialog from "./ShopDialog";
-import FlightInfoGrid from "../../../shared/components/ui/FlightInfoGrid";
-import PageHeader from "../../../shared/components/ui/PageHeader";
+import OperationalWorkspace from "../../../shared/components/layout/OperationalWorkspace";
 import type { Passenger } from "../../../domain/passengers/types";
 import type { ShopItem } from "../../../domain/services/types";
 import {
   shopCategories as shopCategoriesData,
 } from "../../../domain/fixtures/flightData";
-import { Container, Paper, Typography, Grid, Box } from "@mui/material";
+import { Paper, Typography, Box } from "@mui/material";
 
 interface InFlightProps {
   openSeatMapRequest?: number;
@@ -237,82 +236,64 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
   };
 
   return (
-    <Container className="inflight" maxWidth={false} sx={{ py: { xs: 2, sm: 3 }, px: { xs: 2, md: 0 }, minWidth: 0 }}>
-      <PageHeader
-        title="In-Flight Services"
-        isConnected={isConnected}
-        selectedFlightNumber={selectedFlight?.flightNumber}
-      />
-
-      <Grid container spacing={{ xs: 2, sm: 3, xl: 4 }} sx={{ minWidth: 0 }}>
-        <Grid size={{ xs: 12, md: 3, lg: 2.6, xl: 2.4 }} sx={{ minWidth: 0 }}>
-          <InFlightFlightList
-            flights={flights}
-            selectedFlightId={selectedFlight?.id}
-            onFlightSelect={handleFlightSelect}
+    <OperationalWorkspace
+      className="inflight"
+      title="In-Flight Services"
+      isConnected={isConnected}
+      selectedFlight={selectedFlight}
+      leftRail={(
+        <InFlightFlightList
+          flights={flights}
+          selectedFlightId={selectedFlight?.id}
+          onFlightSelect={handleFlightSelect}
+        />
+      )}
+      rightRail={selectedFlight && (
+        <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box>
+            <Typography variant="h6">Passenger Manifest</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Select by seat and booking reference; use Seat Map for visual lookup.
+            </Typography>
+          </Box>
+          <InFlightPassengerList
+            passengers={flightPassengers}
+            selectedPassengerId={currentPassengerData?.id}
+            onPassengerSelect={handlePassengerSelect}
+            embedded
           />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 9, lg: 9.4, xl: 9.6 }} sx={{ minWidth: 0 }}>
-          {selectedFlight ? (
-            <>
-              <FlightInfoGrid flight={selectedFlight} />
-
-              <Grid container spacing={{ xs: 2, xl: 3 }} sx={{ minWidth: 0 }}>
-                <Grid size={{ xs: 12, lg: 4.4, xl: 4 }} sx={{ minWidth: 300 }}>
-                  <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box>
-                      <Typography variant="h6">
-                        Passenger Manifest
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Select by seat and booking reference; use the nav seat map for visual lookup.
-                      </Typography>
-                    </Box>
-                    <InFlightPassengerList
-                      passengers={flightPassengers}
-                      selectedPassengerId={selectedPassenger?.id}
-                      onPassengerSelect={handlePassengerSelect}
-                      embedded
-                    />
-                  </Paper>
-                </Grid>
-
-                <Grid size={{ xs: 12, lg: 7.6, xl: 8 }} sx={{ minWidth: 0 }}>
-                  {currentPassengerData ? (
-                    <PassengerServicePanel
-                      passenger={currentPassengerData}
-                      onAddService={() => setAddServiceDialog(true)}
-                      onRemoveService={handleRemoveService}
-                      onChangeMeal={() => {
-                        setSelectedMeal(currentPassengerData.specialMeal);
-                        setChangeMealDialog(true);
-                      }}
-                      onAddShopItem={() => setShopDialog(true)}
-                      onRemoveShopItem={handleRemoveShopItem}
-                      onUpdateQuantity={handleUpdateQuantity}
-                      calculateShopTotal={calculateShopTotal}
-                    />
-                  ) : (
-                    <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 }, height: "100%", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-                      <Typography variant="body1" color="text.secondary">
-                        Select a passenger to view meals, services, and shop requests.
-                      </Typography>
-                    </Paper>
-                  )}
-                </Grid>
-              </Grid>
-
-            </>
-          ) : (
-            <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
-              <Typography variant="h6" color="textSecondary">
-                Please select a flight to view in-flight services
-              </Typography>
-            </Paper>
-          )}
-        </Grid>
-      </Grid>
+        </Paper>
+      )}
+      rightRailWidth={{ lg: 3.25, xl: 3 }}
+      emptyState={(
+        <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
+          <Typography variant="h6" color="textSecondary">
+            Please select a flight to view in-flight services
+          </Typography>
+        </Paper>
+      )}
+    >
+      {currentPassengerData ? (
+        <PassengerServicePanel
+          passenger={currentPassengerData}
+          onAddService={() => setAddServiceDialog(true)}
+          onRemoveService={handleRemoveService}
+          onChangeMeal={() => {
+            setSelectedMeal(currentPassengerData.specialMeal);
+            setChangeMealDialog(true);
+          }}
+          onAddShopItem={() => setShopDialog(true)}
+          onRemoveShopItem={handleRemoveShopItem}
+          onUpdateQuantity={handleUpdateQuantity}
+          calculateShopTotal={calculateShopTotal}
+        />
+      ) : (
+        <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 }, height: "100%", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+          <Typography variant="body1" color="text.secondary">
+            Select a passenger to view meals, services, and shop requests.
+          </Typography>
+        </Paper>
+      )}
 
       <AddServiceDialog
         open={addServiceDialog}
@@ -358,7 +339,7 @@ const InFlight: React.FC<InFlightProps> = ({ openSeatMapRequest = 0 }) => {
         onClose={handleCloseSeatMap}
         onSeatSelect={handleSeatClick}
       />
-    </Container>
+    </OperationalWorkspace>
   );
 };
 

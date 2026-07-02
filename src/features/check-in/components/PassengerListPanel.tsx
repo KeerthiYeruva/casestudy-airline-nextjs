@@ -49,7 +49,7 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
   const checkedInCount = passengers.filter(p => p.checkedIn).length;
   
   return (
-    <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
         <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
           Passengers
@@ -61,7 +61,7 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
           sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
         />
       </Box>
-      <List sx={{ pt: 0, overflow: 'auto', flex: 1 }}>
+      <List sx={{ pt: 0, overflow: 'auto', flex: 1, minHeight: 0, maxHeight: { xs: 360, sm: 420, md: 480, lg: 'calc(100vh - 420px)' } }}>
         {passengers.map((passenger, index) => (
           <React.Fragment key={passenger.id}>
             <ListItem 
@@ -159,7 +159,7 @@ const PassengerListPanel: React.FC<PassengerListPanelProps> = ({
                   )}
 
                   {/* Action Buttons */}
-                  <Box sx={{ display: "flex", gap: { xs: 0.5, sm: 1 }, justifyContent: 'flex-end', mt: { xs: 1, sm: 0.5 } }}>
+                  <Box sx={{ display: "flex", gap: { xs: 0.5, sm: 1 }, justifyContent: 'flex-end', mt: { xs: 1, sm: 0.5 }, flexWrap: 'wrap' }}>
                     {!passenger.checkedIn ? (
                       <Button
                         variant="contained"
