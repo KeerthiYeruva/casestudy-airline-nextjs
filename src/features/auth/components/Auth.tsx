@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import useAuthStore from '../../../stores/useAuthStore';
 import { UserRole, normalizeUserRole, roleDescriptions, roleLabels, staffRoleOptions } from '../../../domain/auth/types';
-import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '../../../infrastructure/firebase/firebaseConfig';
+import { auth, googleProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from '../../../infrastructure/firebase/firebaseConfig';
 import { isFirebaseConfigured } from '../../../infrastructure/persistence/firestoreService';
 import {
   Dialog,
@@ -59,6 +59,18 @@ const Auth: React.FC = () => {
   useEffect(() => {
     if (!firebaseEnabled) return;
 
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user && !isAuthenticated) {
+          setRoleDialog(true);
+        }
+      })
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : 'Login failed';
+        loginFailure(message);
+        console.error('Redirect login error:', err);
+      });
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser && !isAuthenticated) {
         setRoleDialog(true);
@@ -66,7 +78,7 @@ const Auth: React.FC = () => {
     });
 
     return () => unsubscribe();
-  }, [firebaseEnabled, isAuthenticated]);
+  }, [firebaseEnabled, isAuthenticated, loginFailure]);
 
   const handleLogin = async () => {
     loginStart();
@@ -83,6 +95,11 @@ const Auth: React.FC = () => {
       await signInWithPopup(auth, googleProvider);
       setRoleDialog(true);
     } catch (err) {
+      if (err && typeof err === 'object' && 'code' in err && err.code === 'auth/popup-blocked') {
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      }
+
       const message = err instanceof Error ? err.message : 'Login failed';
       loginFailure(message);
       console.error('Login error:', err);

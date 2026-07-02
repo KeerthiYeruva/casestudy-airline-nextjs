@@ -30,7 +30,14 @@ const COLLECTIONS = {
 export function isFirebaseConfigured(): boolean {
   try {
     const config = db.app.options;
-    return config.apiKey !== 'YOUR_API_KEY' && config.projectId !== 'YOUR_PROJECT_ID';
+    const apiKey = String(config.apiKey || '');
+    const projectId = String(config.projectId || '');
+
+    return Boolean(apiKey && projectId)
+      && apiKey !== 'YOUR_API_KEY'
+      && projectId !== 'YOUR_PROJECT_ID'
+      && !apiKey.startsWith('your-')
+      && !projectId.startsWith('your-');
   } catch {
     return false;
   }

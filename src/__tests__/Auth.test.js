@@ -6,11 +6,10 @@ import useAuthStore from '../stores/useAuthStore';
 // Mock Firebase auth
 jest.mock('../infrastructure/firebase/firebaseConfig', () => ({
   auth: {},
-  googleProvider: {}
-}));
-
-jest.mock('firebase/auth', () => ({
+  googleProvider: {},
   signInWithPopup: jest.fn(),
+  signInWithRedirect: jest.fn(),
+  getRedirectResult: jest.fn(() => Promise.resolve(null)),
   signOut: jest.fn(),
   onAuthStateChanged: jest.fn((auth, callback) => {
     callback(null);
@@ -31,6 +30,7 @@ describe('Auth Component', () => {
       error: null,
       loginStart: jest.fn(),
       loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
       logout: jest.fn(),
       setRole: jest.fn(),
     });
@@ -64,6 +64,7 @@ describe('Auth Component', () => {
       error: null,
       loginStart: jest.fn(),
       loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
       logout: jest.fn(),
       setRole: jest.fn(),
     });
@@ -86,6 +87,7 @@ describe('Auth Component', () => {
       error: null,
       loginStart: jest.fn(),
       loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
       logout: jest.fn(),
       setRole: jest.fn(),
     });
@@ -107,6 +109,7 @@ describe('Auth Component', () => {
       error: null,
       loginStart: jest.fn(),
       loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
       logout: jest.fn(),
       setRole: jest.fn(),
     });
@@ -130,6 +133,7 @@ describe('Auth Component', () => {
       error: null,
       loginStart: jest.fn(),
       loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
       logout: jest.fn(),
       setRole: jest.fn(),
     });
@@ -151,6 +155,7 @@ describe('Auth Component', () => {
       error: null,
       loginStart: jest.fn(),
       loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
       logout: jest.fn(),
       setRole: jest.fn(),
     });
@@ -171,6 +176,7 @@ describe('Auth Component', () => {
       error: 'Authentication failed. Please try again.',
       loginStart: jest.fn(),
       loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
       logout: jest.fn(),
       setRole: jest.fn(),
     });
@@ -192,6 +198,7 @@ describe('Auth Component', () => {
       error: null,
       loginStart: jest.fn(),
       loginSuccess: jest.fn(),
+      loginFailure: jest.fn(),
       logout: jest.fn(),
       setRole: jest.fn(),
     });

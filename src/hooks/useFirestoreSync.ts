@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { subscribeToFlights, subscribeToPassengers, isFirebaseConfigured } from '../infrastructure/persistence/firestoreService';
 import useDataStore from '../stores/useDataStore';
 import type { Flight } from '../domain/flights/types';
@@ -41,26 +41,6 @@ export function useFirestoreSync() {
 
     return unsubscribe;
   }, [isConfigured, setPassengers]);
-
-  // Auto-sync on mount
-  useEffect(() => {
-    if (!isConfigured) {
-      console.log('[Firestore] Not configured - skipping sync');
-      return;
-    }
-
-    console.log('[Firestore] Starting real-time sync...');
-
-    // Subscribe to both collections
-    const unsubscribeFlights = syncFlights();
-    const unsubscribePassengers = syncPassengers();
-
-    return () => {
-      console.log('[Firestore] Stopping real-time sync...');
-      unsubscribeFlights();
-      unsubscribePassengers();
-    };
-  }, [isConfigured, syncFlights, syncPassengers]);
 
   return {
     isConfigured,
