@@ -82,6 +82,9 @@ describe('HomeClient navigation', () => {
     expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /navigate to flight search/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to admin dashboard/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to passengers/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to flights/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to seat operations/i })).not.toBeInTheDocument();
     expect(await screen.findByText('Admin Dashboard View')).toBeInTheDocument();
   });
 
@@ -147,7 +150,9 @@ describe('HomeClient navigation', () => {
     expect(screen.queryByText('My Trips')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /navigate to operations overview/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /navigate to admin dashboard/i })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: /navigate to passengers/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to passengers/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to flights/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /navigate to seat operations/i })).not.toBeInTheDocument();
     expect(await screen.findByText('Admin Dashboard View')).toBeInTheDocument();
   });
 });

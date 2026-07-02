@@ -26,13 +26,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import PeopleIcon from "@mui/icons-material/People";
 import SearchIcon from "@mui/icons-material/Search";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import ConnectingAirportsIcon from "@mui/icons-material/ConnectingAirports";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
-import SettingsIcon from "@mui/icons-material/Settings";
 import LocaleSelector from "../common/LocaleSelector";
 
 const FlightSearch = lazy(() => import("../../../features/customer/components/FlightSearch"));
@@ -53,11 +51,7 @@ type ViewKey =
   | "checkin"
   | "inflight"
   | "seatMap"
-  | "admin"
-  | "adminPassengers"
-  | "adminFlights"
-  | "adminSeats"
-  | "adminServices";
+  | "admin";
 type AccessLevel = "public" | "customer" | "staff" | "checkin" | "cabin" | "admin";
 
 interface NavigationItem {
@@ -139,38 +133,6 @@ const navigationItems: NavigationItem[] = [
     icon: <DashboardIcon />,
     access: "admin",
   },
-  {
-    view: "adminPassengers",
-    label: "Passengers",
-    mobileLabel: "Passengers",
-    description: "Passenger records and documents",
-    icon: <PeopleIcon />,
-    access: "admin",
-  },
-  {
-    view: "adminFlights",
-    label: "Flights",
-    mobileLabel: "Flights",
-    description: "Create, update, and delete flights",
-    icon: <FlightTakeoffIcon />,
-    access: "admin",
-  },
-  {
-    view: "adminSeats",
-    label: "Seats",
-    mobileLabel: "Seats",
-    description: "Seat preferences and upgrades",
-    icon: <EventSeatIcon />,
-    access: "admin",
-  },
-  {
-    view: "adminServices",
-    label: "Services",
-    mobileLabel: "Services",
-    description: "Ancillary services, meals, and shop",
-    icon: <SettingsIcon />,
-    access: "admin",
-  },
 ];
 
 const canAccessLevel = (access: AccessLevel, role: UserRole | null, isAuthenticated: boolean) => {
@@ -201,7 +163,7 @@ const customerNavigationViews: NavigationItem["view"][] = ["search", "trips", "s
 const checkInNavigationViews: NavigationItem["view"][] = ["opsDashboard", "checkin", "seatMap", "status"];
 const cabinNavigationViews: NavigationItem["view"][] = ["opsDashboard", "inflight", "seatMap", "status"];
 const operationsNavigationViews: NavigationItem["view"][] = ["opsDashboard", "checkin", "inflight", "seatMap", "status"];
-const adminNavigationViews: NavigationItem["view"][] = ["admin", "checkin", "inflight", "seatMap", "adminPassengers", "adminFlights", "adminSeats", "adminServices"];
+const adminNavigationViews: NavigationItem["view"][] = ["admin"];
 
 const checkInNavigationSections: NavigationSection[] = [
   { title: "Overview", views: ["opsDashboard"] },
@@ -220,17 +182,7 @@ const operationsNavigationSections: NavigationSection[] = [
 
 const adminNavigationSections: NavigationSection[] = [
   { title: "Dashboard", views: ["admin"] },
-  { title: "Operations", views: ["checkin", "inflight", "seatMap"] },
-  { title: "Management", views: ["adminPassengers", "adminFlights", "adminSeats", "adminServices"] },
 ];
-
-const adminTabByView: Partial<Record<ViewKey, "passengers" | "services" | "seats" | "flights">> = {
-  admin: "passengers",
-  adminPassengers: "passengers",
-  adminFlights: "flights",
-  adminSeats: "seats",
-  adminServices: "services",
-};
 
 const getNavigationViewsForRole = (role: UserRole | null, isAuthenticated: boolean) => {
   if (!isAuthenticated) return publicNavigationViews;
@@ -659,11 +611,11 @@ export default function HomeClient() {
                 <OperationalSeatMap
                   mode={getSeatMapMode()}
                   onOpenCheckIn={() => setCurrentView("checkin")}
-                  onOpenSeatManagement={() => setCurrentView("adminSeats")}
+                  onOpenSeatManagement={() => setCurrentView("admin")}
                 />
               )}
-              {(activeView === "admin" || activeView === "adminPassengers" || activeView === "adminFlights" || activeView === "adminSeats" || activeView === "adminServices") && canAccessAdmin && (
-                <AdminDashboard key={activeView} initialTab={adminTabByView[activeView]} />
+              {activeView === "admin" && canAccessAdmin && (
+                <AdminDashboard />
               )}
             </Suspense>
           </Box>

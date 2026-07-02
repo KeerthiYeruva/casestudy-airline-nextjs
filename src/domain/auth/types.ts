@@ -119,7 +119,6 @@ export const staffRoleOptions = [
   UserRole.CABIN_CREW,
   UserRole.OPERATIONS,
   UserRole.ADMIN,
-  UserRole.SUPER_ADMIN,
 ];
 
 export interface User {
